@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anunțuri imobiliare | Full Imobiliare</title>
+<meta name="description" content="Apartamente, case, terenuri și spații comerciale de vânzare sau de închiriat în București și Ilfov. Anunțuri verificate de Full Imobiliare.">
+<link rel="stylesheet" href="css/stil.css">
+</head>
+<body>
+
+<header class="antet"><div class="container antet-inner">
+  <a class="sigla" href="index.html"><span class="sigla-marca"></span>FULL IMOBILIARE</a>
+  <nav class="nav">
+    <a href="index.html">Acasă</a>
+    <a href="anunturi.html" class="activ">Anunțuri</a>
+    <a href="servicii.html">Servicii</a>
+    <a href="despre.html">Despre</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html" class="cta">Contact</a>
+  </nav>
+</div></header>
+
+<section class="sectiune"><div class="container">
+  <div class="sectiune-cap"><h2>Anunțuri imobiliare</h2></div>
+
+  <div class="bara-filtre">
+    <select id="f-tranzactie" aria-label="Tranzacție">
+      <option value="">Vânzare + închiriere</option>
+      <option value="vanzare">De vânzare</option>
+      <option value="inchiriere">De închiriat</option>
+    </select>
+    <select id="f-tip" aria-label="Tip">
+      <option value="">Orice tip</option>
+      <option value="apartament">Apartament</option>
+      <option value="casa">Casă / vilă</option>
+      <option value="teren">Teren</option>
+      <option value="comercial">Spațiu comercial</option>
+      <option value="birou">Birou</option>
+    </select>
+    <select id="f-pret" aria-label="Preț">
+      <option value="">Orice preț</option>
+      <option value="0-1000">până în 1.000 € (chirii)</option>
+      <option value="0-100000">până în 100.000 €</option>
+      <option value="100000-200000">100.000 – 200.000 €</option>
+      <option value="200000-300000">200.000 – 300.000 €</option>
+      <option value="300000-">peste 300.000 €</option>
+    </select>
+    <select id="f-camere" aria-label="Camere">
+      <option value="">Orice număr de camere</option>
+      <option value="1">minim 1</option>
+      <option value="2">minim 2</option>
+      <option value="3">minim 3</option>
+      <option value="4">minim 4</option>
+    </select>
+    <select id="f-zona" aria-label="Zonă">
+      <option value="">Toate zonele</option>
+    </select>
+    <select id="f-sortare" aria-label="Sortare">
+      <option value="recente">Cele mai noi</option>
+      <option value="pret-crescator">Preț crescător</option>
+      <option value="pret-descrescator">Preț descrescător</option>
+    </select>
+  </div>
+
+  <p class="rezultate-info" id="rezultate-info"></p>
+  <div class="grila-anunturi" id="lista-anunturi"></div>
+</div></section>
+
+<footer class="subsol"><div class="container">
+  <div class="subsol-legal"><span>© 2026 Full Imobiliare · [DATE FIRMĂ - DE COMPLETAT]</span><span>fullimobiliare.ro</span></div>
+</div></footer>
+
+<script src="js/date-demo.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
