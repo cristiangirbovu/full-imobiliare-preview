@@ -11,21 +11,40 @@ function apiListeaza() {
   try { const s = localStorage.getItem(CHEIE_DATE); if (s) return JSON.parse(s); } catch (e) {}
   return JSON.parse(JSON.stringify(ANUNTURI));
 }
-function apiScrie(lista) { localStorage.setItem(CHEIE_DATE, JSON.stringify(lista)); }
-function apiReseteaza() { localStorage.removeItem(CHEIE_DATE); }
+function apiScrie(lista) { try { localStorage.setItem(CHEIE_DATE, JSON.stringify(lista)); } catch (e) {} }
+function apiReseteaza() { try { localStorage.removeItem(CHEIE_DATE); } catch (e) {} }
 
 let anunturi = apiListeaza();
 let refInEditare = null;   // null = anunț nou
 
 // ===== Autentificare (demo) =====
-function esteAutentificat() { return localStorage.getItem(CHEIE_SESIUNE) === "1"; }
+// Sesiune cu rezervă în memorie: dacă browserul blochează stocarea locală (mod privat,
+// protecție strictă la urmărire), login-ul funcționează totuși pe durata paginii.
+let sesiuneInMemorie = false;
+let utilizatorInMemorie = "";
+function seteazaSesiune(email) {
+  sesiuneInMemorie = true; utilizatorInMemorie = email;
+  try { localStorage.setItem(CHEIE_SESIUNE, "1"); localStorage.setItem("fi_utilizator", email); } catch (e) {}
+}
+function stergeSesiune() {
+  sesiuneInMemorie = false; utilizatorInMemorie = "";
+  try { localStorage.removeItem(CHEIE_SESIUNE); localStorage.removeItem("fi_utilizator"); } catch (e) {}
+}
+function esteAutentificat() {
+  if (sesiuneInMemorie) return true;
+  try { return localStorage.getItem(CHEIE_SESIUNE) === "1"; } catch (e) { return false; }
+}
+function utilizatorCurent() {
+  if (utilizatorInMemorie) return utilizatorInMemorie;
+  try { return localStorage.getItem("fi_utilizator") || ""; } catch (e) { return ""; }
+}
 
 function arataEcran() {
   const logat = esteAutentificat();
   document.getElementById("ecran-login").hidden = logat;
   document.getElementById("ecran-admin").hidden = !logat;
   if (logat) {
-    document.getElementById("admin-utilizator").textContent = localStorage.getItem("fi_utilizator") || "";
+    document.getElementById("admin-utilizator").textContent = utilizatorCurent();
     randeazaTabel();
   }
 }
@@ -33,10 +52,9 @@ function arataEcran() {
 document.getElementById("formular-login").addEventListener("submit", e => {
   e.preventDefault();
   const email = document.getElementById("l-email").value.trim().toLowerCase();
-  const parola = document.getElementById("l-parola").value;
+  const parola = document.getElementById("l-parola").value.trim();
   if (email === CONT_DEMO.email && parola === CONT_DEMO.parola) {
-    localStorage.setItem(CHEIE_SESIUNE, "1");
-    localStorage.setItem("fi_utilizator", email);
+    seteazaSesiune(email);
     document.getElementById("login-eroare").hidden = true;
     arataEcran();
   } else {
@@ -45,8 +63,7 @@ document.getElementById("formular-login").addEventListener("submit", e => {
 });
 
 document.getElementById("buton-iesire").addEventListener("click", () => {
-  localStorage.removeItem(CHEIE_SESIUNE);
-  localStorage.removeItem("fi_utilizator");
+  stergeSesiune();
   arataEcran();
 });
 
