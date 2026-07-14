@@ -3,10 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Administrare | Full Imobiliare</title>
-<link rel="stylesheet" href="css/stil.css">
-<link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/stil.css?v=4">
+<link rel="stylesheet" href="css/admin.css?v=4">
+<script>
+/* Diagnostic vizibil: daca un script nu se incarca sau arunca o eroare, apare o banda rosie jos. */
+window.addEventListener("error", function (e) {
+  try {
+    var mesaj = (e.target && e.target.tagName === "SCRIPT") ? ("Nu s-a incarcat scriptul: " + (e.target.src || "?"))
+              : (e.message ? ("Eroare de script: " + e.message) : "Eroare necunoscuta");
+    function arata() {
+      var b = document.getElementById("banner-diagnostic");
+      if (!b) { b = document.createElement("div"); b.id = "banner-diagnostic";
+        b.style.cssText = "position:fixed;bottom:0;left:0;right:0;background:#B23A3A;color:#fff;font:13px monospace;padding:9px 14px;z-index:9999;white-space:pre-wrap";
+        document.body.appendChild(b); }
+      b.textContent = "Diagnostic: " + mesaj;
+    }
+    if (document.body) { arata(); } else { document.addEventListener("DOMContentLoaded", arata); }
+  } catch (x) {}
+}, true);
+</script>
 </head>
 <body class="fundal-admin">
 
@@ -175,7 +193,7 @@
   </div>
 </dialog>
 
-<script src="js/date-demo.js"></script>
-<script src="js/admin.js"></script>
+<script src="js/date-demo.js?v=4"></script>
+<script src="js/admin.js?v=4"></script>
 </body>
 </html>
