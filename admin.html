@@ -3,11 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
-<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Administrare | Full Imobiliare</title>
-<link rel="stylesheet" href="css/stil.css?v=4">
-<link rel="stylesheet" href="css/admin.css?v=4">
+<link rel="stylesheet" href="css/stil.css?v=5">
+<link rel="stylesheet" href="css/admin.css?v=5">
 <script>
 /* Diagnostic vizibil: daca un script nu se incarca sau arunca o eroare, apare o banda rosie jos. */
 window.addEventListener("error", function (e) {
@@ -55,7 +54,12 @@ window.addEventListener("error", function (e) {
     </div>
   </div></header>
 
-  <!-- Vederea LISTĂ -->
+  <div class="container admin-taburi">
+    <button class="tab activ" id="tab-anunturi" type="button">Anunțuri</button>
+    <button class="tab" id="tab-blog" type="button">Blog</button>
+  </div>
+
+  <!-- Vederea LISTĂ ANUNȚURI -->
   <main class="container" id="vedere-lista">
     <div class="admin-cap">
       <div>
@@ -119,6 +123,7 @@ window.addEventListener("error", function (e) {
           <div class="camp-bifat"><label><input id="f-negociabil" type="checkbox"> Preț negociabil</label></div>
           <div><label for="f-oras">Oraș / județ *</label><input id="f-oras" type="text" required value="București"></div>
           <div><label for="f-zona">Zonă / cartier *</label><input id="f-zona" type="text" required></div>
+          <div class="camp-lat"><label for="f-adresa">Adresă pentru hartă (stradă + oraș; apare pinul pe harta anunțului)</label><input id="f-adresa" type="text" placeholder="Strada Avionului, București"></div>
           <div><label for="f-status">Status</label>
             <select id="f-status">
               <option value="activ">Activ</option>
@@ -183,6 +188,65 @@ window.addEventListener("error", function (e) {
   </main>
 </div>
 
+<!-- Vederea BLOG -->
+  <main class="container" id="vedere-blog" hidden>
+    <div class="admin-cap">
+      <div>
+        <h2>Articole de blog</h2>
+        <p class="rezultate-info" id="blog-contor"></p>
+      </div>
+      <div class="admin-unelte">
+        <button class="buton-principal" id="buton-articol-nou" type="button">+ Articol nou</button>
+      </div>
+    </div>
+    <div class="tabel-invelis">
+      <table class="tabel-admin">
+        <thead><tr>
+          <th>Imagine</th><th>Titlu</th><th>Status</th><th>Publicat</th><th class="col-actiuni">Acțiuni</th>
+        </tr></thead>
+        <tbody id="blog-tbody"></tbody>
+      </table>
+    </div>
+    <p class="nota-demo">Articolele publicate apar imediat pe pagina de blog a site-ului; ciornele rămân vizibile doar aici.</p>
+  </main>
+
+  <!-- Vederea FORMULAR ARTICOL -->
+  <main class="container" id="vedere-formular-articol" hidden>
+    <div class="admin-cap">
+      <div>
+        <h2 id="articol-formular-titlu">Articol nou</h2>
+        <p class="rezultate-info" id="articol-formular-slug"></p>
+      </div>
+      <div class="admin-unelte">
+        <button class="buton-secundar" id="buton-articol-inapoi" type="button">← Înapoi la articole</button>
+      </div>
+    </div>
+    <form class="formular-anunt" id="formular-articol">
+      <div class="panou sectiune-formular">
+        <h3>Articol</h3>
+        <div class="grila-2">
+          <div class="camp-lat"><label for="fa-titlu">Titlu *</label><input id="fa-titlu" type="text" required maxlength="140"></div>
+          <div><label for="fa-imagine">Imagine de copertă (adresă)</label><input id="fa-imagine" type="text" placeholder="img/demo/living-modern.png"></div>
+          <div><label for="fa-status">Status</label>
+            <select id="fa-status">
+              <option value="ciorna">Ciornă (nepublicat)</option>
+              <option value="publicat">Publicat</option>
+            </select></div>
+        </div>
+        <div style="margin-top:14px"><label for="fa-rezumat">Rezumat (apare în lista de blog și în descrierea pentru Google)</label><textarea id="fa-rezumat" rows="2" maxlength="220"></textarea></div>
+      </div>
+      <div class="panou sectiune-formular">
+        <h3>Conținut</h3>
+        <label for="fa-continut">Paragrafele se separă cu o linie goală; un rând care începe cu „## " devine subtitlu</label>
+        <textarea id="fa-continut" rows="16" placeholder="Introducerea articolului...&#10;&#10;## Primul subtitlu&#10;Conținutul secțiunii..."></textarea>
+      </div>
+      <div class="bara-salvare">
+        <button class="buton-secundar" type="button" id="buton-articol-renunta">Renunță</button>
+        <button class="buton-principal" type="submit">Salvează articolul</button>
+      </div>
+    </form>
+  </main>
+
 <!-- Dialog ștergere -->
 <dialog id="dialog-sterge" class="dialog">
   <h3>Ștergi anunțul?</h3>
@@ -193,7 +257,7 @@ window.addEventListener("error", function (e) {
   </div>
 </dialog>
 
-<script src="js/date-demo.js?v=4"></script>
-<script src="js/admin.js?v=4"></script>
+<script src="js/date-demo.js?v=5"></script>
+<script src="js/admin.js?v=5"></script>
 </body>
 </html>

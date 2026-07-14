@@ -17,6 +17,27 @@ function apiReseteaza() { try { localStorage.removeItem(CHEIE_DATE); } catch (e)
 let anunturi = apiListeaza();
 let refInEditare = null;   // null = anunț nou
 
+// ===== Articole de blog (același tipar de adaptor) =====
+const CHEIE_ARTICOLE = "fi_articole";
+function apiListeazaArticole() {
+  try { const s = localStorage.getItem(CHEIE_ARTICOLE); if (s) return JSON.parse(s); } catch (e) {}
+  return (typeof ARTICOLE !== "undefined") ? JSON.parse(JSON.stringify(ARTICOLE)) : [];
+}
+function apiScrieArticole(lista) { try { localStorage.setItem(CHEIE_ARTICOLE, JSON.stringify(lista)); } catch (e) {} }
+let articole = apiListeazaArticole();
+let slugInEditare = null;  // null = articol nou
+
+// ===== Navigarea între vederi (taburi + formulare) =====
+const VEDERI = ["vedere-lista", "vedere-formular", "vedere-blog", "vedere-formular-articol"];
+function arataVederea(id) {
+  VEDERI.forEach(v => { const el = document.getElementById(v); if (el) el.hidden = (v !== id); });
+  document.getElementById("tab-anunturi").classList.toggle("activ", id === "vedere-lista" || id === "vedere-formular");
+  document.getElementById("tab-blog").classList.toggle("activ", id === "vedere-blog" || id === "vedere-formular-articol");
+  window.scrollTo({ top: 0 });
+}
+document.getElementById("tab-anunturi").addEventListener("click", () => { arataVederea("vedere-lista"); randeazaTabel(); });
+document.getElementById("tab-blog").addEventListener("click", () => { arataVederea("vedere-blog"); randeazaTabelBlog(); });
+
 // ===== Autentificare (demo) =====
 // Sesiune cu rezervă în memorie: dacă browserul blochează stocarea locală (mod privat,
 // protecție strictă la urmărire), login-ul funcționează totuși pe durata paginii.
@@ -130,11 +151,13 @@ document.getElementById("buton-reset").addEventListener("click", () => {
   randeazaTabel();
 });
 
-// ===== Ștergere cu dialog =====
+// ===== Ștergere cu dialog (partajat între anunțuri și articole) =====
 let refDeSters = null;
+var slugDeSters = null;
 const dialogSterge = document.getElementById("dialog-sterge");
 function cereStergere(ref) {
   refDeSters = ref;
+  slugDeSters = null;
   const a = anunturi.find(x => x.id_intern === ref);
   document.getElementById("dialog-sterge-text").textContent =
     `${a.id_intern} · ${a.titlu}. Anunțul dispare definitiv din listă și de pe site.`;
@@ -168,6 +191,7 @@ function deschideFormular(ref) {
   v("f-tip", a ? a.tip : "apartament"); v("f-pret", a ? a.pret_eur : "");
   document.getElementById("f-negociabil").checked = a ? !!a.negociabil : false;
   v("f-oras", a ? a.oras : "București"); v("f-zona", a ? a.zona : "");
+  v("f-adresa", a ? (a.adresa_harta || "") : "");
   v("f-status", a ? a.status : "activ"); v("f-suprafata", a ? a.suprafata_mp : "");
   v("f-camere", a ? a.camere : ""); v("f-bai", a ? a.bai : "");
   v("f-etaj", a ? a.etaj : ""); v("f-etaje", a ? a.etaje_total : "");
@@ -178,14 +202,11 @@ function deschideFormular(ref) {
   v("f-agent", a ? a.agent_nume : ""); v("f-agent-tel", a ? a.agent_telefon : "");
   previzualizeazaPoze();
 
-  document.getElementById("vedere-lista").hidden = true;
-  document.getElementById("vedere-formular").hidden = false;
-  window.scrollTo({ top: 0 });
+  arataVederea("vedere-formular");
 }
 
 function inchideFormular() {
-  document.getElementById("vedere-formular").hidden = true;
-  document.getElementById("vedere-lista").hidden = false;
+  arataVederea("vedere-lista");
   randeazaTabel();
 }
 
@@ -209,7 +230,8 @@ document.getElementById("formular-anunt").addEventListener("submit", e => {
   const a = refInEditare ? anunturi.find(x => x.id_intern === refInEditare) : { id_intern: refNou(), publicat_la: azi };
   a.titlu = text("f-titlu"); a.tranzactie = text("f-tranzactie"); a.tip = text("f-tip");
   a.pret_eur = numar("f-pret"); a.negociabil = document.getElementById("f-negociabil").checked;
-  a.oras = text("f-oras"); a.zona = text("f-zona"); a.status = text("f-status");
+  a.oras = text("f-oras"); a.zona = text("f-zona"); a.adresa_harta = text("f-adresa") || null;
+  a.status = text("f-status");
   a.vandut_la = a.status === "vandut" ? (a.vandut_la || azi) : null;
   a.suprafata_mp = numar("f-suprafata"); a.camere = numar("f-camere"); a.bai = numar("f-bai");
   a.etaj = numar("f-etaj"); a.etaje_total = numar("f-etaje"); a.an_constructie = numar("f-an");
@@ -224,6 +246,97 @@ document.getElementById("formular-anunt").addEventListener("submit", e => {
   if (!refInEditare) anunturi.unshift(a);
   apiScrie(anunturi);
   inchideFormular();
+});
+
+// ===== Blog: listă + formular =====
+function genereazaSlug(titlu) {
+  const harta = { "ă": "a", "â": "a", "î": "i", "ș": "s", "ş": "s", "ț": "t", "ţ": "t" };
+  let s = titlu.toLowerCase().replace(/[ăâîșşțţ]/g, c => harta[c] || c)
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 70);
+  let unic = s, n = 2;
+  while (articole.some(a => a.slug === unic && a.slug !== slugInEditare)) { unic = `${s}-${n}`; n++; }
+  return unic;
+}
+
+function randeazaTabelBlog() {
+  const lista = [...articole].sort((x, y) => (y.publicat_la || y.actualizat_la || "").localeCompare(x.publicat_la || x.actualizat_la || ""));
+  const publicate = lista.filter(a => a.status === "publicat").length;
+  document.getElementById("blog-contor").textContent =
+    `${lista.length} articole (${publicate} publicate, ${lista.length - publicate} ciorne)`;
+  document.getElementById("blog-tbody").innerHTML = lista.map(a => `
+    <tr>
+      <td><img class="tabel-foto" src="${a.imagine_url || ""}" alt=""></td>
+      <td class="tabel-titlu">${a.titlu}</td>
+      <td><span class="insigna ${a.status === "publicat" ? "" : "vandut"}">${a.status === "publicat" ? "Publicat" : "Ciornă"}</span></td>
+      <td>${a.publicat_la || "-"}</td>
+      <td class="col-actiuni">
+        ${a.status === "publicat" ? `<a class="actiune" href="articol.html?slug=${a.slug}" target="_blank" rel="noopener">Vezi</a>` : ""}
+        <button class="actiune" data-articol-editeaza="${a.slug}" type="button">Editează</button>
+        <button class="actiune sterge" data-articol-sterge="${a.slug}" type="button">Șterge</button>
+      </td>
+    </tr>`).join("");
+  document.querySelectorAll("[data-articol-editeaza]").forEach(b => b.addEventListener("click", () => deschideFormularArticol(b.dataset.articolEditeaza)));
+  document.querySelectorAll("[data-articol-sterge]").forEach(b => b.addEventListener("click", () => cereStergereArticol(b.dataset.articolSterge)));
+}
+
+function cereStergereArticol(slug) {
+  slugDeSters = slug;
+  const a = articole.find(x => x.slug === slug);
+  document.getElementById("dialog-sterge-text").textContent =
+    `Articolul „${a.titlu}" dispare definitiv, inclusiv de pe site dacă e publicat.`;
+  refDeSters = null;
+  dialogSterge.showModal();
+}
+
+function deschideFormularArticol(slug) {
+  slugInEditare = slug || null;
+  const a = slug ? articole.find(x => x.slug === slug) : null;
+  document.getElementById("articol-formular-titlu").textContent = a ? "Editare articol" : "Articol nou";
+  document.getElementById("articol-formular-slug").textContent = a ? `Adresă: articol.html?slug=${a.slug}` : "Adresa articolului se generează automat din titlu";
+  document.getElementById("fa-titlu").value = a ? a.titlu : "";
+  document.getElementById("fa-imagine").value = a ? (a.imagine_url || "") : "";
+  document.getElementById("fa-status").value = a ? a.status : "ciorna";
+  document.getElementById("fa-rezumat").value = a ? (a.rezumat || "") : "";
+  document.getElementById("fa-continut").value = a ? (a.continut || "") : "";
+  arataVederea("vedere-formular-articol");
+}
+
+function inchideFormularArticol() {
+  arataVederea("vedere-blog");
+  randeazaTabelBlog();
+}
+
+document.getElementById("buton-articol-nou").addEventListener("click", () => deschideFormularArticol(null));
+document.getElementById("buton-articol-inapoi").addEventListener("click", inchideFormularArticol);
+document.getElementById("buton-articol-renunta").addEventListener("click", inchideFormularArticol);
+
+document.getElementById("formular-articol").addEventListener("submit", e => {
+  e.preventDefault();
+  const azi = new Date().toISOString().slice(0, 10);
+  const a = slugInEditare ? articole.find(x => x.slug === slugInEditare) : {};
+  a.titlu = document.getElementById("fa-titlu").value.trim();
+  if (!slugInEditare) a.slug = genereazaSlug(a.titlu);
+  a.imagine_url = document.getElementById("fa-imagine").value.trim() || null;
+  a.rezumat = document.getElementById("fa-rezumat").value.trim();
+  a.continut = document.getElementById("fa-continut").value;
+  const statusNou = document.getElementById("fa-status").value;
+  if (statusNou === "publicat" && a.status !== "publicat") a.publicat_la = azi;
+  if (statusNou === "ciorna") a.publicat_la = null;
+  a.status = statusNou;
+  a.actualizat_la = azi;
+  if (!slugInEditare) articole.unshift(a);
+  apiScrieArticole(articole);
+  inchideFormularArticol();
+});
+
+// Dialogul de ștergere e partajat între anunțuri și articole: acționează după variabila setată.
+document.getElementById("dialog-da").addEventListener("click", () => {
+  if (slugDeSters) {
+    articole = articole.filter(x => x.slug !== slugDeSters);
+    apiScrieArticole(articole);
+    slugDeSters = null;
+    randeazaTabelBlog();
+  }
 });
 
 arataEcran();

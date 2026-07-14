@@ -5,6 +5,10 @@ const DATE_ANUNTURI = (function () {
   try { const s = localStorage.getItem("fi_anunturi"); if (s) return JSON.parse(s); } catch (e) {}
   return ANUNTURI;
 })();
+const DATE_ARTICOLE = (function () {
+  try { const s = localStorage.getItem("fi_articole"); if (s) return JSON.parse(s); } catch (e) {}
+  return (typeof ARTICOLE !== "undefined") ? ARTICOLE : [];
+})();
 
 function formatPret(a) {
   const pret = a.pret_eur.toLocaleString("ro-RO");
@@ -116,6 +120,64 @@ function randeazaDetaliu() {
     rand("Certificat energetic", a.certificat_energetic ? "Clasa " + a.certificat_energetic : null);
   document.getElementById("d-dotari").innerHTML =
     a.dotari.map(d => `<span class="dotare">${d}</span>`).join("");
+
+  // Harta cu pin: embed Google Maps fără cheie API, pe baza adresei text din anunț.
+  const harta = document.getElementById("d-harta");
+  if (harta) {
+    if (a.adresa_harta) {
+      harta.classList.remove("harta-slot");
+      harta.innerHTML = `<iframe title="Hartă: ${a.adresa_harta}" src="https://www.google.com/maps?q=${encodeURIComponent(a.adresa_harta)}&output=embed&hl=ro" style="width:100%; height:320px; border:0; border-radius:var(--raza); display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe><p style="margin-top:8px; font-size:13px; color:var(--text-secundar)">${a.adresa_harta}</p>`;
+    } else {
+      harta.textContent = "Localizarea exactă este disponibilă la cerere.";
+    }
+  }
+}
+
+// ===== Blog =====
+function dataFrumoasa(iso) {
+  if (!iso) return "";
+  const luni = ["ianuarie","februarie","martie","aprilie","mai","iunie","iulie","august","septembrie","octombrie","noiembrie","decembrie"];
+  const p = iso.split("-");
+  return `${parseInt(p[2], 10)} ${luni[parseInt(p[1], 10) - 1]} ${p[0]}`;
+}
+
+function randeazaBlog() {
+  const el = document.getElementById("lista-articole");
+  if (!el) return;
+  const publicate = DATE_ARTICOLE.filter(a => a.status === "publicat")
+    .sort((x, y) => (y.publicat_la || "").localeCompare(x.publicat_la || ""));
+  el.innerHTML = publicate.length ? publicate.map(a => `
+    <a class="card-articol" href="articol.html?slug=${a.slug}">
+      <img src="${a.imagine_url || ""}" alt="">
+      <div class="corp"><h3>${a.titlu}</h3><div class="data">${dataFrumoasa(a.publicat_la)}</div></div>
+    </a>`).join("")
+    : `<p style="color:var(--text-secundar)">Primele articole apar în curând.</p>`;
+}
+
+function randeazaArticol() {
+  const radacina = document.getElementById("articol");
+  if (!radacina) return;
+  const slug = new URLSearchParams(location.search).get("slug");
+  const a = DATE_ARTICOLE.find(x => x.slug === slug && x.status === "publicat")
+    || DATE_ARTICOLE.filter(x => x.status === "publicat")[0];
+  if (!a) { radacina.innerHTML = "<p>Articolul nu a fost găsit.</p>"; return; }
+  document.title = `${a.titlu} | Full Imobiliare`;
+  document.getElementById("a-titlu").textContent = a.titlu;
+  document.getElementById("a-data").textContent = dataFrumoasa(a.publicat_la);
+  const img = document.getElementById("a-imagine");
+  if (a.imagine_url) { img.src = a.imagine_url; img.alt = a.titlu; } else { img.remove(); }
+  // Conținut: paragrafe separate prin linie goală; liniile care încep cu "## " devin subtitluri.
+  document.getElementById("a-continut").innerHTML = (a.continut || "").split(/\n\s*\n/).map(bloc => {
+    const b = bloc.trim();
+    if (!b) return "";
+    if (b.startsWith("## ")) {
+      const linii = b.split("\n");
+      const titlu = `<h2>${linii[0].slice(3)}</h2>`;
+      const rest = linii.slice(1).join(" ").trim();
+      return titlu + (rest ? `<p>${rest}</p>` : "");
+    }
+    return `<p>${b.replace(/\n/g, " ")}</p>`;
+  }).join("");
 }
 
 // Schimbarea pozei principale: crossfade cu blur ca să mascheze tranziția între două imagini.
@@ -137,6 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
   populeazaZone();
   randeazaLista();
   randeazaDetaliu();
+  randeazaBlog();
+  randeazaArticol();
   document.querySelectorAll(".bara-filtre select").forEach(s => s.addEventListener("change", randeazaLista));
 
   // Apariție la scroll: IntersectionObserver (fără scroll listener); CSS-ul respectă prefers-reduced-motion.

@@ -29,6 +29,12 @@
 .buton-principal:active, .buton-secundar:active, .buton-pericol:active { transform: scale(0.97); }
 .buton-text { background: none; border: 0; color: var(--accent); font: inherit; font-size: inherit; font-weight: 700; cursor: pointer; padding: 0; }
 
+/* ===== Taburi ===== */
+.admin-taburi { display: flex; gap: 8px; padding-top: 22px; }
+.tab { background: none; border: 1px solid transparent; border-radius: var(--raza-interactiv); padding: 9px 18px; font: inherit; font-size: 14.5px; font-weight: 700; color: var(--text-secundar); cursor: pointer; transition: background var(--dur-ui) ease, color var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out); }
+.tab.activ { background: var(--alb); border-color: var(--linie); color: var(--brand); box-shadow: var(--umbra-card); }
+.tab:active { transform: scale(0.97); }
+
 /* ===== Lista / tabel ===== */
 #vedere-lista, #vedere-formular { padding: 34px 0 72px 0; }
 .admin-cap { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 22px; }
