@@ -1,5 +1,6 @@
-/* FULL IMOBILIARE — admin.css (v0)
-   Panoul de administrare: refolosește tokens din stil.css; același sistem de rază și mișcare. */
+/* FULL IMOBILIARE — admin.css (v2)
+   Layout profesional: bară laterală fixă de navigare + conținut; editoare pe două coloane
+   cu panoul de Publicare mereu vizibil (sticky). Refolosește tokens din stil.css. */
 
 .fundal-admin { background: var(--fundal-sectiune); }
 
@@ -16,33 +17,49 @@
 .login-eroare { color: #B23A3A; font-size: 13.5px; font-weight: 600; }
 .login-demo { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--linie); font-size: 12.5px; color: var(--text-secundar); line-height: 1.6; }
 
-/* ===== Antet admin ===== */
-.eticheta-admin { background: var(--accent); color: var(--alb); font-size: 10.5px; letter-spacing: 1.5px; padding: 3px 8px; border-radius: 5px; margin-left: 4px; }
-.admin-cont { display: flex; align-items: center; gap: 18px; font-size: 13.5px; color: var(--text-secundar); }
-.admin-cont a { font-weight: 600; color: var(--accent); }
+/* ===== Schema generală: bară laterală + conținut ===== */
+.admin-schema { display: grid; grid-template-columns: 240px 1fr; min-height: 100dvh; }
 
-/* ===== Butoane admin ===== */
+.bara-laterala { background: var(--brand-inchis); color: rgba(255,255,255,0.75); padding: 22px 16px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100dvh; }
+.bara-sigla { display: flex; align-items: center; gap: 11px; padding: 4px 8px 20px 8px; color: var(--alb); }
+.bara-sigla .sigla-marca { background: var(--alb); }   /* SLOT LOGO: pe fundal închis, varianta albă */
+.bara-sigla span:last-child { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; line-height: 1.3; }
+.bara-sigla em { display: block; font-style: normal; font-size: 10.5px; font-weight: 400; letter-spacing: 0.5px; color: rgba(255,255,255,0.5); }
+.bara-eticheta { font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); padding: 10px 8px 8px 8px; }
+.bara-nav { display: flex; flex-direction: column; gap: 4px; }
+.nav-el { display: flex; align-items: center; justify-content: space-between; width: 100%; background: none; border: 0; border-left: 3px solid transparent; border-radius: 7px; padding: 11px 12px; font: inherit; font-size: 14.5px; font-weight: 600; color: rgba(255,255,255,0.72); cursor: pointer; text-align: left; transition: background var(--dur-ui) ease, color var(--dur-ui) ease; }
+.nav-el.activ { background: rgba(255,255,255,0.10); color: var(--alb); border-left-color: var(--accent); }
+.nav-el:active { transform: scale(0.98); }
+@media (hover: hover) and (pointer: fine) { .nav-el:hover { background: rgba(255,255,255,0.07); color: var(--alb); } }
+.nav-numar { font-size: 11.5px; font-weight: 700; background: rgba(255,255,255,0.12); border-radius: 10px; padding: 2px 9px; }
+.bara-jos { margin-top: auto; padding: 16px 8px 0 8px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+.bara-jos a { color: var(--alb); font-weight: 700; }
+.bara-utilizator { color: rgba(255,255,255,0.5); font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
+.bara-jos .buton-secundar { background: rgba(255,255,255,0.08); color: var(--alb); border: 1px solid rgba(255,255,255,0.18); }
+
+.admin-continut { padding: 30px 36px 60px 36px; min-width: 0; }
+
+/* ===== Butoane ===== */
 .buton-principal, .buton-secundar, .buton-pericol { border: 0; border-radius: var(--raza-interactiv); padding: 11px 18px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out), box-shadow var(--dur-ui) ease; }
 .buton-principal { background: var(--brand); color: var(--alb); }
 .buton-secundar { background: var(--alb); color: var(--text); border: 1px solid var(--linie); }
 .buton-pericol { background: #B23A3A; color: var(--alb); }
 .buton-principal:active, .buton-secundar:active, .buton-pericol:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) {
+  .buton-principal:hover { background: var(--brand-inchis); }
+  .buton-secundar:hover { border-color: var(--brand); }
+}
 .buton-text { background: none; border: 0; color: var(--accent); font: inherit; font-size: inherit; font-weight: 700; cursor: pointer; padding: 0; }
 
-/* ===== Taburi ===== */
-.admin-taburi { display: flex; gap: 8px; padding-top: 22px; }
-.tab { background: none; border: 1px solid transparent; border-radius: var(--raza-interactiv); padding: 9px 18px; font: inherit; font-size: 14.5px; font-weight: 700; color: var(--text-secundar); cursor: pointer; transition: background var(--dur-ui) ease, color var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out); }
-.tab.activ { background: var(--alb); border-color: var(--linie); color: var(--brand); box-shadow: var(--umbra-card); }
-.tab:active { transform: scale(0.97); }
-
-/* ===== Lista / tabel ===== */
-#vedere-lista, #vedere-formular { padding: 34px 0 72px 0; }
+/* ===== Cap de secțiune + unelte ===== */
 .admin-cap { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 22px; }
-.admin-cap h2 { font-size: 26px; color: var(--brand); }
+.admin-cap h2 { font-size: 25px; color: var(--brand); }
 .admin-unelte { display: flex; gap: 10px; flex-wrap: wrap; }
 .admin-unelte input[type="search"], .admin-unelte select { border: 1px solid var(--linie); border-radius: var(--raza-interactiv); padding: 10px 12px; font: inherit; font-size: 14px; background: var(--alb); min-width: 170px; }
+
+/* ===== Tabele ===== */
 .tabel-invelis { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); box-shadow: var(--umbra-card); overflow-x: auto; }
-.tabel-admin { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 900px; }
+.tabel-admin { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 760px; }
 .tabel-admin th { text-align: left; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-secundar); padding: 14px 16px; border-bottom: 1px solid var(--linie); white-space: nowrap; }
 .tabel-admin td { padding: 12px 16px; border-bottom: 1px solid var(--linie); vertical-align: middle; }
 .tabel-admin tbody tr:last-child td { border-bottom: 0; }
@@ -51,7 +68,8 @@
   .tabel-admin tbody tr:hover { background: var(--fundal); }
 }
 .tabel-foto { width: 64px; height: 44px; object-fit: cover; border-radius: 6px; display: block; }
-.tabel-titlu { font-weight: 600; max-width: 320px; }
+.tabel-titlu { font-weight: 600; max-width: 340px; }
+.tabel-descriere { font-size: 13px; color: var(--text-secundar); font-weight: 400; margin-top: 3px; max-width: 52ch; }
 .tabel-ref { font-size: 12.5px; letter-spacing: 0.5px; color: var(--text-secundar); white-space: nowrap; }
 .tabel-pret { font-weight: 700; color: var(--brand); white-space: nowrap; }
 .select-status { border: 1px solid var(--linie); border-radius: 6px; padding: 7px 8px; font: inherit; font-size: 13px; font-weight: 600; background: var(--alb); }
@@ -63,28 +81,49 @@
 .actiune { background: none; border: 0; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; padding: 6px 8px; border-radius: 6px; color: var(--accent); transition: background var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out); }
 .actiune.sterge { color: #B23A3A; }
 .actiune:active { transform: scale(0.96); }
-@media (hover: hover) and (pointer: fine) { .actiune:hover { background: var(--fundal-sectiune); } }
+.actiune:disabled { opacity: 0.3; cursor: default; }
+@media (hover: hover) and (pointer: fine) { .actiune:not(:disabled):hover { background: var(--fundal-sectiune); } }
 .nota-demo { margin-top: 16px; font-size: 13px; color: var(--text-secundar); }
 
-/* ===== Formular anunț ===== */
-.formular-anunt label { font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 6px; }
-.formular-anunt input, .formular-anunt select, .formular-anunt textarea { border: 1px solid var(--linie); border-radius: var(--raza-interactiv); padding: 11px 12px; font: inherit; font-size: 14.5px; width: 100%; background: var(--alb); transition: border-color var(--dur-ui) ease; }
-@media (hover: hover) and (pointer: fine) { .formular-anunt input:hover, .formular-anunt select:hover, .formular-anunt textarea:hover { border-color: var(--brand); } }
-.sectiune-formular { margin-bottom: 20px; }
-.sectiune-formular h3 { margin-bottom: 16px; }
+/* ===== Editoare pe două coloane ===== */
+.editor-grila { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+.editor-lateral { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 18px; }
+.editor-lateral .panou h3 { font-size: 15px; }
+.rail-actiuni { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--linie); }
+.rail-actiuni button { width: 100%; }
+.editor-ingust { max-width: 640px; }
+
+/* ===== Formulare ===== */
+.panou { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); padding: 22px; box-shadow: var(--umbra-card); }
+.sectiune-formular { margin-bottom: 18px; }
+.sectiune-formular h3, .panou h3 { color: var(--brand); margin-bottom: 14px; font-size: 16px; }
+#formular-anunt label, #formular-articol label, #formular-serviciu label { font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 6px; }
+#formular-anunt input, #formular-anunt select, #formular-anunt textarea,
+#formular-articol input, #formular-articol select, #formular-articol textarea,
+#formular-serviciu input, #formular-serviciu textarea { border: 1px solid var(--linie); border-radius: var(--raza-interactiv); padding: 11px 12px; font: inherit; font-size: 14.5px; width: 100%; background: var(--alb); transition: border-color var(--dur-ui) ease; }
+@media (hover: hover) and (pointer: fine) {
+  #formular-anunt input:hover, #formular-anunt select:hover, #formular-anunt textarea:hover,
+  #formular-articol input:hover, #formular-articol select:hover, #formular-articol textarea:hover,
+  #formular-serviciu input:hover, #formular-serviciu textarea:hover { border-color: var(--brand); }
+}
 .grila-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-.grila-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.grila-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .camp-lat { grid-column: 1 / -1; }
 .camp-bifat { display: flex; align-items: flex-end; padding-bottom: 10px; }
-.camp-bifat label { display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; }
-.camp-bifat input { width: auto; }
+.camp-bifat label, .camp-bifat-simplu { display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; font-size: 14px !important; font-weight: 600; }
+.camp-bifat input, .camp-bifat-simplu input { width: auto !important; }
 .poze-previzualizare { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-.poze-previzualizare img { width: 110px; height: 76px; object-fit: cover; border-radius: 6px; border: 1px solid var(--linie); }
+.poze-previzualizare img { width: 104px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid var(--linie); }
 .nota-camp { font-size: 12.5px; color: var(--text-secundar); margin-top: 10px; }
-.bara-salvare { display: flex; justify-content: flex-end; gap: 12px; padding: 4px 0 0 0; }
+
+/* ===== Badge-uri afișare ===== */
+.insigna-admin { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: 1px; padding: 5px 10px; border-radius: 5px; text-transform: uppercase; }
+.insigna-admin.publicat { color: #1C7A43; background: #F0FAF4; border: 1px solid #BFE3CD; }
+.insigna-admin.ciorna { color: #5A6573; background: var(--fundal-sectiune); border: 1px solid var(--linie); }
+.insigna-admin.evidentiat { color: var(--alb); background: var(--brand); }
 
 /* ===== Dialog ===== */
-.dialog { border: 0; border-radius: var(--raza); box-shadow: var(--umbra-ridicat); padding: 28px; max-width: 420px; width: calc(100% - 48px); }
+.dialog { border: 0; border-radius: var(--raza); box-shadow: var(--umbra-ridicat); padding: 28px; max-width: 440px; width: calc(100% - 48px); }
 .dialog::backdrop { background: rgba(13, 30, 56, 0.45); }
 .dialog h3 { color: var(--brand); margin-bottom: 8px; }
 .dialog p { font-size: 14.5px; color: var(--text-secundar); }
@@ -94,10 +133,19 @@
   @starting-style { .dialog[open] { opacity: 0; transform: scale(0.95); } }
 }
 
-/* ===== Mobil ===== */
+/* ===== Mobil / tablete ===== */
+@media (max-width: 1060px) {
+  .editor-grila { grid-template-columns: 1fr; }
+  .editor-lateral { position: static; }
+}
 @media (max-width: 860px) {
-  .grila-2, .grila-4 { grid-template-columns: 1fr; }
-  .admin-cont span { display: none; }
-  .bara-salvare { flex-direction: column-reverse; }
-  .bara-salvare button { width: 100%; }
+  .admin-schema { grid-template-columns: 1fr; }
+  .bara-laterala { position: static; height: auto; flex-direction: row; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px; }
+  .bara-sigla { padding: 0; }
+  .bara-sigla em, .bara-eticheta, .bara-utilizator { display: none; }
+  .bara-nav { flex-direction: row; gap: 6px; }
+  .nav-el { border-left: 0; padding: 9px 12px; }
+  .bara-jos { margin: 0 0 0 auto; padding: 0; border: 0; flex-direction: row; align-items: center; }
+  .admin-continut { padding: 22px 16px 48px 16px; }
+  .grila-2, .grila-3 { grid-template-columns: 1fr; }
 }

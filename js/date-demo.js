@@ -103,3 +103,28 @@ const ARTICOLE = [
     actualizat_la: "2026-07-12"
   }
 ];
+
+// Serviciile agenției (aceeași formă ca tabela `servicii` din schema.sql).
+// `evidentiat: true` = cardul mare navy, afișat primul, pe toată lățimea.
+const SERVICII = [
+  { id: 1, ordine: 1, evidentiat: true, titlu: "Consultanță juridică gratuită",
+    descriere: "Diferențiatorul nostru din 1993: verificarea actelor de proprietate, asistență la antecontract și contract, intermediere sigură între vânzător și cumpărător, fără costuri suplimentare pentru clienții agenției." },
+  { id: 2, ordine: 2, evidentiat: false, titlu: "Vânzări imobiliare",
+    descriere: "Evaluare corectă, plan de listare, fotografii, promovare și negociere, cu 70% dintre proprietăți în regim de exclusivitate." },
+  { id: 3, ordine: 3, evidentiat: false, titlu: "Închirieri",
+    descriere: "Selecția chiriașilor, contracte echilibrate și predare pe bază de proces-verbal, pentru proprietari fără bătăi de cap." },
+  { id: 4, ordine: 4, evidentiat: false, titlu: "Evaluare imobiliară",
+    descriere: "Prețul corect din prima: analiză comparativă de piață pentru vânzare, cumpărare sau garanții bancare." },
+  { id: 5, ordine: 5, evidentiat: false, titlu: "Consultanță credit",
+    descriere: "Te ghidăm către finanțarea potrivită și pregătim dosarul împreună cu partenerii bancari." },
+  { id: 6, ordine: 6, evidentiat: false, titlu: "Administrare proprietăți",
+    descriere: "Ne ocupăm de chiriași, plăți și mentenanță, ca investiția ta să lucreze singură." },
+  { id: 7, ordine: 7, evidentiat: false, titlu: "Asigurări",
+    descriere: "Asigurarea obligatorie și facultativă a locuinței, gestionate rapid, în același loc cu tranzacția." },
+  { id: 8, ordine: 8, evidentiat: false, titlu: "Cadastru și intabulare",
+    descriere: "Documentația cadastrală și înscrierea în cartea funciară, fără drumuri și fără termene pierdute." },
+  { id: 9, ordine: 9, evidentiat: false, titlu: "Certificate energetice",
+    descriere: "Obligatorii la vânzare și închiriere: le obținem noi, direct pentru anunțul tău." },
+  { id: 10, ordine: 10, evidentiat: false, titlu: "Consultanță specifică",
+    descriere: "Situații particulare (moșteniri, ieșiri din indiviziune, documentații atipice) analizate împreună cu juristul agenției." }
+];

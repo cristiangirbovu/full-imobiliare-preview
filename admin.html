@@ -5,8 +5,8 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Administrare | Full Imobiliare</title>
-<link rel="stylesheet" href="css/stil.css?v=5">
-<link rel="stylesheet" href="css/admin.css?v=5">
+<link rel="stylesheet" href="css/stil.css?v=6">
+<link rel="stylesheet" href="css/admin.css?v=6">
 <script>
 /* Diagnostic vizibil: daca un script nu se incarca sau arunca o eroare, apare o banda rosie jos. */
 window.addEventListener("error", function (e) {
@@ -43,213 +43,250 @@ window.addEventListener("error", function (e) {
   </div>
 </div>
 
-<!-- ===== ECRAN ADMIN ===== -->
+<!-- ===== ECRAN ADMIN: bară laterală + conținut ===== -->
 <div id="ecran-admin" hidden>
-  <header class="antet"><div class="container antet-inner">
-    <a class="sigla" href="admin.html"><span class="sigla-marca"></span>FULL IMOBILIARE <span class="eticheta-admin">ADMIN</span></a>
-    <div class="admin-cont">
+<div class="admin-schema">
+
+  <aside class="bara-laterala">
+    <a class="bara-sigla" href="admin.html"><span class="sigla-marca"></span><span>FULL IMOBILIARE<em>Panou de administrare</em></span></a>
+    <p class="bara-eticheta">Conținut</p>
+    <nav class="bara-nav">
+      <button class="nav-el activ" id="nav-anunturi" type="button">Anunțuri <span class="nav-numar" id="numar-anunturi"></span></button>
+      <button class="nav-el" id="nav-blog" type="button">Blog <span class="nav-numar" id="numar-articole"></span></button>
+      <button class="nav-el" id="nav-servicii" type="button">Servicii <span class="nav-numar" id="numar-servicii"></span></button>
+    </nav>
+    <div class="bara-jos">
       <a href="index.html" target="_blank" rel="noopener">Vezi site-ul →</a>
-      <span id="admin-utilizator"></span>
+      <span class="bara-utilizator" id="admin-utilizator"></span>
       <button class="buton-secundar" id="buton-iesire" type="button">Ieșire</button>
     </div>
-  </div></header>
+  </aside>
 
-  <div class="container admin-taburi">
-    <button class="tab activ" id="tab-anunturi" type="button">Anunțuri</button>
-    <button class="tab" id="tab-blog" type="button">Blog</button>
+  <div class="admin-continut">
+
+    <!-- ===== ANUNȚURI: listă ===== -->
+    <main id="vedere-lista">
+      <div class="admin-cap">
+        <div><h2>Anunțuri</h2><p class="rezultate-info" id="admin-contor"></p></div>
+        <div class="admin-unelte">
+          <input type="search" id="admin-cauta" placeholder="Caută titlu, zonă, REF...">
+          <select id="admin-filtru-status">
+            <option value="">Toate statusurile</option>
+            <option value="activ">Active</option>
+            <option value="rezervat">Rezervate</option>
+            <option value="vandut">Vândute</option>
+          </select>
+          <button class="buton-principal" id="buton-nou" type="button">+ Anunț nou</button>
+        </div>
+      </div>
+      <div class="tabel-invelis">
+        <table class="tabel-admin">
+          <thead><tr><th>REF</th><th>Foto</th><th>Titlu</th><th>Zonă</th><th>Preț</th><th>Status</th><th>Publicat</th><th class="col-actiuni">Acțiuni</th></tr></thead>
+          <tbody id="admin-tbody"></tbody>
+        </table>
+      </div>
+      <p class="nota-demo">Datele se salvează local în acest browser (mediu de demonstrație); la integrarea Supabase, aceleași operațiuni merg în baza de date reală. <button class="buton-text" id="buton-reset" type="button">Resetează datele demo</button></p>
+    </main>
+
+    <!-- ===== ANUNȚURI: editor (două coloane) ===== -->
+    <main id="vedere-formular" hidden>
+      <div class="admin-cap">
+        <div><h2 id="formular-titlu">Anunț nou</h2><p class="rezultate-info" id="formular-ref"></p></div>
+        <div class="admin-unelte"><button class="buton-secundar" id="buton-inapoi" type="button">← Anunțuri</button></div>
+      </div>
+      <form id="formular-anunt">
+        <div class="editor-grila">
+          <div class="editor-principal">
+            <div class="panou sectiune-formular">
+              <h3>Informații principale</h3>
+              <div class="grila-2">
+                <div class="camp-lat"><label for="f-titlu">Titlu anunț *</label><input id="f-titlu" type="text" required maxlength="120"></div>
+                <div><label for="f-tranzactie">Tranzacție *</label>
+                  <select id="f-tranzactie" required>
+                    <option value="vanzare">Vânzare</option>
+                    <option value="inchiriere">Închiriere</option>
+                  </select></div>
+                <div><label for="f-tip">Tip proprietate *</label>
+                  <select id="f-tip" required>
+                    <option value="apartament">Apartament</option>
+                    <option value="casa">Casă / vilă</option>
+                    <option value="teren">Teren</option>
+                    <option value="comercial">Spațiu comercial</option>
+                    <option value="birou">Birou</option>
+                  </select></div>
+                <div><label for="f-pret">Preț (EUR) *</label><input id="f-pret" type="number" min="1" required></div>
+                <div class="camp-bifat"><label><input id="f-negociabil" type="checkbox"> Preț negociabil</label></div>
+                <div><label for="f-oras">Oraș / județ *</label><input id="f-oras" type="text" required value="București"></div>
+                <div><label for="f-zona">Zonă / cartier *</label><input id="f-zona" type="text" required></div>
+              </div>
+            </div>
+            <div class="panou sectiune-formular">
+              <h3>Specificații</h3>
+              <div class="grila-3">
+                <div><label for="f-suprafata">Suprafață (mp)</label><input id="f-suprafata" type="number" min="1"></div>
+                <div><label for="f-camere">Camere</label><input id="f-camere" type="number" min="0"></div>
+                <div><label for="f-bai">Băi</label><input id="f-bai" type="number" min="0"></div>
+                <div><label for="f-etaj">Etaj</label><input id="f-etaj" type="number"></div>
+                <div><label for="f-etaje">Total etaje</label><input id="f-etaje" type="number" min="0"></div>
+                <div><label for="f-an">An construcție</label><input id="f-an" type="number" min="1800" max="2100"></div>
+                <div><label for="f-compartimentare">Compartimentare</label>
+                  <select id="f-compartimentare">
+                    <option value="">Nespecificat</option>
+                    <option value="decomandat">Decomandat</option>
+                    <option value="semidecomandat">Semidecomandat</option>
+                    <option value="nedecomandat">Nedecomandat</option>
+                    <option value="circular">Circular</option>
+                  </select></div>
+                <div><label for="f-certificat">Certificat energetic</label>
+                  <select id="f-certificat">
+                    <option value="">Nespecificat</option>
+                    <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option>
+                  </select></div>
+              </div>
+              <div style="margin-top:14px"><label for="f-dotari">Dotări (separate prin virgulă)</label><input id="f-dotari" type="text" placeholder="Parcare, Balcon, Centrală proprie, AC"></div>
+            </div>
+            <div class="panou sectiune-formular">
+              <h3>Descriere</h3>
+              <textarea id="f-descriere" rows="6" placeholder="Descrierea completă a proprietății..."></textarea>
+            </div>
+            <div class="panou sectiune-formular">
+              <h3>Fotografii</h3>
+              <label for="f-poze">Adresele imaginilor, câte una pe rând (prima e fotografia principală)</label>
+              <textarea id="f-poze" rows="4" placeholder="img/demo/living-modern.png"></textarea>
+              <div class="poze-previzualizare" id="poze-previzualizare"></div>
+              <p class="nota-camp">Încărcarea directă de fișiere se activează la integrarea Supabase Storage.</p>
+            </div>
+          </div>
+          <aside class="editor-lateral">
+            <div class="panou">
+              <h3>Publicare</h3>
+              <label for="f-status">Status</label>
+              <select id="f-status">
+                <option value="activ">Activ</option>
+                <option value="rezervat">Rezervat</option>
+                <option value="vandut">Vândut</option>
+              </select>
+              <div class="rail-actiuni">
+                <button class="buton-principal" type="submit">Salvează anunțul</button>
+                <button class="buton-secundar" type="button" id="buton-renunta">Renunță</button>
+              </div>
+            </div>
+            <div class="panou">
+              <h3>Localizare pe hartă</h3>
+              <label for="f-adresa">Adresă (stradă + oraș)</label>
+              <input id="f-adresa" type="text" placeholder="Strada Avionului, București">
+              <p class="nota-camp">Pinul de pe harta anunțului se așază pe această adresă.</p>
+            </div>
+            <div class="panou">
+              <h3>Agent responsabil</h3>
+              <label for="f-agent">Nume</label><input id="f-agent" type="text">
+              <label for="f-agent-tel" style="margin-top:10px">Telefon</label><input id="f-agent-tel" type="tel">
+            </div>
+          </aside>
+        </div>
+      </form>
+    </main>
+
+    <!-- ===== BLOG: listă ===== -->
+    <main id="vedere-blog" hidden>
+      <div class="admin-cap">
+        <div><h2>Blog</h2><p class="rezultate-info" id="blog-contor"></p></div>
+        <div class="admin-unelte"><button class="buton-principal" id="buton-articol-nou" type="button">+ Articol nou</button></div>
+      </div>
+      <div class="tabel-invelis">
+        <table class="tabel-admin">
+          <thead><tr><th>Imagine</th><th>Titlu</th><th>Status</th><th>Publicat</th><th class="col-actiuni">Acțiuni</th></tr></thead>
+          <tbody id="blog-tbody"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- ===== BLOG: editor (două coloane) ===== -->
+    <main id="vedere-formular-articol" hidden>
+      <div class="admin-cap">
+        <div><h2 id="articol-formular-titlu">Articol nou</h2><p class="rezultate-info" id="articol-formular-slug"></p></div>
+        <div class="admin-unelte"><button class="buton-secundar" id="buton-articol-inapoi" type="button">← Blog</button></div>
+      </div>
+      <form id="formular-articol">
+        <div class="editor-grila">
+          <div class="editor-principal">
+            <div class="panou sectiune-formular">
+              <h3>Conținut</h3>
+              <label for="fa-titlu">Titlu articol *</label>
+              <input id="fa-titlu" type="text" required maxlength="140">
+              <label for="fa-rezumat" style="margin-top:14px">Rezumat (apare în listă și în Google)</label>
+              <textarea id="fa-rezumat" rows="3" maxlength="220"></textarea>
+              <label for="fa-continut" style="margin-top:14px">Textul articolului</label>
+              <textarea id="fa-continut" rows="16" placeholder="Paragrafele se separă printr-o linie goală.&#10;&#10;## Un rând care începe cu ## devine subtitlu"></textarea>
+            </div>
+          </div>
+          <aside class="editor-lateral">
+            <div class="panou">
+              <h3>Publicare</h3>
+              <label for="fa-status">Status</label>
+              <select id="fa-status">
+                <option value="ciorna">Ciornă (nu apare pe site)</option>
+                <option value="publicat">Publicat</option>
+              </select>
+              <div class="rail-actiuni">
+                <button class="buton-principal" type="submit">Salvează articolul</button>
+                <button class="buton-secundar" type="button" id="buton-articol-renunta">Renunță</button>
+              </div>
+            </div>
+            <div class="panou">
+              <h3>Imagine de copertă</h3>
+              <label for="fa-imagine">Adresa imaginii</label>
+              <input id="fa-imagine" type="text" placeholder="img/demo/living-modern.png">
+              <div class="poze-previzualizare" id="fa-imagine-previzualizare"></div>
+            </div>
+          </aside>
+        </div>
+      </form>
+    </main>
+
+    <!-- ===== SERVICII: listă ===== -->
+    <main id="vedere-servicii" hidden>
+      <div class="admin-cap">
+        <div><h2>Servicii</h2><p class="rezultate-info" id="servicii-contor"></p></div>
+        <div class="admin-unelte"><button class="buton-principal" id="buton-serviciu-nou" type="button">+ Serviciu nou</button></div>
+      </div>
+      <div class="tabel-invelis">
+        <table class="tabel-admin">
+          <thead><tr><th>Ordine</th><th>Serviciu</th><th>Afișare</th><th class="col-actiuni">Acțiuni</th></tr></thead>
+          <tbody id="servicii-tbody"></tbody>
+        </table>
+      </div>
+      <p class="nota-demo">Ordinea de aici e ordinea de pe pagina publică de servicii; serviciul evidențiat apare primul, pe toată lățimea.</p>
+    </main>
+
+    <!-- ===== SERVICII: editor ===== -->
+    <main id="vedere-formular-serviciu" hidden>
+      <div class="admin-cap">
+        <div><h2 id="serviciu-formular-titlu">Serviciu nou</h2></div>
+        <div class="admin-unelte"><button class="buton-secundar" id="buton-serviciu-inapoi" type="button">← Servicii</button></div>
+      </div>
+      <form id="formular-serviciu">
+        <div class="panou sectiune-formular editor-ingust">
+          <label for="fs-titlu">Numele serviciului *</label>
+          <input id="fs-titlu" type="text" required maxlength="80">
+          <label for="fs-descriere" style="margin-top:14px">Descriere (1-2 fraze)</label>
+          <textarea id="fs-descriere" rows="4" maxlength="300"></textarea>
+          <label class="camp-bifat-simplu" style="margin-top:14px"><input id="fs-evidentiat" type="checkbox"> Serviciu evidențiat (cardul mare, primul pe pagină)</label>
+          <div class="rail-actiuni" style="margin-top:20px">
+            <button class="buton-principal" type="submit">Salvează serviciul</button>
+            <button class="buton-secundar" type="button" id="buton-serviciu-renunta">Renunță</button>
+          </div>
+        </div>
+      </form>
+    </main>
+
   </div>
-
-  <!-- Vederea LISTĂ ANUNȚURI -->
-  <main class="container" id="vedere-lista">
-    <div class="admin-cap">
-      <div>
-        <h2>Anunțuri</h2>
-        <p class="rezultate-info" id="admin-contor"></p>
-      </div>
-      <div class="admin-unelte">
-        <input type="search" id="admin-cauta" placeholder="Caută titlu, zonă, REF...">
-        <select id="admin-filtru-status">
-          <option value="">Toate statusurile</option>
-          <option value="activ">Active</option>
-          <option value="rezervat">Rezervate</option>
-          <option value="vandut">Vândute</option>
-        </select>
-        <button class="buton-principal" id="buton-nou" type="button">+ Anunț nou</button>
-      </div>
-    </div>
-
-    <div class="tabel-invelis">
-      <table class="tabel-admin">
-        <thead><tr>
-          <th>REF</th><th>Foto</th><th>Titlu</th><th>Zonă</th><th>Preț</th><th>Tranzacție</th><th>Status</th><th>Publicat</th><th class="col-actiuni">Acțiuni</th>
-        </tr></thead>
-        <tbody id="admin-tbody"></tbody>
-      </table>
-    </div>
-    <p class="nota-demo">Datele se salvează local în acest browser (mediu de demonstrație). La integrarea Supabase, aceleași operațiuni merg în baza de date reală. <button class="buton-text" id="buton-reset" type="button">Resetează datele demo</button></p>
-  </main>
-
-  <!-- Vederea FORMULAR -->
-  <main class="container" id="vedere-formular" hidden>
-    <div class="admin-cap">
-      <div>
-        <h2 id="formular-titlu">Anunț nou</h2>
-        <p class="rezultate-info" id="formular-ref"></p>
-      </div>
-      <div class="admin-unelte">
-        <button class="buton-secundar" id="buton-inapoi" type="button">← Înapoi la listă</button>
-      </div>
-    </div>
-
-    <form class="formular-anunt" id="formular-anunt">
-      <div class="panou sectiune-formular">
-        <h3>Informații principale</h3>
-        <div class="grila-2">
-          <div class="camp-lat"><label for="f-titlu">Titlu anunț *</label><input id="f-titlu" type="text" required maxlength="120"></div>
-          <div><label for="f-tranzactie">Tranzacție *</label>
-            <select id="f-tranzactie" required>
-              <option value="vanzare">Vânzare</option>
-              <option value="inchiriere">Închiriere</option>
-            </select></div>
-          <div><label for="f-tip">Tip proprietate *</label>
-            <select id="f-tip" required>
-              <option value="apartament">Apartament</option>
-              <option value="casa">Casă / vilă</option>
-              <option value="teren">Teren</option>
-              <option value="comercial">Spațiu comercial</option>
-              <option value="birou">Birou</option>
-            </select></div>
-          <div><label for="f-pret">Preț (EUR) *</label><input id="f-pret" type="number" min="1" required></div>
-          <div class="camp-bifat"><label><input id="f-negociabil" type="checkbox"> Preț negociabil</label></div>
-          <div><label for="f-oras">Oraș / județ *</label><input id="f-oras" type="text" required value="București"></div>
-          <div><label for="f-zona">Zonă / cartier *</label><input id="f-zona" type="text" required></div>
-          <div class="camp-lat"><label for="f-adresa">Adresă pentru hartă (stradă + oraș; apare pinul pe harta anunțului)</label><input id="f-adresa" type="text" placeholder="Strada Avionului, București"></div>
-          <div><label for="f-status">Status</label>
-            <select id="f-status">
-              <option value="activ">Activ</option>
-              <option value="rezervat">Rezervat</option>
-              <option value="vandut">Vândut</option>
-            </select></div>
-        </div>
-      </div>
-
-      <div class="panou sectiune-formular">
-        <h3>Specificații</h3>
-        <div class="grila-4">
-          <div><label for="f-suprafata">Suprafață (mp)</label><input id="f-suprafata" type="number" min="1"></div>
-          <div><label for="f-camere">Camere</label><input id="f-camere" type="number" min="0"></div>
-          <div><label for="f-bai">Băi</label><input id="f-bai" type="number" min="0"></div>
-          <div><label for="f-etaj">Etaj</label><input id="f-etaj" type="number"></div>
-          <div><label for="f-etaje">Total etaje</label><input id="f-etaje" type="number" min="0"></div>
-          <div><label for="f-an">An construcție</label><input id="f-an" type="number" min="1800" max="2100"></div>
-          <div><label for="f-compartimentare">Compartimentare</label>
-            <select id="f-compartimentare">
-              <option value="">Nespecificat</option>
-              <option value="decomandat">Decomandat</option>
-              <option value="semidecomandat">Semidecomandat</option>
-              <option value="nedecomandat">Nedecomandat</option>
-              <option value="circular">Circular</option>
-            </select></div>
-          <div><label for="f-certificat">Certificat energetic</label>
-            <select id="f-certificat">
-              <option value="">Nespecificat</option>
-              <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option>
-            </select></div>
-        </div>
-        <div style="margin-top:14px"><label for="f-dotari">Dotări (separate prin virgulă)</label><input id="f-dotari" type="text" placeholder="Parcare, Balcon, Centrală proprie, AC"></div>
-      </div>
-
-      <div class="panou sectiune-formular">
-        <h3>Descriere</h3>
-        <textarea id="f-descriere" rows="6" placeholder="Descrierea completă a proprietății..."></textarea>
-      </div>
-
-      <div class="panou sectiune-formular">
-        <h3>Fotografii</h3>
-        <label for="f-poze">Adresele imaginilor, câte una pe rând (prima e fotografia principală)</label>
-        <textarea id="f-poze" rows="4" placeholder="img/demo/living-modern.png"></textarea>
-        <div class="poze-previzualizare" id="poze-previzualizare"></div>
-        <p class="nota-camp">Încărcarea directă de fișiere se activează la integrarea Supabase Storage; până atunci se folosesc adrese de imagini existente.</p>
-      </div>
-
-      <div class="panou sectiune-formular">
-        <h3>Agent responsabil</h3>
-        <div class="grila-2">
-          <div><label for="f-agent">Nume agent</label><input id="f-agent" type="text"></div>
-          <div><label for="f-agent-tel">Telefon agent</label><input id="f-agent-tel" type="tel"></div>
-        </div>
-      </div>
-
-      <div class="bara-salvare">
-        <button class="buton-secundar" type="button" id="buton-renunta">Renunță</button>
-        <button class="buton-principal" type="submit" id="buton-salveaza">Salvează anunțul</button>
-      </div>
-    </form>
-  </main>
+</div>
 </div>
 
-<!-- Vederea BLOG -->
-  <main class="container" id="vedere-blog" hidden>
-    <div class="admin-cap">
-      <div>
-        <h2>Articole de blog</h2>
-        <p class="rezultate-info" id="blog-contor"></p>
-      </div>
-      <div class="admin-unelte">
-        <button class="buton-principal" id="buton-articol-nou" type="button">+ Articol nou</button>
-      </div>
-    </div>
-    <div class="tabel-invelis">
-      <table class="tabel-admin">
-        <thead><tr>
-          <th>Imagine</th><th>Titlu</th><th>Status</th><th>Publicat</th><th class="col-actiuni">Acțiuni</th>
-        </tr></thead>
-        <tbody id="blog-tbody"></tbody>
-      </table>
-    </div>
-    <p class="nota-demo">Articolele publicate apar imediat pe pagina de blog a site-ului; ciornele rămân vizibile doar aici.</p>
-  </main>
-
-  <!-- Vederea FORMULAR ARTICOL -->
-  <main class="container" id="vedere-formular-articol" hidden>
-    <div class="admin-cap">
-      <div>
-        <h2 id="articol-formular-titlu">Articol nou</h2>
-        <p class="rezultate-info" id="articol-formular-slug"></p>
-      </div>
-      <div class="admin-unelte">
-        <button class="buton-secundar" id="buton-articol-inapoi" type="button">← Înapoi la articole</button>
-      </div>
-    </div>
-    <form class="formular-anunt" id="formular-articol">
-      <div class="panou sectiune-formular">
-        <h3>Articol</h3>
-        <div class="grila-2">
-          <div class="camp-lat"><label for="fa-titlu">Titlu *</label><input id="fa-titlu" type="text" required maxlength="140"></div>
-          <div><label for="fa-imagine">Imagine de copertă (adresă)</label><input id="fa-imagine" type="text" placeholder="img/demo/living-modern.png"></div>
-          <div><label for="fa-status">Status</label>
-            <select id="fa-status">
-              <option value="ciorna">Ciornă (nepublicat)</option>
-              <option value="publicat">Publicat</option>
-            </select></div>
-        </div>
-        <div style="margin-top:14px"><label for="fa-rezumat">Rezumat (apare în lista de blog și în descrierea pentru Google)</label><textarea id="fa-rezumat" rows="2" maxlength="220"></textarea></div>
-      </div>
-      <div class="panou sectiune-formular">
-        <h3>Conținut</h3>
-        <label for="fa-continut">Paragrafele se separă cu o linie goală; un rând care începe cu „## " devine subtitlu</label>
-        <textarea id="fa-continut" rows="16" placeholder="Introducerea articolului...&#10;&#10;## Primul subtitlu&#10;Conținutul secțiunii..."></textarea>
-      </div>
-      <div class="bara-salvare">
-        <button class="buton-secundar" type="button" id="buton-articol-renunta">Renunță</button>
-        <button class="buton-principal" type="submit">Salvează articolul</button>
-      </div>
-    </form>
-  </main>
-
-<!-- Dialog ștergere -->
+<!-- Dialog ștergere (partajat) -->
 <dialog id="dialog-sterge" class="dialog">
-  <h3>Ștergi anunțul?</h3>
+  <h3>Ștergi definitiv?</h3>
   <p id="dialog-sterge-text"></p>
   <div class="dialog-actiuni">
     <button class="buton-secundar" id="dialog-nu" type="button">Nu, păstrează</button>
@@ -257,7 +294,7 @@ window.addEventListener("error", function (e) {
   </div>
 </dialog>
 
-<script src="js/date-demo.js?v=5"></script>
-<script src="js/admin.js?v=5"></script>
+<script src="js/date-demo.js?v=6"></script>
+<script src="js/admin.js?v=6"></script>
 </body>
 </html>

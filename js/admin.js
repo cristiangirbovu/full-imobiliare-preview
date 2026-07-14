@@ -1,46 +1,28 @@
-// FULL IMOBILIARE — admin.js (v0, mediu de demonstrație)
+// FULL IMOBILIARE — admin.js (v2: bară laterală + Anunțuri / Blog / Servicii)
 // Stratul de date: localStorage, cu EXACT aceeași formă ca schema Supabase (schema.sql).
 // La integrare, funcțiile api* se rescriu pe clientul Supabase; interfața rămâne neschimbată.
 
 const CHEIE_DATE = "fi_anunturi";
+const CHEIE_ARTICOLE = "fi_articole";
+const CHEIE_SERVICII = "fi_servicii";
 const CHEIE_SESIUNE = "fi_sesiune";
 const CONT_DEMO = { email: "admin@fullimobiliare.ro", parola: "demo2026" };
 
-// ===== Stratul de date (adaptor demo) =====
-function apiListeaza() {
-  try { const s = localStorage.getItem(CHEIE_DATE); if (s) return JSON.parse(s); } catch (e) {}
-  return JSON.parse(JSON.stringify(ANUNTURI));
+// ===== Stratul de date (adaptoare demo) =====
+function citeste(cheie, seed) {
+  try { const s = localStorage.getItem(cheie); if (s) return JSON.parse(s); } catch (e) {}
+  return JSON.parse(JSON.stringify(seed));
 }
-function apiScrie(lista) { try { localStorage.setItem(CHEIE_DATE, JSON.stringify(lista)); } catch (e) {} }
-function apiReseteaza() { try { localStorage.removeItem(CHEIE_DATE); } catch (e) {} }
+function scrie(cheie, lista) { try { localStorage.setItem(cheie, JSON.stringify(lista)); } catch (e) {} }
 
-let anunturi = apiListeaza();
-let refInEditare = null;   // null = anunț nou
+let anunturi = citeste(CHEIE_DATE, ANUNTURI);
+let articole = citeste(CHEIE_ARTICOLE, typeof ARTICOLE !== "undefined" ? ARTICOLE : []);
+let servicii = citeste(CHEIE_SERVICII, typeof SERVICII !== "undefined" ? SERVICII : []);
+let refInEditare = null;
+let slugInEditare = null;
+let serviciuInEditare = null;
 
-// ===== Articole de blog (același tipar de adaptor) =====
-const CHEIE_ARTICOLE = "fi_articole";
-function apiListeazaArticole() {
-  try { const s = localStorage.getItem(CHEIE_ARTICOLE); if (s) return JSON.parse(s); } catch (e) {}
-  return (typeof ARTICOLE !== "undefined") ? JSON.parse(JSON.stringify(ARTICOLE)) : [];
-}
-function apiScrieArticole(lista) { try { localStorage.setItem(CHEIE_ARTICOLE, JSON.stringify(lista)); } catch (e) {} }
-let articole = apiListeazaArticole();
-let slugInEditare = null;  // null = articol nou
-
-// ===== Navigarea între vederi (taburi + formulare) =====
-const VEDERI = ["vedere-lista", "vedere-formular", "vedere-blog", "vedere-formular-articol"];
-function arataVederea(id) {
-  VEDERI.forEach(v => { const el = document.getElementById(v); if (el) el.hidden = (v !== id); });
-  document.getElementById("tab-anunturi").classList.toggle("activ", id === "vedere-lista" || id === "vedere-formular");
-  document.getElementById("tab-blog").classList.toggle("activ", id === "vedere-blog" || id === "vedere-formular-articol");
-  window.scrollTo({ top: 0 });
-}
-document.getElementById("tab-anunturi").addEventListener("click", () => { arataVederea("vedere-lista"); randeazaTabel(); });
-document.getElementById("tab-blog").addEventListener("click", () => { arataVederea("vedere-blog"); randeazaTabelBlog(); });
-
-// ===== Autentificare (demo) =====
-// Sesiune cu rezervă în memorie: dacă browserul blochează stocarea locală (mod privat,
-// protecție strictă la urmărire), login-ul funcționează totuși pe durata paginii.
+// ===== Autentificare (demo, cu rezervă în memorie dacă stocarea e blocată) =====
 let sesiuneInMemorie = false;
 let utilizatorInMemorie = "";
 function seteazaSesiune(email) {
@@ -66,6 +48,7 @@ function arataEcran() {
   document.getElementById("ecran-admin").hidden = !logat;
   if (logat) {
     document.getElementById("admin-utilizator").textContent = utilizatorCurent();
+    actualizeazaContoare();
     randeazaTabel();
   }
 }
@@ -83,12 +66,56 @@ document.getElementById("formular-login").addEventListener("submit", e => {
   }
 });
 
-document.getElementById("buton-iesire").addEventListener("click", () => {
-  stergeSesiune();
-  arataEcran();
+document.getElementById("buton-iesire").addEventListener("click", () => { stergeSesiune(); arataEcran(); });
+
+// ===== Navigare (bara laterală) =====
+const VEDERI = ["vedere-lista", "vedere-formular", "vedere-blog", "vedere-formular-articol", "vedere-servicii", "vedere-formular-serviciu"];
+function arataVederea(id) {
+  VEDERI.forEach(v => { const el = document.getElementById(v); if (el) el.hidden = (v !== id); });
+  document.getElementById("nav-anunturi").classList.toggle("activ", id.startsWith("vedere-lista") || id === "vedere-formular");
+  document.getElementById("nav-blog").classList.toggle("activ", id === "vedere-blog" || id === "vedere-formular-articol");
+  document.getElementById("nav-servicii").classList.toggle("activ", id === "vedere-servicii" || id === "vedere-formular-serviciu");
+  window.scrollTo({ top: 0 });
+}
+document.getElementById("nav-anunturi").addEventListener("click", () => { arataVederea("vedere-lista"); randeazaTabel(); });
+document.getElementById("nav-blog").addEventListener("click", () => { arataVederea("vedere-blog"); randeazaTabelBlog(); });
+document.getElementById("nav-servicii").addEventListener("click", () => { arataVederea("vedere-servicii"); randeazaTabelServicii(); });
+
+function actualizeazaContoare() {
+  document.getElementById("numar-anunturi").textContent = anunturi.length;
+  document.getElementById("numar-articole").textContent = articole.length;
+  document.getElementById("numar-servicii").textContent = servicii.length;
+}
+
+// ===== Ștergere cu dialog unificat =====
+const dialogSterge = document.getElementById("dialog-sterge");
+let tintaStergere = null;   // { tip: "anunt" | "articol" | "serviciu", id }
+function cereStergerea(tip, id, text) {
+  tintaStergere = { tip, id };
+  document.getElementById("dialog-sterge-text").textContent = text;
+  dialogSterge.showModal();
+}
+document.getElementById("dialog-nu").addEventListener("click", () => { tintaStergere = null; dialogSterge.close(); });
+document.getElementById("dialog-da").addEventListener("click", () => {
+  if (!tintaStergere) { dialogSterge.close(); return; }
+  if (tintaStergere.tip === "anunt") {
+    anunturi = anunturi.filter(x => x.id_intern !== tintaStergere.id);
+    scrie(CHEIE_DATE, anunturi); randeazaTabel();
+  } else if (tintaStergere.tip === "articol") {
+    articole = articole.filter(x => x.slug !== tintaStergere.id);
+    scrie(CHEIE_ARTICOLE, articole); randeazaTabelBlog();
+  } else if (tintaStergere.tip === "serviciu") {
+    servicii = servicii.filter(x => x.id !== tintaStergere.id);
+    scrie(CHEIE_SERVICII, servicii); randeazaTabelServicii();
+  }
+  tintaStergere = null;
+  actualizeazaContoare();
+  dialogSterge.close();
 });
 
-// ===== Tabelul =====
+// ============================================================
+// ANUNȚURI
+// ============================================================
 function formatPretAdmin(a) {
   const pret = a.pret_eur.toLocaleString("ro-RO");
   return a.tranzactie === "inchiriere" ? `${pret} € / lună` : `${pret} €`;
@@ -103,17 +130,14 @@ function randeazaTabel() {
     return true;
   }).sort((x, y) => y.publicat_la.localeCompare(x.publicat_la));
 
-  document.getElementById("admin-contor").textContent =
-    `${lista.length} din ${anunturi.length} anunțuri`;
-
+  document.getElementById("admin-contor").textContent = `${lista.length} din ${anunturi.length} anunțuri`;
   document.getElementById("admin-tbody").innerHTML = lista.map(a => `
     <tr>
       <td class="tabel-ref">${a.id_intern}</td>
       <td><img class="tabel-foto" src="${(a.poze && a.poze[0]) || ""}" alt=""></td>
-      <td class="tabel-titlu">${a.titlu}</td>
+      <td class="tabel-titlu">${a.titlu}<div class="tabel-descriere">${a.tranzactie === "inchiriere" ? "Închiriere" : "Vânzare"} · ${a.tip}</div></td>
       <td>${a.oras}, ${a.zona}</td>
       <td class="tabel-pret">${formatPretAdmin(a)}</td>
-      <td>${a.tranzactie === "inchiriere" ? "Închiriere" : "Vânzare"}</td>
       <td>
         <select class="select-status st-${a.status}" data-ref="${a.id_intern}" aria-label="Status ${a.id_intern}">
           <option value="activ" ${a.status === "activ" ? "selected" : ""}>Activ</option>
@@ -128,50 +152,33 @@ function randeazaTabel() {
       </td>
     </tr>`).join("");
 
-  // Status inline
   document.querySelectorAll(".select-status").forEach(sel => sel.addEventListener("change", e => {
     const a = anunturi.find(x => x.id_intern === e.target.dataset.ref);
     a.status = e.target.value;
     a.vandut_la = a.status === "vandut" ? new Date().toISOString().slice(0, 10) : null;
     a.actualizat_la = new Date().toISOString().slice(0, 10);
-    apiScrie(anunturi);
+    scrie(CHEIE_DATE, anunturi);
     randeazaTabel();
   }));
-  // Editare + ștergere
   document.querySelectorAll("[data-editeaza]").forEach(b => b.addEventListener("click", () => deschideFormular(b.dataset.editeaza)));
-  document.querySelectorAll("[data-sterge]").forEach(b => b.addEventListener("click", () => cereStergere(b.dataset.sterge)));
+  document.querySelectorAll("[data-sterge]").forEach(b => b.addEventListener("click", () => {
+    const a = anunturi.find(x => x.id_intern === b.dataset.sterge);
+    cereStergerea("anunt", a.id_intern, `${a.id_intern} · ${a.titlu}. Anunțul dispare definitiv din listă și de pe site.`);
+  }));
 }
 
 document.getElementById("admin-cauta").addEventListener("input", randeazaTabel);
 document.getElementById("admin-filtru-status").addEventListener("change", randeazaTabel);
 
 document.getElementById("buton-reset").addEventListener("click", () => {
-  apiReseteaza();
-  anunturi = apiListeaza();
+  try { localStorage.removeItem(CHEIE_DATE); localStorage.removeItem(CHEIE_ARTICOLE); localStorage.removeItem(CHEIE_SERVICII); } catch (e) {}
+  anunturi = citeste(CHEIE_DATE, ANUNTURI);
+  articole = citeste(CHEIE_ARTICOLE, typeof ARTICOLE !== "undefined" ? ARTICOLE : []);
+  servicii = citeste(CHEIE_SERVICII, typeof SERVICII !== "undefined" ? SERVICII : []);
+  actualizeazaContoare();
   randeazaTabel();
 });
 
-// ===== Ștergere cu dialog (partajat între anunțuri și articole) =====
-let refDeSters = null;
-var slugDeSters = null;
-const dialogSterge = document.getElementById("dialog-sterge");
-function cereStergere(ref) {
-  refDeSters = ref;
-  slugDeSters = null;
-  const a = anunturi.find(x => x.id_intern === ref);
-  document.getElementById("dialog-sterge-text").textContent =
-    `${a.id_intern} · ${a.titlu}. Anunțul dispare definitiv din listă și de pe site.`;
-  dialogSterge.showModal();
-}
-document.getElementById("dialog-nu").addEventListener("click", () => dialogSterge.close());
-document.getElementById("dialog-da").addEventListener("click", () => {
-  anunturi = anunturi.filter(x => x.id_intern !== refDeSters);
-  apiScrie(anunturi);
-  dialogSterge.close();
-  randeazaTabel();
-});
-
-// ===== Formularul =====
 function refNou() {
   const maxim = anunturi.reduce((m, a) => {
     const n = parseInt((a.id_intern || "").replace(/\D/g, ""), 10);
@@ -201,14 +208,10 @@ function deschideFormular(ref) {
   v("f-descriere", a ? a.descriere : ""); v("f-poze", a ? (a.poze || []).join("\n") : "");
   v("f-agent", a ? a.agent_nume : ""); v("f-agent-tel", a ? a.agent_telefon : "");
   previzualizeazaPoze();
-
   arataVederea("vedere-formular");
 }
 
-function inchideFormular() {
-  arataVederea("vedere-lista");
-  randeazaTabel();
-}
+function inchideFormular() { arataVederea("vedere-lista"); randeazaTabel(); }
 
 document.getElementById("buton-nou").addEventListener("click", () => deschideFormular(null));
 document.getElementById("buton-inapoi").addEventListener("click", inchideFormular);
@@ -244,11 +247,14 @@ document.getElementById("formular-anunt").addEventListener("submit", e => {
   a.actualizat_la = azi;
 
   if (!refInEditare) anunturi.unshift(a);
-  apiScrie(anunturi);
+  scrie(CHEIE_DATE, anunturi);
+  actualizeazaContoare();
   inchideFormular();
 });
 
-// ===== Blog: listă + formular =====
+// ============================================================
+// BLOG
+// ============================================================
 function genereazaSlug(titlu) {
   const harta = { "ă": "a", "â": "a", "î": "i", "ș": "s", "ş": "s", "ț": "t", "ţ": "t" };
   let s = titlu.toLowerCase().replace(/[ăâîșşțţ]/g, c => harta[c] || c)
@@ -267,7 +273,7 @@ function randeazaTabelBlog() {
     <tr>
       <td><img class="tabel-foto" src="${a.imagine_url || ""}" alt=""></td>
       <td class="tabel-titlu">${a.titlu}</td>
-      <td><span class="insigna ${a.status === "publicat" ? "" : "vandut"}">${a.status === "publicat" ? "Publicat" : "Ciornă"}</span></td>
+      <td><span class="insigna-admin ${a.status === "publicat" ? "publicat" : "ciorna"}">${a.status === "publicat" ? "Publicat" : "Ciornă"}</span></td>
       <td>${a.publicat_la || "-"}</td>
       <td class="col-actiuni">
         ${a.status === "publicat" ? `<a class="actiune" href="articol.html?slug=${a.slug}" target="_blank" rel="noopener">Vezi</a>` : ""}
@@ -276,16 +282,10 @@ function randeazaTabelBlog() {
       </td>
     </tr>`).join("");
   document.querySelectorAll("[data-articol-editeaza]").forEach(b => b.addEventListener("click", () => deschideFormularArticol(b.dataset.articolEditeaza)));
-  document.querySelectorAll("[data-articol-sterge]").forEach(b => b.addEventListener("click", () => cereStergereArticol(b.dataset.articolSterge)));
-}
-
-function cereStergereArticol(slug) {
-  slugDeSters = slug;
-  const a = articole.find(x => x.slug === slug);
-  document.getElementById("dialog-sterge-text").textContent =
-    `Articolul „${a.titlu}" dispare definitiv, inclusiv de pe site dacă e publicat.`;
-  refDeSters = null;
-  dialogSterge.showModal();
+  document.querySelectorAll("[data-articol-sterge]").forEach(b => b.addEventListener("click", () => {
+    const a = articole.find(x => x.slug === b.dataset.articolSterge);
+    cereStergerea("articol", a.slug, `Articolul „${a.titlu}" dispare definitiv, inclusiv de pe site dacă e publicat.`);
+  }));
 }
 
 function deschideFormularArticol(slug) {
@@ -298,13 +298,18 @@ function deschideFormularArticol(slug) {
   document.getElementById("fa-status").value = a ? a.status : "ciorna";
   document.getElementById("fa-rezumat").value = a ? (a.rezumat || "") : "";
   document.getElementById("fa-continut").value = a ? (a.continut || "") : "";
+  previzualizeazaImagineArticol();
   arataVederea("vedere-formular-articol");
 }
 
-function inchideFormularArticol() {
-  arataVederea("vedere-blog");
-  randeazaTabelBlog();
+function inchideFormularArticol() { arataVederea("vedere-blog"); randeazaTabelBlog(); }
+
+function previzualizeazaImagineArticol() {
+  const u = document.getElementById("fa-imagine").value.trim();
+  document.getElementById("fa-imagine-previzualizare").innerHTML =
+    u ? `<img src="${u}" alt="" onerror="this.style.opacity=.25">` : "";
 }
+document.getElementById("fa-imagine").addEventListener("input", previzualizeazaImagineArticol);
 
 document.getElementById("buton-articol-nou").addEventListener("click", () => deschideFormularArticol(null));
 document.getElementById("buton-articol-inapoi").addEventListener("click", inchideFormularArticol);
@@ -325,18 +330,84 @@ document.getElementById("formular-articol").addEventListener("submit", e => {
   a.status = statusNou;
   a.actualizat_la = azi;
   if (!slugInEditare) articole.unshift(a);
-  apiScrieArticole(articole);
+  scrie(CHEIE_ARTICOLE, articole);
+  actualizeazaContoare();
   inchideFormularArticol();
 });
 
-// Dialogul de ștergere e partajat între anunțuri și articole: acționează după variabila setată.
-document.getElementById("dialog-da").addEventListener("click", () => {
-  if (slugDeSters) {
-    articole = articole.filter(x => x.slug !== slugDeSters);
-    apiScrieArticole(articole);
-    slugDeSters = null;
-    randeazaTabelBlog();
-  }
+// ============================================================
+// SERVICII
+// ============================================================
+function serviciiOrdonate() {
+  return [...servicii].sort((x, y) => x.ordine - y.ordine);
+}
+
+function randeazaTabelServicii() {
+  const lista = serviciiOrdonate();
+  document.getElementById("servicii-contor").textContent =
+    `${lista.length} servicii pe pagina publică`;
+  document.getElementById("servicii-tbody").innerHTML = lista.map((s, i) => `
+    <tr>
+      <td class="tabel-ref">
+        <button class="actiune" data-muta-sus="${s.id}" type="button" ${i === 0 ? "disabled" : ""} aria-label="Mută mai sus">↑</button>
+        <button class="actiune" data-muta-jos="${s.id}" type="button" ${i === lista.length - 1 ? "disabled" : ""} aria-label="Mută mai jos">↓</button>
+      </td>
+      <td class="tabel-titlu">${s.titlu}<div class="tabel-descriere">${s.descriere || ""}</div></td>
+      <td>${s.evidentiat ? '<span class="insigna-admin evidentiat">Evidențiat</span>' : '<span class="insigna-admin ciorna">Card standard</span>'}</td>
+      <td class="col-actiuni">
+        <button class="actiune" data-serviciu-editeaza="${s.id}" type="button">Editează</button>
+        <button class="actiune sterge" data-serviciu-sterge="${s.id}" type="button">Șterge</button>
+      </td>
+    </tr>`).join("");
+
+  const muta = (id, directie) => {
+    const lista = serviciiOrdonate();
+    const i = lista.findIndex(x => x.id === id);
+    const j = i + directie;
+    if (j < 0 || j >= lista.length) return;
+    const a = lista[i], b = lista[j];
+    const t = a.ordine; a.ordine = b.ordine; b.ordine = t;
+    scrie(CHEIE_SERVICII, servicii);
+    randeazaTabelServicii();
+  };
+  document.querySelectorAll("[data-muta-sus]").forEach(b => b.addEventListener("click", () => muta(parseInt(b.dataset.mutaSus, 10), -1)));
+  document.querySelectorAll("[data-muta-jos]").forEach(b => b.addEventListener("click", () => muta(parseInt(b.dataset.mutaJos, 10), 1)));
+  document.querySelectorAll("[data-serviciu-editeaza]").forEach(b => b.addEventListener("click", () => deschideFormularServiciu(parseInt(b.dataset.serviciuEditeaza, 10))));
+  document.querySelectorAll("[data-serviciu-sterge]").forEach(b => b.addEventListener("click", () => {
+    const s = servicii.find(x => x.id === parseInt(b.dataset.serviciuSterge, 10));
+    cereStergerea("serviciu", s.id, `Serviciul „${s.titlu}" dispare de pe pagina publică de servicii.`);
+  }));
+}
+
+function deschideFormularServiciu(id) {
+  serviciuInEditare = id || null;
+  const s = id ? servicii.find(x => x.id === id) : null;
+  document.getElementById("serviciu-formular-titlu").textContent = s ? "Editare serviciu" : "Serviciu nou";
+  document.getElementById("fs-titlu").value = s ? s.titlu : "";
+  document.getElementById("fs-descriere").value = s ? (s.descriere || "") : "";
+  document.getElementById("fs-evidentiat").checked = s ? !!s.evidentiat : false;
+  arataVederea("vedere-formular-serviciu");
+}
+
+function inchideFormularServiciu() { arataVederea("vedere-servicii"); randeazaTabelServicii(); }
+
+document.getElementById("buton-serviciu-nou").addEventListener("click", () => deschideFormularServiciu(null));
+document.getElementById("buton-serviciu-inapoi").addEventListener("click", inchideFormularServiciu);
+document.getElementById("buton-serviciu-renunta").addEventListener("click", inchideFormularServiciu);
+
+document.getElementById("formular-serviciu").addEventListener("submit", e => {
+  e.preventDefault();
+  const azi = new Date().toISOString().slice(0, 10);
+  const s = serviciuInEditare ? servicii.find(x => x.id === serviciuInEditare)
+    : { id: servicii.reduce((m, x) => Math.max(m, x.id), 0) + 1, ordine: servicii.reduce((m, x) => Math.max(m, x.ordine), 0) + 1 };
+  s.titlu = document.getElementById("fs-titlu").value.trim();
+  s.descriere = document.getElementById("fs-descriere").value.trim();
+  s.evidentiat = document.getElementById("fs-evidentiat").checked;
+  s.actualizat_la = azi;
+  if (!serviciuInEditare) servicii.push(s);
+  scrie(CHEIE_SERVICII, servicii);
+  actualizeazaContoare();
+  inchideFormularServiciu();
 });
 
 arataEcran();

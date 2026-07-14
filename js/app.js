@@ -9,6 +9,21 @@ const DATE_ARTICOLE = (function () {
   try { const s = localStorage.getItem("fi_articole"); if (s) return JSON.parse(s); } catch (e) {}
   return (typeof ARTICOLE !== "undefined") ? ARTICOLE : [];
 })();
+const DATE_SERVICII = (function () {
+  try { const s = localStorage.getItem("fi_servicii"); if (s) return JSON.parse(s); } catch (e) {}
+  return (typeof SERVICII !== "undefined") ? SERVICII : [];
+})();
+
+// Pagina de servicii: cardul evidențiat primul (lățime totală), restul în ordinea setată din admin.
+function randeazaServicii() {
+  const el = document.getElementById("lista-servicii");
+  if (!el) return;
+  const lista = [...DATE_SERVICII].sort((x, y) => (x.evidentiat === y.evidentiat) ? x.ordine - y.ordine : (x.evidentiat ? -1 : 1));
+  el.innerHTML = lista.map(s => `
+    <div class="card-serviciu ${s.evidentiat ? "evidentiat" : ""}">
+      <h3>${s.titlu}</h3><p>${s.descriere || ""}</p>
+    </div>`).join("");
+}
 
 function formatPret(a) {
   const pret = a.pret_eur.toLocaleString("ro-RO");
@@ -201,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
   randeazaDetaliu();
   randeazaBlog();
   randeazaArticol();
+  randeazaServicii();
   document.querySelectorAll(".bara-filtre select").forEach(s => s.addEventListener("change", randeazaLista));
 
   // Apariție la scroll: IntersectionObserver (fără scroll listener); CSS-ul respectă prefers-reduced-motion.
