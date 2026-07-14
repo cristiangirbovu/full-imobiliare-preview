@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Administrare | Full Imobiliare</title>
+<link rel="stylesheet" href="css/stil.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="fundal-admin">
+
+<!-- ===== ECRAN LOGIN ===== -->
+<div id="ecran-login" class="login-invelis">
+  <div class="login-panou">
+    <div class="login-sigla"><span class="sigla-marca"></span></div>
+    <h1>Panou de administrare</h1>
+    <p class="login-sub">Full Imobiliare · acces doar pentru echipă</p>
+    <form class="formular" id="formular-login">
+      <div><label for="l-email">Email</label><input id="l-email" type="email" autocomplete="username" required></div>
+      <div><label for="l-parola">Parolă</label><input id="l-parola" type="password" autocomplete="current-password" required></div>
+      <p class="login-eroare" id="login-eroare" hidden>Email sau parolă incorecte.</p>
+      <button type="submit">Intră în cont</button>
+    </form>
+    <p class="login-demo">Mediu de demonstrație: <b>admin@fullimobiliare.ro</b> / <b>demo2026</b><br>Autentificarea reală (Supabase) se activează la integrare.</p>
+  </div>
+</div>
+
+<!-- ===== ECRAN ADMIN ===== -->
+<div id="ecran-admin" hidden>
+  <header class="antet"><div class="container antet-inner">
+    <a class="sigla" href="admin.html"><span class="sigla-marca"></span>FULL IMOBILIARE <span class="eticheta-admin">ADMIN</span></a>
+    <div class="admin-cont">
+      <a href="index.html" target="_blank" rel="noopener">Vezi site-ul →</a>
+      <span id="admin-utilizator"></span>
+      <button class="buton-secundar" id="buton-iesire" type="button">Ieșire</button>
+    </div>
+  </div></header>
+
+  <!-- Vederea LISTĂ -->
+  <main class="container" id="vedere-lista">
+    <div class="admin-cap">
+      <div>
+        <h2>Anunțuri</h2>
+        <p class="rezultate-info" id="admin-contor"></p>
+      </div>
+      <div class="admin-unelte">
+        <input type="search" id="admin-cauta" placeholder="Caută titlu, zonă, REF...">
+        <select id="admin-filtru-status">
+          <option value="">Toate statusurile</option>
+          <option value="activ">Active</option>
+          <option value="rezervat">Rezervate</option>
+          <option value="vandut">Vândute</option>
+        </select>
+        <button class="buton-principal" id="buton-nou" type="button">+ Anunț nou</button>
+      </div>
+    </div>
+
+    <div class="tabel-invelis">
+      <table class="tabel-admin">
+        <thead><tr>
+          <th>REF</th><th>Foto</th><th>Titlu</th><th>Zonă</th><th>Preț</th><th>Tranzacție</th><th>Status</th><th>Publicat</th><th class="col-actiuni">Acțiuni</th>
+        </tr></thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+    </div>
+    <p class="nota-demo">Datele se salvează local în acest browser (mediu de demonstrație). La integrarea Supabase, aceleași operațiuni merg în baza de date reală. <button class="buton-text" id="buton-reset" type="button">Resetează datele demo</button></p>
+  </main>
+
+  <!-- Vederea FORMULAR -->
+  <main class="container" id="vedere-formular" hidden>
+    <div class="admin-cap">
+      <div>
+        <h2 id="formular-titlu">Anunț nou</h2>
+        <p class="rezultate-info" id="formular-ref"></p>
+      </div>
+      <div class="admin-unelte">
+        <button class="buton-secundar" id="buton-inapoi" type="button">← Înapoi la listă</button>
+      </div>
+    </div>
+
+    <form class="formular-anunt" id="formular-anunt">
+      <div class="panou sectiune-formular">
+        <h3>Informații principale</h3>
+        <div class="grila-2">
+          <div class="camp-lat"><label for="f-titlu">Titlu anunț *</label><input id="f-titlu" type="text" required maxlength="120"></div>
+          <div><label for="f-tranzactie">Tranzacție *</label>
+            <select id="f-tranzactie" required>
+              <option value="vanzare">Vânzare</option>
+              <option value="inchiriere">Închiriere</option>
+            </select></div>
+          <div><label for="f-tip">Tip proprietate *</label>
+            <select id="f-tip" required>
+              <option value="apartament">Apartament</option>
+              <option value="casa">Casă / vilă</option>
+              <option value="teren">Teren</option>
+              <option value="comercial">Spațiu comercial</option>
+              <option value="birou">Birou</option>
+            </select></div>
+          <div><label for="f-pret">Preț (EUR) *</label><input id="f-pret" type="number" min="1" required></div>
+          <div class="camp-bifat"><label><input id="f-negociabil" type="checkbox"> Preț negociabil</label></div>
+          <div><label for="f-oras">Oraș / județ *</label><input id="f-oras" type="text" required value="București"></div>
+          <div><label for="f-zona">Zonă / cartier *</label><input id="f-zona" type="text" required></div>
+          <div><label for="f-status">Status</label>
+            <select id="f-status">
+              <option value="activ">Activ</option>
+              <option value="rezervat">Rezervat</option>
+              <option value="vandut">Vândut</option>
+            </select></div>
+        </div>
+      </div>
+
+      <div class="panou sectiune-formular">
+        <h3>Specificații</h3>
+        <div class="grila-4">
+          <div><label for="f-suprafata">Suprafață (mp)</label><input id="f-suprafata" type="number" min="1"></div>
+          <div><label for="f-camere">Camere</label><input id="f-camere" type="number" min="0"></div>
+          <div><label for="f-bai">Băi</label><input id="f-bai" type="number" min="0"></div>
+          <div><label for="f-etaj">Etaj</label><input id="f-etaj" type="number"></div>
+          <div><label for="f-etaje">Total etaje</label><input id="f-etaje" type="number" min="0"></div>
+          <div><label for="f-an">An construcție</label><input id="f-an" type="number" min="1800" max="2100"></div>
+          <div><label for="f-compartimentare">Compartimentare</label>
+            <select id="f-compartimentare">
+              <option value="">Nespecificat</option>
+              <option value="decomandat">Decomandat</option>
+              <option value="semidecomandat">Semidecomandat</option>
+              <option value="nedecomandat">Nedecomandat</option>
+              <option value="circular">Circular</option>
+            </select></div>
+          <div><label for="f-certificat">Certificat energetic</label>
+            <select id="f-certificat">
+              <option value="">Nespecificat</option>
+              <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option>
+            </select></div>
+        </div>
+        <div style="margin-top:14px"><label for="f-dotari">Dotări (separate prin virgulă)</label><input id="f-dotari" type="text" placeholder="Parcare, Balcon, Centrală proprie, AC"></div>
+      </div>
+
+      <div class="panou sectiune-formular">
+        <h3>Descriere</h3>
+        <textarea id="f-descriere" rows="6" placeholder="Descrierea completă a proprietății..."></textarea>
+      </div>
+
+      <div class="panou sectiune-formular">
+        <h3>Fotografii</h3>
+        <label for="f-poze">Adresele imaginilor, câte una pe rând (prima e fotografia principală)</label>
+        <textarea id="f-poze" rows="4" placeholder="img/demo/living-modern.png"></textarea>
+        <div class="poze-previzualizare" id="poze-previzualizare"></div>
+        <p class="nota-camp">Încărcarea directă de fișiere se activează la integrarea Supabase Storage; până atunci se folosesc adrese de imagini existente.</p>
+      </div>
+
+      <div class="panou sectiune-formular">
+        <h3>Agent responsabil</h3>
+        <div class="grila-2">
+          <div><label for="f-agent">Nume agent</label><input id="f-agent" type="text"></div>
+          <div><label for="f-agent-tel">Telefon agent</label><input id="f-agent-tel" type="tel"></div>
+        </div>
+      </div>
+
+      <div class="bara-salvare">
+        <button class="buton-secundar" type="button" id="buton-renunta">Renunță</button>
+        <button class="buton-principal" type="submit" id="buton-salveaza">Salvează anunțul</button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<!-- Dialog ștergere -->
+<dialog id="dialog-sterge" class="dialog">
+  <h3>Ștergi anunțul?</h3>
+  <p id="dialog-sterge-text"></p>
+  <div class="dialog-actiuni">
+    <button class="buton-secundar" id="dialog-nu" type="button">Nu, păstrează</button>
+    <button class="buton-pericol" id="dialog-da" type="button">Da, șterge</button>
+  </div>
+</dialog>
+
+<script src="js/date-demo.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

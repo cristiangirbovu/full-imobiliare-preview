@@ -1,5 +1,10 @@
-// FULL IMOBILIARE — app.js (v0): randare anunțuri, filtre, sortare, pagină de detaliu.
-// Sursa de date: ANUNTURI (date-demo.js). La integrare se înlocuiește cu Supabase.
+// FULL IMOBILIARE — app.js: randare anunțuri, filtre, sortare, pagină de detaliu.
+// Sursa de date: localStorage (dacă adminul demo a modificat ceva), altfel ANUNTURI (date-demo.js).
+// La integrare, această funcție se rescrie pe Supabase; restul interfeței rămâne neschimbat.
+const DATE_ANUNTURI = (function () {
+  try { const s = localStorage.getItem("fi_anunturi"); if (s) return JSON.parse(s); } catch (e) {}
+  return ANUNTURI;
+})();
 
 function formatPret(a) {
   const pret = a.pret_eur.toLocaleString("ro-RO");
@@ -35,7 +40,7 @@ function cardAnunt(a, index) {
 function randeazaRecente(idElement) {
   const el = document.getElementById(idElement);
   if (!el) return;
-  const recente = ANUNTURI.filter(a => a.status !== "vandut")
+  const recente = DATE_ANUNTURI.filter(a => a.status !== "vandut")
     .sort((x, y) => y.publicat_la.localeCompare(x.publicat_la)).slice(0, 3);
   el.innerHTML = recente.map(cardAnunt).join("");
 }
@@ -48,7 +53,7 @@ function randeazaLista() {
   const tranzactie = v("f-tranzactie"), tip = v("f-tip"), camere = v("f-camere"),
         zona = v("f-zona"), pret = v("f-pret"), sortare = v("f-sortare");
 
-  let lista = ANUNTURI.filter(a => {
+  let lista = DATE_ANUNTURI.filter(a => {
     if (tranzactie && a.tranzactie !== tranzactie) return false;
     if (tip && a.tip !== tip) return false;
     if (camere && a.camere < parseInt(camere)) return false;
@@ -73,7 +78,7 @@ function randeazaLista() {
 function populeazaZone() {
   const sel = document.getElementById("f-zona");
   if (!sel) return;
-  [...new Set(ANUNTURI.map(a => a.zona))].sort().forEach(z => {
+  [...new Set(DATE_ANUNTURI.map(a => a.zona))].sort().forEach(z => {
     const o = document.createElement("option"); o.value = z; o.textContent = z; sel.appendChild(o);
   });
 }
@@ -83,7 +88,7 @@ function randeazaDetaliu() {
   const radacina = document.getElementById("detaliu-anunt");
   if (!radacina) return;
   const id = new URLSearchParams(location.search).get("id") || "FI-1001";
-  const a = ANUNTURI.find(x => x.id_intern === id) || ANUNTURI[0];
+  const a = DATE_ANUNTURI.find(x => x.id_intern === id) || DATE_ANUNTURI[0];
   document.title = `${a.titlu} | Full Imobiliare`;
 
   document.getElementById("d-titlu").textContent = a.titlu;

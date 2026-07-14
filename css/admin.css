@@ -1,0 +1,97 @@
+/* FULL IMOBILIARE — admin.css (v0)
+   Panoul de administrare: refolosește tokens din stil.css; același sistem de rază și mișcare. */
+
+.fundal-admin { background: var(--fundal-sectiune); }
+
+/* ===== Login ===== */
+.login-invelis { min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-panou { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); box-shadow: var(--umbra-ridicat); padding: 40px; width: 100%; max-width: 420px; }
+@media (prefers-reduced-motion: no-preference) {
+  .login-panou { transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out); }
+  @starting-style { .login-panou { opacity: 0; transform: translateY(14px) scale(0.98); } }
+}
+.login-sigla { display: flex; justify-content: center; margin-bottom: 18px; }
+.login-panou h1 { font-size: 22px; color: var(--brand); text-align: center; }
+.login-sub { text-align: center; font-size: 13.5px; color: var(--text-secundar); margin: 6px 0 24px 0; }
+.login-eroare { color: #B23A3A; font-size: 13.5px; font-weight: 600; }
+.login-demo { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--linie); font-size: 12.5px; color: var(--text-secundar); line-height: 1.6; }
+
+/* ===== Antet admin ===== */
+.eticheta-admin { background: var(--accent); color: var(--alb); font-size: 10.5px; letter-spacing: 1.5px; padding: 3px 8px; border-radius: 5px; margin-left: 4px; }
+.admin-cont { display: flex; align-items: center; gap: 18px; font-size: 13.5px; color: var(--text-secundar); }
+.admin-cont a { font-weight: 600; color: var(--accent); }
+
+/* ===== Butoane admin ===== */
+.buton-principal, .buton-secundar, .buton-pericol { border: 0; border-radius: var(--raza-interactiv); padding: 11px 18px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out), box-shadow var(--dur-ui) ease; }
+.buton-principal { background: var(--brand); color: var(--alb); }
+.buton-secundar { background: var(--alb); color: var(--text); border: 1px solid var(--linie); }
+.buton-pericol { background: #B23A3A; color: var(--alb); }
+.buton-principal:active, .buton-secundar:active, .buton-pericol:active { transform: scale(0.97); }
+.buton-text { background: none; border: 0; color: var(--accent); font: inherit; font-size: inherit; font-weight: 700; cursor: pointer; padding: 0; }
+
+/* ===== Lista / tabel ===== */
+#vedere-lista, #vedere-formular { padding: 34px 0 72px 0; }
+.admin-cap { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 22px; }
+.admin-cap h2 { font-size: 26px; color: var(--brand); }
+.admin-unelte { display: flex; gap: 10px; flex-wrap: wrap; }
+.admin-unelte input[type="search"], .admin-unelte select { border: 1px solid var(--linie); border-radius: var(--raza-interactiv); padding: 10px 12px; font: inherit; font-size: 14px; background: var(--alb); min-width: 170px; }
+.tabel-invelis { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); box-shadow: var(--umbra-card); overflow-x: auto; }
+.tabel-admin { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 900px; }
+.tabel-admin th { text-align: left; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-secundar); padding: 14px 16px; border-bottom: 1px solid var(--linie); white-space: nowrap; }
+.tabel-admin td { padding: 12px 16px; border-bottom: 1px solid var(--linie); vertical-align: middle; }
+.tabel-admin tbody tr:last-child td { border-bottom: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .tabel-admin tbody tr { transition: background var(--dur-ui) ease; }
+  .tabel-admin tbody tr:hover { background: var(--fundal); }
+}
+.tabel-foto { width: 64px; height: 44px; object-fit: cover; border-radius: 6px; display: block; }
+.tabel-titlu { font-weight: 600; max-width: 320px; }
+.tabel-ref { font-size: 12.5px; letter-spacing: 0.5px; color: var(--text-secundar); white-space: nowrap; }
+.tabel-pret { font-weight: 700; color: var(--brand); white-space: nowrap; }
+.select-status { border: 1px solid var(--linie); border-radius: 6px; padding: 7px 8px; font: inherit; font-size: 13px; font-weight: 600; background: var(--alb); }
+.select-status.st-activ { color: #1C7A43; border-color: #BFE3CD; background: #F0FAF4; }
+.select-status.st-rezervat { color: #8A5A12; border-color: #EAD9B0; background: #FBF6EA; }
+.select-status.st-vandut { color: #5A6573; border-color: var(--linie); background: var(--fundal-sectiune); }
+.col-actiuni { text-align: right; }
+.tabel-admin td.col-actiuni { white-space: nowrap; }
+.actiune { background: none; border: 0; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; padding: 6px 8px; border-radius: 6px; color: var(--accent); transition: background var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out); }
+.actiune.sterge { color: #B23A3A; }
+.actiune:active { transform: scale(0.96); }
+@media (hover: hover) and (pointer: fine) { .actiune:hover { background: var(--fundal-sectiune); } }
+.nota-demo { margin-top: 16px; font-size: 13px; color: var(--text-secundar); }
+
+/* ===== Formular anunț ===== */
+.formular-anunt label { font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 6px; }
+.formular-anunt input, .formular-anunt select, .formular-anunt textarea { border: 1px solid var(--linie); border-radius: var(--raza-interactiv); padding: 11px 12px; font: inherit; font-size: 14.5px; width: 100%; background: var(--alb); transition: border-color var(--dur-ui) ease; }
+@media (hover: hover) and (pointer: fine) { .formular-anunt input:hover, .formular-anunt select:hover, .formular-anunt textarea:hover { border-color: var(--brand); } }
+.sectiune-formular { margin-bottom: 20px; }
+.sectiune-formular h3 { margin-bottom: 16px; }
+.grila-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.grila-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.camp-lat { grid-column: 1 / -1; }
+.camp-bifat { display: flex; align-items: flex-end; padding-bottom: 10px; }
+.camp-bifat label { display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; }
+.camp-bifat input { width: auto; }
+.poze-previzualizare { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.poze-previzualizare img { width: 110px; height: 76px; object-fit: cover; border-radius: 6px; border: 1px solid var(--linie); }
+.nota-camp { font-size: 12.5px; color: var(--text-secundar); margin-top: 10px; }
+.bara-salvare { display: flex; justify-content: flex-end; gap: 12px; padding: 4px 0 0 0; }
+
+/* ===== Dialog ===== */
+.dialog { border: 0; border-radius: var(--raza); box-shadow: var(--umbra-ridicat); padding: 28px; max-width: 420px; width: calc(100% - 48px); }
+.dialog::backdrop { background: rgba(13, 30, 56, 0.45); }
+.dialog h3 { color: var(--brand); margin-bottom: 8px; }
+.dialog p { font-size: 14.5px; color: var(--text-secundar); }
+.dialog-actiuni { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
+@media (prefers-reduced-motion: no-preference) {
+  .dialog[open] { transition: opacity var(--dur-ui) var(--ease-out), transform var(--dur-ui) var(--ease-out); }
+  @starting-style { .dialog[open] { opacity: 0; transform: scale(0.95); } }
+}
+
+/* ===== Mobil ===== */
+@media (max-width: 860px) {
+  .grila-2, .grila-4 { grid-template-columns: 1fr; }
+  .admin-cont span { display: none; }
+  .bara-salvare { flex-direction: column-reverse; }
+  .bara-salvare button { width: 100%; }
+}
