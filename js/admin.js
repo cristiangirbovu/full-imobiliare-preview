@@ -339,7 +339,7 @@ function randeazaTabelSolicitari() {
       <td style="white-space:nowrap">${dataOra(s.creat_la)}</td>
       <td><span class="insigna-admin ${s.rol === "proprietar" ? "evidentiat" : "ciorna"}">${s.rol === "proprietar" ? "Listare" : "Căutare"}</span></td>
       <td class="tabel-titlu">${escapeHtml(s.contact.nume)}<div class="tabel-descriere">${escapeHtml(s.contact.telefon)}${s.contact.email ? " · " + escapeHtml(s.contact.email) : ""}</div></td>
-      <td class="tabel-descriere" style="max-width:360px">${escapeHtml(rezumatSolicitare(s))}</td>
+      <td class="tabel-descriere" style="min-width:260px; max-width:380px">${escapeHtml(rezumatSolicitare(s))}</td>
       <td><span class="insigna-admin sol-${s.status}">${STATUS_SOLICITARE[s.status] || s.status}</span></td>
       <td class="col-actiuni">
         <button class="actiune" data-solicitare="${s.id}" type="button">Deschide</button>
