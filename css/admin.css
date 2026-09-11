@@ -1,4 +1,4 @@
-/* FULL IMOBILIARE — admin.css (v2)
+/* FULL IMOBILIARE — admin.css (v3: brand Cheia-F + Solicitări)
    Layout profesional: bară laterală fixă de navigare + conținut; editoare pe două coloane
    cu panoul de Publicare mereu vizibil (sticky). Refolosește tokens din stil.css. */
 
@@ -22,8 +22,8 @@
 
 .bara-laterala { background: var(--brand-inchis); color: rgba(255,255,255,0.75); padding: 22px 16px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100dvh; }
 .bara-sigla { display: flex; align-items: center; gap: 11px; padding: 4px 8px 20px 8px; color: var(--alb); }
-.bara-sigla .sigla-marca { background: var(--alb); }   /* SLOT LOGO: pe fundal închis, varianta albă */
-.bara-sigla span:last-child { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; line-height: 1.3; }
+.bara-sigla .sigla-marca { color: var(--alb); }   /* marca albă pe navy = tratamentul oficial marca-master-alb */
+.bara-sigla .sigla-text { font-size: 12px; display: block; }
 .bara-sigla em { display: block; font-style: normal; font-size: 10.5px; font-weight: 400; letter-spacing: 0.5px; color: rgba(255,255,255,0.5); }
 .bara-eticheta { font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); padding: 10px 8px 8px 8px; }
 .bara-nav { display: flex; flex-direction: column; gap: 4px; }
@@ -32,6 +32,8 @@
 .nav-el:active { transform: scale(0.98); }
 @media (hover: hover) and (pointer: fine) { .nav-el:hover { background: rgba(255,255,255,0.07); color: var(--alb); } }
 .nav-numar { font-size: 11.5px; font-weight: 700; background: rgba(255,255,255,0.12); border-radius: 10px; padding: 2px 9px; }
+.nav-numar:empty { display: none; }
+.nav-numar.alerta { background: var(--accent); color: var(--brand-inchis); }
 .bara-jos { margin-top: auto; padding: 16px 8px 0 8px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
 .bara-jos a { color: var(--alb); font-weight: 700; }
 .bara-utilizator { color: rgba(255,255,255,0.5); font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
@@ -49,7 +51,7 @@
   .buton-principal:hover { background: var(--brand-inchis); }
   .buton-secundar:hover { border-color: var(--brand); }
 }
-.buton-text { background: none; border: 0; color: var(--accent); font: inherit; font-size: inherit; font-weight: 700; cursor: pointer; padding: 0; }
+.buton-text { background: none; border: 0; color: var(--accent-inchis); font: inherit; font-size: inherit; font-weight: 700; cursor: pointer; padding: 0; }
 
 /* ===== Cap de secțiune + unelte ===== */
 .admin-cap { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 22px; }
@@ -78,7 +80,7 @@
 .select-status.st-vandut { color: #5A6573; border-color: var(--linie); background: var(--fundal-sectiune); }
 .col-actiuni { text-align: right; }
 .tabel-admin td.col-actiuni { white-space: nowrap; }
-.actiune { background: none; border: 0; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; padding: 6px 8px; border-radius: 6px; color: var(--accent); transition: background var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out); }
+.actiune { background: none; border: 0; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; padding: 6px 8px; border-radius: 6px; color: var(--accent-inchis); transition: background var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out); }
 .actiune.sterge { color: #B23A3A; }
 .actiune:active { transform: scale(0.96); }
 .actiune:disabled { opacity: 0.3; cursor: default; }
@@ -115,12 +117,23 @@
 .poze-previzualizare { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 .poze-previzualizare img { width: 104px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid var(--linie); }
 .nota-camp { font-size: 12.5px; color: var(--text-secundar); margin-top: 10px; }
+/* Componentele partajate (bife, manager de poze) nu preiau regulile generice ale formularului */
+#formular-anunt .bifa { display: flex; margin: 0; font-weight: 500; }
+#formular-anunt .bifa input, #formular-anunt .poze-incarcare input { width: auto; }
+#formular-anunt .buton-fisier { display: inline-block; margin: 0; }
+#formular-anunt .poze-incarcare .buton-secundar { padding: 10px 14px; }
+.rail-actiuni a { display: block; text-align: center; }
+#vedere-solicitare .tabel-spec td:first-child { width: 38%; }
 
 /* ===== Badge-uri afișare ===== */
 .insigna-admin { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: 1px; padding: 5px 10px; border-radius: 5px; text-transform: uppercase; }
 .insigna-admin.publicat { color: #1C7A43; background: #F0FAF4; border: 1px solid #BFE3CD; }
 .insigna-admin.ciorna { color: #5A6573; background: var(--fundal-sectiune); border: 1px solid var(--linie); }
 .insigna-admin.evidentiat { color: var(--alb); background: var(--brand); }
+.insigna-admin.sol-noua { color: var(--alb); background: var(--accent-inchis); }
+.insigna-admin.sol-aprobata { color: #1C7A43; background: #F0FAF4; border: 1px solid #BFE3CD; }
+.insigna-admin.sol-tratata { color: #1C7A43; background: #F0FAF4; border: 1px solid #BFE3CD; }
+.insigna-admin.sol-respinsa { color: #5A6573; background: var(--fundal-sectiune); border: 1px solid var(--linie); text-decoration: line-through; }
 
 /* ===== Dialog ===== */
 .dialog { border: 0; border-radius: var(--raza); box-shadow: var(--umbra-ridicat); padding: 28px; max-width: 440px; width: calc(100% - 48px); }
@@ -139,12 +152,12 @@
   .editor-lateral { position: static; }
 }
 @media (max-width: 860px) {
-  .admin-schema { grid-template-columns: 1fr; }
+  .admin-schema { grid-template-columns: minmax(0, 1fr); }
   .bara-laterala { position: static; height: auto; flex-direction: row; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px; }
   .bara-sigla { padding: 0; }
   .bara-sigla em, .bara-eticheta, .bara-utilizator { display: none; }
-  .bara-nav { flex-direction: row; gap: 6px; }
-  .nav-el { border-left: 0; padding: 9px 12px; }
+  .bara-nav { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+  .nav-el { border-left: 0; padding: 9px 12px; width: auto; }
   .bara-jos { margin: 0 0 0 auto; padding: 0; border: 0; flex-direction: row; align-items: center; }
   .admin-continut { padding: 22px 16px 48px 16px; }
   .grila-2, .grila-3 { grid-template-columns: 1fr; }

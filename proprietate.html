@@ -4,8 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Blog imobiliar | Full Imobiliare</title>
-<meta name="description" content="Ghiduri și analize despre piața imobiliară din București și Ilfov: cumpărare, vânzare, închiriere, acte, credit.">
+<title>Proprietate | Full Imobiliare</title>
 <link rel="icon" href="img/icon/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
@@ -19,19 +18,67 @@
   <a class="sigla" href="index.html" aria-label="Full Imobiliare, pagina principală"><svg class="sigla-marca" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false"><defs><mask id="m-antet"><rect width="1000" height="1000" fill="white"/><path fill-rule="evenodd" fill="black" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></mask></defs><rect width="1000" height="1000" rx="180" fill="currentColor" mask="url(#m-antet)"/></svg><span class="sigla-text">FULL IMOBILIARE</span></a>
   <nav class="nav" aria-label="Meniu principal">
     <a href="index.html">Acasă</a>
-    <a href="proprietati.html">Proprietăți</a>
+    <a href="proprietati.html" class="activ">Proprietăți</a>
     <a href="servicii.html">Servicii</a>
     <a href="despre.html">Despre</a>
-    <a href="blog.html" class="activ">Blog</a>
+    <a href="blog.html">Blog</a>
     <a href="contact.html" class="cta">Contact</a>
   </nav>
 </div></header>
 
-<section class="sectiune"><div class="container">
-  <p class="eticheta-mica">Ghiduri și analize</p>
-  <div class="sectiune-cap"><h2>Blogul Full Imobiliare</h2></div>
-  <div class="grila-blog" id="lista-articole"></div>
-</div></section>
+<div id="detaliu-anunt">
+<div class="container anunt-titlu-bloc">
+  <div class="insigne" style="position:static; margin-bottom:10px" id="d-insigne"></div>
+  <h1 id="d-titlu"></h1>
+  <p class="anunt-meta" id="d-meta"></p>
+</div>
+
+<div class="container anunt-grila">
+  <div>
+    <div class="galerie-principala"><img id="d-foto" src="" alt="Fotografie proprietate"></div>
+    <div class="galerie-mini" id="d-mini"></div>
+
+    <div class="panou" style="margin-top:18px">
+      <h3>Descriere</h3>
+      <p id="d-descriere" style="color:var(--text-secundar); font-size:15px"></p>
+    </div>
+
+    <div class="panou">
+      <h3>Caracteristici</h3>
+      <table class="tabel-spec" id="d-spec"></table>
+    </div>
+
+    <div class="panou">
+      <h3>Dotări</h3>
+      <div id="d-dotari"></div>
+    </div>
+
+    <div class="panou">
+      <h3>Localizare</h3>
+      <div class="harta-slot" id="d-harta">Se încarcă localizarea...</div>
+    </div>
+  </div>
+
+  <aside class="lipicios">
+    <div class="panou">
+      <div class="pret" id="d-pret"></div>
+      <div class="ref" id="d-ref"></div>
+      <a class="buton telefon" href="tel:+40000000000">Sună agenția: [DE COMPLETAT]</a>
+      <a class="buton whatsapp" href="https://wa.me/40000000000">Scrie-ne pe WhatsApp</a>
+      <div class="agent">Agent responsabil: <b id="d-agent"></b></div>
+    </div>
+    <div class="panou">
+      <h3 style="font-size:16px; margin-bottom:8px">De ce Full Imobiliare</h3>
+      <p style="font-size:14px; color:var(--text-secundar)">Din 1993, cu consultanță juridică gratuită la fiecare tranzacție și servicii complete, de la vizionare până la semnare.</p>
+    </div>
+    <div class="panou">
+      <h3 style="font-size:16px; margin-bottom:8px">Cauți ceva asemănător?</h3>
+      <p style="font-size:14px; color:var(--text-secundar)">Spune-ne ce cauți și îți propunem proprietăți înainte să ajungă pe site.</p>
+      <a class="buton contur" href="contact.html?rol=cautator">Caută-ți casa împreună cu noi</a>
+    </div>
+  </aside>
+</div>
+</div>
 
 <footer class="subsol"><div class="container">
   <div class="subsol-grila">

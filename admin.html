@@ -5,8 +5,12 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Administrare | Full Imobiliare</title>
-<link rel="stylesheet" href="css/stil.css?v=6">
-<link rel="stylesheet" href="css/admin.css?v=6">
+<link rel="icon" href="img/icon/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
+<meta name="theme-color" content="#12294A">
+<link rel="stylesheet" href="css/stil.css?v=7">
+<link rel="stylesheet" href="css/admin.css?v=7">
 <script>
 /* Diagnostic vizibil: daca un script nu se incarca sau arunca o eroare, apare o banda rosie jos. */
 window.addEventListener("error", function (e) {
@@ -27,10 +31,18 @@ window.addEventListener("error", function (e) {
 </head>
 <body class="fundal-admin">
 
+<!-- Marca Cheia-F (geometria din marca-master, contur unic); refolosită prin <use> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <mask id="m-cheie"><rect width="1000" height="1000" fill="white"/><path fill-rule="evenodd" fill="black" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></mask>
+    <symbol id="marca-cheie" viewBox="0 0 1000 1000"><rect width="1000" height="1000" rx="180" fill="currentColor" mask="url(#m-cheie)"/></symbol>
+  </defs>
+</svg>
+
 <!-- ===== ECRAN LOGIN ===== -->
 <div id="ecran-login" class="login-invelis">
   <div class="login-panou">
-    <div class="login-sigla"><span class="sigla-marca"></span></div>
+    <div class="login-sigla"><svg class="sigla-marca" style="width:56px;height:56px" aria-hidden="true"><use href="#marca-cheie"/></svg></div>
     <h1>Panou de administrare</h1>
     <p class="login-sub">Full Imobiliare · acces doar pentru echipă</p>
     <form class="formular" id="formular-login">
@@ -48,10 +60,11 @@ window.addEventListener("error", function (e) {
 <div class="admin-schema">
 
   <aside class="bara-laterala">
-    <a class="bara-sigla" href="admin.html"><span class="sigla-marca"></span><span>FULL IMOBILIARE<em>Panou de administrare</em></span></a>
+    <a class="bara-sigla" href="admin.html"><svg class="sigla-marca" aria-hidden="true"><use href="#marca-cheie"/></svg><span><span class="sigla-text">FULL IMOBILIARE</span><em>Panou de administrare</em></span></a>
     <p class="bara-eticheta">Conținut</p>
     <nav class="bara-nav">
-      <button class="nav-el activ" id="nav-anunturi" type="button">Anunțuri <span class="nav-numar" id="numar-anunturi"></span></button>
+      <button class="nav-el activ" id="nav-anunturi" type="button">Proprietăți <span class="nav-numar" id="numar-anunturi"></span></button>
+      <button class="nav-el" id="nav-solicitari" type="button">Solicitări <span class="nav-numar" id="numar-solicitari"></span></button>
       <button class="nav-el" id="nav-blog" type="button">Blog <span class="nav-numar" id="numar-articole"></span></button>
       <button class="nav-el" id="nav-servicii" type="button">Servicii <span class="nav-numar" id="numar-servicii"></span></button>
     </nav>
@@ -64,10 +77,10 @@ window.addEventListener("error", function (e) {
 
   <div class="admin-continut">
 
-    <!-- ===== ANUNȚURI: listă ===== -->
+    <!-- ===== PROPRIETĂȚI: listă ===== -->
     <main id="vedere-lista">
       <div class="admin-cap">
-        <div><h2>Anunțuri</h2><p class="rezultate-info" id="admin-contor"></p></div>
+        <div><h2>Proprietăți</h2><p class="rezultate-info" id="admin-contor"></p></div>
         <div class="admin-unelte">
           <input type="search" id="admin-cauta" placeholder="Caută titlu, zonă, REF...">
           <select id="admin-filtru-status">
@@ -76,7 +89,7 @@ window.addEventListener("error", function (e) {
             <option value="rezervat">Rezervate</option>
             <option value="vandut">Vândute</option>
           </select>
-          <button class="buton-principal" id="buton-nou" type="button">+ Anunț nou</button>
+          <button class="buton-principal" id="buton-nou" type="button">+ Proprietate nouă</button>
         </div>
       </div>
       <div class="tabel-invelis">
@@ -88,11 +101,11 @@ window.addEventListener("error", function (e) {
       <p class="nota-demo">Datele se salvează local în acest browser (mediu de demonstrație); la integrarea Supabase, aceleași operațiuni merg în baza de date reală. <button class="buton-text" id="buton-reset" type="button">Resetează datele demo</button></p>
     </main>
 
-    <!-- ===== ANUNȚURI: editor (două coloane) ===== -->
+    <!-- ===== PROPRIETĂȚI: editor (două coloane) ===== -->
     <main id="vedere-formular" hidden>
       <div class="admin-cap">
-        <div><h2 id="formular-titlu">Anunț nou</h2><p class="rezultate-info" id="formular-ref"></p></div>
-        <div class="admin-unelte"><button class="buton-secundar" id="buton-inapoi" type="button">← Anunțuri</button></div>
+        <div><h2 id="formular-titlu">Proprietate nouă</h2><p class="rezultate-info" id="formular-ref"></p></div>
+        <div class="admin-unelte"><button class="buton-secundar" id="buton-inapoi" type="button">← Proprietăți</button></div>
       </div>
       <form id="formular-anunt">
         <div class="editor-grila">
@@ -100,7 +113,7 @@ window.addEventListener("error", function (e) {
             <div class="panou sectiune-formular">
               <h3>Informații principale</h3>
               <div class="grila-2">
-                <div class="camp-lat"><label for="f-titlu">Titlu anunț *</label><input id="f-titlu" type="text" required maxlength="120"></div>
+                <div class="camp-lat"><label for="f-titlu">Titlu *</label><input id="f-titlu" type="text" required maxlength="120"></div>
                 <div><label for="f-tranzactie">Tranzacție *</label>
                   <select id="f-tranzactie" required>
                     <option value="vanzare">Vânzare</option>
@@ -109,6 +122,7 @@ window.addEventListener("error", function (e) {
                 <div><label for="f-tip">Tip proprietate *</label>
                   <select id="f-tip" required>
                     <option value="apartament">Apartament</option>
+                    <option value="penthouse">Penthouse</option>
                     <option value="casa">Casă / vilă</option>
                     <option value="teren">Teren</option>
                     <option value="comercial">Spațiu comercial</option>
@@ -121,7 +135,7 @@ window.addEventListener("error", function (e) {
               </div>
             </div>
             <div class="panou sectiune-formular">
-              <h3>Specificații</h3>
+              <h3>Caracteristici</h3>
               <div class="grila-3">
                 <div><label for="f-suprafata">Suprafață (mp)</label><input id="f-suprafata" type="number" min="1"></div>
                 <div><label for="f-camere">Camere</label><input id="f-camere" type="number" min="0"></div>
@@ -134,7 +148,7 @@ window.addEventListener("error", function (e) {
                     <option value="">Nespecificat</option>
                     <option value="decomandat">Decomandat</option>
                     <option value="semidecomandat">Semidecomandat</option>
-                    <option value="nedecomandat">Nedecomandat</option>
+                    <option value="comandat">Comandat</option>
                     <option value="circular">Circular</option>
                   </select></div>
                 <div><label for="f-certificat">Certificat energetic</label>
@@ -143,7 +157,12 @@ window.addEventListener("error", function (e) {
                     <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option>
                   </select></div>
               </div>
-              <div style="margin-top:14px"><label for="f-dotari">Dotări (separate prin virgulă)</label><input id="f-dotari" type="text" placeholder="Parcare, Balcon, Centrală proprie, AC"></div>
+            </div>
+            <div class="panou sectiune-formular">
+              <h3>Dotări</h3>
+              <p class="nota-camp" style="margin:-6px 0 14px 0">Bifele se schimbă după tipul de proprietate ales mai sus.</p>
+              <div class="bife-grupuri" id="f-dotari"></div>
+              <div style="margin-top:16px"><label for="f-dotari-altele">Alte dotări (text liber, separate prin virgulă)</label><input id="f-dotari-altele" type="text" placeholder="Ce nu există în listă"></div>
             </div>
             <div class="panou sectiune-formular">
               <h3>Descriere</h3>
@@ -151,10 +170,8 @@ window.addEventListener("error", function (e) {
             </div>
             <div class="panou sectiune-formular">
               <h3>Fotografii</h3>
-              <label for="f-poze">Adresele imaginilor, câte una pe rând (prima e fotografia principală)</label>
-              <textarea id="f-poze" rows="4" placeholder="img/demo/living-modern.png"></textarea>
-              <div class="poze-previzualizare" id="poze-previzualizare"></div>
-              <p class="nota-camp">Încărcarea directă de fișiere se activează la integrarea Supabase Storage.</p>
+              <div id="f-poze"></div>
+              <p class="nota-camp">Fotografiile se redimensionează automat în browser. În mediul de demonstrație se salvează local; la integrare merg în Supabase Storage.</p>
             </div>
           </div>
           <aside class="editor-lateral">
@@ -162,12 +179,13 @@ window.addEventListener("error", function (e) {
               <h3>Publicare</h3>
               <label for="f-status">Status</label>
               <select id="f-status">
-                <option value="activ">Activ</option>
+                <option value="activ">Activ (vizibil pe site)</option>
                 <option value="rezervat">Rezervat</option>
                 <option value="vandut">Vândut</option>
               </select>
+              <p class="nota-camp" id="formular-sursa" hidden></p>
               <div class="rail-actiuni">
-                <button class="buton-principal" type="submit">Salvează anunțul</button>
+                <button class="buton-principal" type="submit" id="buton-salveaza">Salvează proprietatea</button>
                 <button class="buton-secundar" type="button" id="buton-renunta">Renunță</button>
               </div>
             </div>
@@ -175,7 +193,7 @@ window.addEventListener("error", function (e) {
               <h3>Localizare pe hartă</h3>
               <label for="f-adresa">Adresă (stradă + oraș)</label>
               <input id="f-adresa" type="text" placeholder="Strada Avionului, București">
-              <p class="nota-camp">Pinul de pe harta anunțului se așază pe această adresă.</p>
+              <p class="nota-camp">Pinul de pe harta proprietății se așază pe această adresă.</p>
             </div>
             <div class="panou">
               <h3>Agent responsabil</h3>
@@ -185,6 +203,46 @@ window.addEventListener("error", function (e) {
           </aside>
         </div>
       </form>
+    </main>
+
+    <!-- ===== SOLICITĂRI: listă ===== -->
+    <main id="vedere-solicitari" hidden>
+      <div class="admin-cap">
+        <div><h2>Solicitări</h2><p class="rezultate-info" id="solicitari-contor"></p></div>
+        <div class="admin-unelte">
+          <select id="solicitari-filtru-rol">
+            <option value="">Proprietari și căutători</option>
+            <option value="proprietar">Doar proprietari (listare)</option>
+            <option value="cautator">Doar căutători</option>
+          </select>
+          <select id="solicitari-filtru-status">
+            <option value="noua">Doar noi</option>
+            <option value="">Toate statusurile</option>
+            <option value="aprobata">Aprobate</option>
+            <option value="tratata">Tratate</option>
+            <option value="respinsa">Respinse</option>
+          </select>
+        </div>
+      </div>
+      <div class="tabel-invelis">
+        <table class="tabel-admin">
+          <thead><tr><th>Ref</th><th>Primită</th><th>Tip</th><th>Persoană</th><th>Rezumat</th><th>Status</th><th class="col-actiuni">Acțiuni</th></tr></thead>
+          <tbody id="solicitari-tbody"></tbody>
+        </table>
+      </div>
+      <p class="nota-demo">Solicitările vin din pagina publică de Contact. O solicitare de proprietar nu apare niciodată pe site de la sine: devine proprietate doar după „Aprobă și publică".</p>
+    </main>
+
+    <!-- ===== SOLICITĂRI: detaliu ===== -->
+    <main id="vedere-solicitare" hidden>
+      <div class="admin-cap">
+        <div><h2 id="solicitare-titlu">Solicitare</h2><p class="rezultate-info" id="solicitare-meta"></p></div>
+        <div class="admin-unelte"><button class="buton-secundar" id="buton-solicitare-inapoi" type="button">← Solicitări</button></div>
+      </div>
+      <div class="editor-grila">
+        <div class="editor-principal" id="solicitare-continut"></div>
+        <aside class="editor-lateral" id="solicitare-actiuni"></aside>
+      </div>
     </main>
 
     <!-- ===== BLOG: listă ===== -->
@@ -294,7 +352,8 @@ window.addEventListener("error", function (e) {
   </div>
 </dialog>
 
-<script src="js/date-demo.js?v=6"></script>
-<script src="js/admin.js?v=6"></script>
+<script src="js/date-demo.js?v=7"></script>
+<script src="js/comun.js?v=7"></script>
+<script src="js/admin.js?v=7"></script>
 </body>
 </html>

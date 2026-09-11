@@ -2,19 +2,24 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Contact | Full Imobiliare</title>
-<meta name="description" content="Contactează Full Imobiliare: telefon, WhatsApp sau formular. Agenție imobiliară în București și Ilfov, din 1993.">
-<link rel="stylesheet" href="css/stil.css">
+<meta name="description" content="Listează proprietatea cu noi sau spune-ne ce cauți. Full Imobiliare, agenție imobiliară în București și Ilfov, din 1993: telefon, WhatsApp, formular.">
+<link rel="icon" href="img/icon/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
+<meta name="theme-color" content="#12294A">
+<link rel="stylesheet" href="css/stil.css?v=7">
+
 </head>
 <body>
 
 <header class="antet"><div class="container antet-inner">
-  <a class="sigla" href="index.html"><span class="sigla-marca"></span>FULL IMOBILIARE</a>
-  <nav class="nav">
+  <a class="sigla" href="index.html" aria-label="Full Imobiliare, pagina principală"><svg class="sigla-marca" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false"><defs><mask id="m-antet"><rect width="1000" height="1000" fill="white"/><path fill-rule="evenodd" fill="black" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></mask></defs><rect width="1000" height="1000" rx="180" fill="currentColor" mask="url(#m-antet)"/></svg><span class="sigla-text">FULL IMOBILIARE</span></a>
+  <nav class="nav" aria-label="Meniu principal">
     <a href="index.html">Acasă</a>
-    <a href="anunturi.html">Anunțuri</a>
+    <a href="proprietati.html">Proprietăți</a>
     <a href="servicii.html">Servicii</a>
     <a href="despre.html">Despre</a>
     <a href="blog.html">Blog</a>
@@ -23,37 +28,214 @@
 </div></header>
 
 <section class="sectiune"><div class="container">
+  <p class="eticheta-mica">Contact</p>
   <div class="sectiune-cap"><h2>Hai să vorbim despre proprietatea ta</h2></div>
+  <div class="contact-direct">
+    <a href="tel:+40000000000">Telefon: [DE COMPLETAT]</a>
+    <a href="https://wa.me/40000000000" rel="noopener" target="_blank">WhatsApp</a>
+    <a href="mailto:office@fullimobiliare.ro">office@fullimobiliare.ro</a>
+    <span>Program: [DE COMPLETAT]</span>
+  </div>
+
+  <div class="rol-comutator" role="tablist" aria-label="Alege tipul solicitării">
+    <button class="rol-card activ" type="button" role="tab" data-rol="proprietar" aria-selected="true" aria-controls="sectiune-proprietar">
+      <span class="rol-titlu">Sunt proprietar</span>
+      <span class="rol-sub">Listează proprietatea cu noi</span>
+    </button>
+    <button class="rol-card" type="button" role="tab" data-rol="cautator" aria-selected="false" aria-controls="sectiune-cautator">
+      <span class="rol-titlu">Caut o proprietate</span>
+      <span class="rol-sub">Caută-ți casa împreună cu noi</span>
+    </button>
+  </div>
+
   <div class="grila-contact">
-    <div class="panou">
-      <h3 style="color:var(--brand); margin-bottom:14px">Scrie-ne</h3>
-      <form class="formular" onsubmit="event.preventDefault(); alert('Formularul se conectează la Supabase în faza de integrare.');">
-        <div><label for="c-nume">Numele tău</label><input id="c-nume" type="text" autocomplete="name" required></div>
-        <div><label for="c-telefon">Telefon</label><input id="c-telefon" type="tel" autocomplete="tel" required></div>
-        <div><label for="c-email">Email (opțional)</label><input id="c-email" type="email" autocomplete="email"></div>
-        <div><label for="c-mesaj">Cu ce te putem ajuta?</label><textarea id="c-mesaj" rows="5" placeholder="Vânzare, cumpărare, închiriere, evaluare..."></textarea></div>
-        <button type="submit">Trimite mesajul</button>
-        <p style="font-size:12.5px; color:var(--text-secundar)">Prin trimitere ești de acord cu politica de confidențialitate. Mesajele ajung la [EMAIL - DE COMPLETAT].</p>
-      </form>
+    <div>
+
+      <!-- ===== PROPRIETAR: listează proprietatea ===== -->
+      <div class="panou" id="sectiune-proprietar" role="tabpanel">
+        <div class="formular-cap">
+          <h3>Listează proprietatea cu noi</h3>
+          <p>Completezi datele proprietății, cu fotografiile tale. Un consultant te sună, verifică detaliile și abia apoi publicăm proprietatea. Nimic nu apare pe site fără acordul tău.</p>
+        </div>
+        <form class="formular" id="formular-proprietar">
+          <fieldset class="bloc-formular">
+            <legend>Datele tale</legend>
+            <div class="grila-2">
+              <div><label for="p-nume">Nume și prenume *</label><input id="p-nume" type="text" autocomplete="name" required></div>
+              <div><label for="p-telefon">Telefon *</label><input id="p-telefon" type="tel" autocomplete="tel" required></div>
+              <div class="camp-lat"><label for="p-email">Email</label><input id="p-email" type="email" autocomplete="email"></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="bloc-formular">
+            <legend>Proprietatea</legend>
+            <div class="grila-2">
+              <div><label for="p-tranzactie">Vreau să *</label>
+                <select id="p-tranzactie" required>
+                  <option value="vanzare">Vând</option>
+                  <option value="inchiriere">Închiriez</option>
+                </select></div>
+              <div><label for="p-tip">Tip proprietate *</label>
+                <select id="p-tip" required>
+                  <option value="apartament">Apartament</option>
+                  <option value="penthouse">Penthouse</option>
+                  <option value="casa">Casă / vilă</option>
+                  <option value="teren">Teren</option>
+                  <option value="comercial">Spațiu comercial</option>
+                  <option value="birou">Birou</option>
+                </select></div>
+              <div><label for="p-oras">Oraș / județ *</label><input id="p-oras" type="text" value="București" required></div>
+              <div><label for="p-zona">Zonă / cartier *</label><input id="p-zona" type="text" placeholder="Ex.: Aviației" required></div>
+              <div class="camp-lat"><label for="p-adresa">Strada (opțional, nu se publică fără acordul tău)</label><input id="p-adresa" type="text" placeholder="Strada, număr"></div>
+              <div><label for="p-pret">Preț dorit (EUR) *</label><input id="p-pret" type="number" min="1" inputmode="numeric" required></div>
+              <div class="camp-bifat" style="align-self:end"><label><input id="p-negociabil" type="checkbox"> Prețul este negociabil</label></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="bloc-formular">
+            <legend>Caracteristici</legend>
+            <div class="grila-3">
+              <div><label for="p-suprafata">Suprafață (mp)</label><input id="p-suprafata" type="number" min="1" inputmode="numeric"></div>
+              <div><label for="p-camere">Camere</label><input id="p-camere" type="number" min="0" inputmode="numeric"></div>
+              <div><label for="p-bai">Băi</label><input id="p-bai" type="number" min="0" inputmode="numeric"></div>
+              <div><label for="p-etaj">Etaj</label><input id="p-etaj" type="number" inputmode="numeric"></div>
+              <div><label for="p-etaje">Total etaje</label><input id="p-etaje" type="number" min="0" inputmode="numeric"></div>
+              <div><label for="p-an">An construcție</label><input id="p-an" type="number" min="1800" max="2100" inputmode="numeric"></div>
+              <div><label for="p-compartimentare">Compartimentare</label>
+                <select id="p-compartimentare">
+                  <option value="">Nespecificat</option>
+                  <option value="decomandat">Decomandat</option>
+                  <option value="semidecomandat">Semidecomandat</option>
+                  <option value="comandat">Comandat</option>
+                  <option value="circular">Circular</option>
+                </select></div>
+              <div><label for="p-certificat">Certificat energetic</label>
+                <select id="p-certificat">
+                  <option value="">Nu știu / nu am încă</option>
+                  <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option>
+                </select></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="bloc-formular">
+            <legend>Dotări</legend>
+            <div class="bife-grupuri" id="p-dotari"></div>
+            <div><label for="p-dotari-altele">Alte dotări (opțional)</label><input id="p-dotari-altele" type="text" placeholder="Ce nu ai găsit în listă, separat prin virgulă"></div>
+          </fieldset>
+
+          <fieldset class="bloc-formular">
+            <legend>Descriere</legend>
+            <div><label for="p-descriere">Spune-ne câteva cuvinte despre proprietate</label><textarea id="p-descriere" rows="5" placeholder="Orientare, stare, vecinătăți, de ce o vinzi sau o închiriezi, când e disponibilă..."></textarea></div>
+          </fieldset>
+
+          <fieldset class="bloc-formular">
+            <legend>Fotografii</legend>
+            <div id="p-poze"></div>
+          </fieldset>
+
+          <div class="consimtamant">
+            <label><input id="p-acord" type="checkbox" required> Sunt de acord ca Full Imobiliare să mă contacteze în legătură cu această solicitare și am citit <a href="#" rel="noopener">politica de confidențialitate</a>. *</label>
+          </div>
+          <p class="formular-eroare" id="p-eroare" hidden></p>
+          <div><button type="submit">Trimite solicitarea</button></div>
+          <p class="nota">Câmpurile marcate cu * sunt obligatorii. Proprietatea nu se publică automat: un consultant o verifică împreună cu tine înainte.</p>
+        </form>
+      </div>
+
+      <!-- ===== CĂUTĂTOR: caută-ți casa ===== -->
+      <div class="panou" id="sectiune-cautator" role="tabpanel" hidden>
+        <div class="formular-cap">
+          <h3>Caută-ți casa împreună cu noi</h3>
+          <p>Spune-ne ce cauți și îți propunem proprietăți potrivite, inclusiv dintre cele care nu au ajuns încă pe site.</p>
+        </div>
+        <form class="formular" id="formular-cautator">
+          <fieldset class="bloc-formular">
+            <legend>Datele tale</legend>
+            <div class="grila-2">
+              <div><label for="c-nume">Nume și prenume *</label><input id="c-nume" type="text" autocomplete="name" required></div>
+              <div><label for="c-telefon">Telefon *</label><input id="c-telefon" type="tel" autocomplete="tel" required></div>
+              <div class="camp-lat"><label for="c-email">Email</label><input id="c-email" type="email" autocomplete="email"></div>
+            </div>
+          </fieldset>
+          <fieldset class="bloc-formular">
+            <legend>Ce cauți</legend>
+            <div class="grila-2">
+              <div><label for="c-tranzactie">Vreau să *</label>
+                <select id="c-tranzactie" required>
+                  <option value="vanzare">Cumpăr</option>
+                  <option value="inchiriere">Închiriez</option>
+                </select></div>
+              <div><label for="c-tip">Tip proprietate *</label>
+                <select id="c-tip" required>
+                  <option value="apartament">Apartament</option>
+                  <option value="penthouse">Penthouse</option>
+                  <option value="casa">Casă / vilă</option>
+                  <option value="teren">Teren</option>
+                  <option value="comercial">Spațiu comercial</option>
+                  <option value="birou">Birou</option>
+                </select></div>
+              <div class="camp-lat"><label for="c-zone">Zone preferate</label><input id="c-zone" type="text" placeholder="Ex.: Aviației, Floreasca, Pipera"></div>
+              <div><label for="c-camere">Număr minim de camere</label><input id="c-camere" type="number" min="0" inputmode="numeric"></div>
+              <div><label for="c-buget">Buget maxim (EUR)</label><input id="c-buget" type="number" min="1" inputmode="numeric"></div>
+              <div class="camp-lat"><label for="c-mesaj">Detalii</label><textarea id="c-mesaj" rows="5" placeholder="Etaj, an construcție, parcare, termen, orice contează pentru tine..."></textarea></div>
+            </div>
+          </fieldset>
+          <div class="consimtamant">
+            <label><input id="c-acord" type="checkbox" required> Sunt de acord ca Full Imobiliare să mă contacteze în legătură cu această solicitare și am citit <a href="#" rel="noopener">politica de confidențialitate</a>. *</label>
+          </div>
+          <p class="formular-eroare" id="c-eroare" hidden></p>
+          <div><button type="submit">Trimite solicitarea</button></div>
+          <p class="nota">Câmpurile marcate cu * sunt obligatorii.</p>
+        </form>
+      </div>
+
     </div>
+
     <div>
       <div class="panou">
-        <h3 style="color:var(--brand); margin-bottom:10px">Direct</h3>
-        <a class="buton telefon" href="tel:+40000000000">Telefon: [DE COMPLETAT]</a>
-        <a class="buton whatsapp" href="https://wa.me/40000000000">WhatsApp</a>
-        <p style="margin-top:14px; font-size:14px; color:var(--text-secundar)">Program: [DE COMPLETAT]<br>Sediu: [ADRESĂ - DE COMPLETAT]</p>
+        <h3>Cum decurge</h3>
+        <ol style="padding-left:20px; color:var(--text-secundar); font-size:14.5px; display:grid; gap:10px">
+          <li><b style="color:var(--text)">Trimiți solicitarea</b>, cu datele și fotografiile tale.</li>
+          <li><b style="color:var(--text)">Te sună un consultant</b> în cel mai scurt timp, verifică detaliile și stabiliți împreună prețul și strategia.</li>
+          <li><b style="color:var(--text)">Publicăm proprietatea</b> pe site și pe portalurile partenere, cu consultanță juridică gratuită până la semnare.</li>
+        </ol>
       </div>
       <div class="panou">
-        <h3 style="color:var(--brand); margin-bottom:10px">Sediul nostru</h3>
-        <div class="harta-slot" style="height:220px">Hartă Google Maps: se integrează după confirmarea adresei</div>
+        <h3>Sediul nostru</h3>
+        <p style="font-size:14px; color:var(--text-secundar)">Bd. Dimitrie Cantemir nr. 19, bl. 5, sc. 1, parter, ap. 2, Sector 4, București</p>
+        <div class="harta-slot" style="height:220px; margin-top:12px">Harta se integrează după confirmarea adresei de birou</div>
       </div>
     </div>
   </div>
 </div></section>
 
 <footer class="subsol"><div class="container">
-  <div class="subsol-legal"><span>© 2026 Full Imobiliare · [DATE FIRMĂ - DE COMPLETAT]</span><span>fullimobiliare.ro</span></div>
+  <div class="subsol-grila">
+    <div>
+      <a class="sigla" href="index.html" aria-label="Full Imobiliare"><svg class="sigla-marca" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false"><defs><mask id="m-subsol"><rect width="1000" height="1000" fill="white"/><path fill-rule="evenodd" fill="black" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></mask></defs><rect width="1000" height="1000" rx="180" fill="currentColor" mask="url(#m-subsol)"/></svg><span class="sigla-text">FULL IMOBILIARE</span></a>
+      <p>Agenție imobiliară în București și Ilfov, din 1993. Servicii complete de vânzare, închiriere și consultanță, cu asistență juridică gratuită.</p>
+      <p style="margin-top:10px">Telefon: [DE COMPLETAT]<br>Email: <a href="mailto:office@fullimobiliare.ro" style="display:inline; padding:0">office@fullimobiliare.ro</a><br>Program: [DE COMPLETAT]</p>
+      <div class="taietura" aria-hidden="true"></div>
+    </div>
+    <div>
+      <h4>Navigare</h4>
+      <a href="proprietati.html">Proprietăți</a><a href="servicii.html">Servicii</a><a href="despre.html">Despre</a><a href="blog.html">Blog</a><a href="contact.html">Contact</a><a href="contact.html?rol=proprietar">Listează proprietatea cu noi</a>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <a href="#">Confidențialitate</a><a href="#">Cookie-uri</a><a href="#">Termeni și condiții</a><a href="https://anpc.ro/ce-este-sal/" rel="noopener" target="_blank">ANPC - SAL</a><a href="https://ec.europa.eu/consumers/odr" rel="noopener" target="_blank">ANPC - SOL</a>
+    </div>
+    <div>
+      <h4>Date firmă</h4>
+      <p>Full Impex S.R.L.<br>CUI: 3901401<br>Reg. Com.: J40/11528/1993<br>Sediu: Bd. Dimitrie Cantemir nr. 19, bl. 5, sc. 1, parter, ap. 2, Sector 4, București</p>
+    </div>
+  </div>
+  <div class="subsol-legal"><span>© 2026 Full Imobiliare. Toate drepturile rezervate.</span><span>fullimobiliare.ro</span></div>
 </div></footer>
 
+<script src="js/date-demo.js?v=7"></script>
+<script src="js/comun.js?v=7"></script>
+<script src="js/app.js?v=7"></script>
+<script src="js/contact.js?v=7"></script>
 </body>
 </html>

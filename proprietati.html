@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Blog imobiliar | Full Imobiliare</title>
-<meta name="description" content="Ghiduri și analize despre piața imobiliară din București și Ilfov: cumpărare, vânzare, închiriere, acte, credit.">
+<title>Proprietăți de vânzare și de închiriat în București și Ilfov | Full Imobiliare</title>
+<meta name="description" content="Proprietăți listate de Full Imobiliare: apartamente, penthouse-uri, case, terenuri și spații comerciale în București și Ilfov. Filtrează după tranzacție, tip, preț, camere și zonă.">
 <link rel="icon" href="img/icon/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
@@ -19,18 +19,59 @@
   <a class="sigla" href="index.html" aria-label="Full Imobiliare, pagina principală"><svg class="sigla-marca" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false"><defs><mask id="m-antet"><rect width="1000" height="1000" fill="white"/><path fill-rule="evenodd" fill="black" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></mask></defs><rect width="1000" height="1000" rx="180" fill="currentColor" mask="url(#m-antet)"/></svg><span class="sigla-text">FULL IMOBILIARE</span></a>
   <nav class="nav" aria-label="Meniu principal">
     <a href="index.html">Acasă</a>
-    <a href="proprietati.html">Proprietăți</a>
+    <a href="proprietati.html" class="activ">Proprietăți</a>
     <a href="servicii.html">Servicii</a>
     <a href="despre.html">Despre</a>
-    <a href="blog.html" class="activ">Blog</a>
+    <a href="blog.html">Blog</a>
     <a href="contact.html" class="cta">Contact</a>
   </nav>
 </div></header>
 
 <section class="sectiune"><div class="container">
-  <p class="eticheta-mica">Ghiduri și analize</p>
-  <div class="sectiune-cap"><h2>Blogul Full Imobiliare</h2></div>
-  <div class="grila-blog" id="lista-articole"></div>
+  <div class="sectiune-cap"><h2>Proprietăți listate</h2></div>
+
+  <div class="bara-filtre">
+    <select id="f-tranzactie" aria-label="Tranzacție">
+      <option value="">Vânzare + închiriere</option>
+      <option value="vanzare">De vânzare</option>
+      <option value="inchiriere">De închiriat</option>
+    </select>
+    <select id="f-tip" aria-label="Tip">
+      <option value="">Orice tip</option>
+        <option value="apartament">Apartament</option>
+        <option value="penthouse">Penthouse</option>
+        <option value="casa">Casă / vilă</option>
+        <option value="teren">Teren</option>
+        <option value="comercial">Spațiu comercial</option>
+        <option value="birou">Birou</option>
+    </select>
+    <select id="f-pret" aria-label="Preț">
+      <option value="">Orice preț</option>
+      <option value="0-1000">până în 1.000 € (chirii)</option>
+      <option value="0-100000">până în 100.000 €</option>
+      <option value="100000-200000">100.000 - 200.000 €</option>
+      <option value="200000-300000">200.000 - 300.000 €</option>
+      <option value="300000-">peste 300.000 €</option>
+    </select>
+    <select id="f-camere" aria-label="Camere">
+      <option value="">Orice număr de camere</option>
+      <option value="1">minim 1</option>
+      <option value="2">minim 2</option>
+      <option value="3">minim 3</option>
+      <option value="4">minim 4</option>
+    </select>
+    <select id="f-zona" aria-label="Zonă">
+      <option value="">Toate zonele</option>
+    </select>
+    <select id="f-sortare" aria-label="Sortare">
+      <option value="recente">Cele mai noi</option>
+      <option value="pret-crescator">Preț crescător</option>
+      <option value="pret-descrescator">Preț descrescător</option>
+    </select>
+  </div>
+
+  <p class="rezultate-info" id="rezultate-info"></p>
+  <div class="grila-anunturi" id="lista-anunturi"></div>
 </div></section>
 
 <footer class="subsol"><div class="container">

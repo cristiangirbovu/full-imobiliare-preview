@@ -2,28 +2,23 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Articol | Full Imobiliare</title>
-<link rel="stylesheet" href="css/stil.css?v=6">
-<style>
-.articol-invelis { max-width: 780px; }
-.articol-invelis h1 { font-size: clamp(27px, 3.2vw, 36px); color: var(--brand); line-height: 1.2; }
-.articol-data { margin-top: 10px; font-size: 14px; color: var(--text-secundar); }
-.articol-imagine { margin: 26px 0; border-radius: var(--raza); overflow: hidden; aspect-ratio: 16/9; }
-.articol-imagine img { width: 100%; height: 100%; object-fit: cover; }
-.articol-continut p { font-size: 16.5px; line-height: 1.75; color: var(--text); margin-bottom: 18px; max-width: 68ch; }
-.articol-continut h2 { font-size: 21px; color: var(--brand); margin: 30px 0 12px 0; }
-.articol-inapoi { display: inline-block; margin-top: 26px; font-weight: 700; color: var(--accent); font-size: 14.5px; }
-</style>
+<link rel="icon" href="img/icon/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
+<meta name="theme-color" content="#12294A">
+<link rel="stylesheet" href="css/stil.css?v=7">
+
 </head>
 <body>
 
 <header class="antet"><div class="container antet-inner">
-  <a class="sigla" href="index.html"><span class="sigla-marca"></span>FULL IMOBILIARE</a>
-  <nav class="nav">
+  <a class="sigla" href="index.html" aria-label="Full Imobiliare, pagina principală"><svg class="sigla-marca" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false"><defs><mask id="m-antet"><rect width="1000" height="1000" fill="white"/><path fill-rule="evenodd" fill="black" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></mask></defs><rect width="1000" height="1000" rx="180" fill="currentColor" mask="url(#m-antet)"/></svg><span class="sigla-text">FULL IMOBILIARE</span></a>
+  <nav class="nav" aria-label="Meniu principal">
     <a href="index.html">Acasă</a>
-    <a href="anunturi.html">Anunțuri</a>
+    <a href="proprietati.html">Proprietăți</a>
     <a href="servicii.html">Servicii</a>
     <a href="despre.html">Despre</a>
     <a href="blog.html" class="activ">Blog</a>
@@ -40,10 +35,32 @@
 </div></section>
 
 <footer class="subsol"><div class="container">
-  <div class="subsol-legal"><span>© 2026 Full Imobiliare · [DATE FIRMĂ - DE COMPLETAT]</span><span>fullimobiliare.ro</span></div>
+  <div class="subsol-grila">
+    <div>
+      <a class="sigla" href="index.html" aria-label="Full Imobiliare"><svg class="sigla-marca" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false"><defs><mask id="m-subsol"><rect width="1000" height="1000" fill="white"/><path fill-rule="evenodd" fill="black" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></mask></defs><rect width="1000" height="1000" rx="180" fill="currentColor" mask="url(#m-subsol)"/></svg><span class="sigla-text">FULL IMOBILIARE</span></a>
+      <p>Agenție imobiliară în București și Ilfov, din 1993. Servicii complete de vânzare, închiriere și consultanță, cu asistență juridică gratuită.</p>
+      <p style="margin-top:10px">Telefon: [DE COMPLETAT]<br>Email: <a href="mailto:office@fullimobiliare.ro" style="display:inline; padding:0">office@fullimobiliare.ro</a><br>Program: [DE COMPLETAT]</p>
+      <div class="taietura" aria-hidden="true"></div>
+    </div>
+    <div>
+      <h4>Navigare</h4>
+      <a href="proprietati.html">Proprietăți</a><a href="servicii.html">Servicii</a><a href="despre.html">Despre</a><a href="blog.html">Blog</a><a href="contact.html">Contact</a><a href="contact.html?rol=proprietar">Listează proprietatea cu noi</a>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <a href="#">Confidențialitate</a><a href="#">Cookie-uri</a><a href="#">Termeni și condiții</a><a href="https://anpc.ro/ce-este-sal/" rel="noopener" target="_blank">ANPC - SAL</a><a href="https://ec.europa.eu/consumers/odr" rel="noopener" target="_blank">ANPC - SOL</a>
+    </div>
+    <div>
+      <h4>Date firmă</h4>
+      <p>Full Impex S.R.L.<br>CUI: 3901401<br>Reg. Com.: J40/11528/1993<br>Sediu: Bd. Dimitrie Cantemir nr. 19, bl. 5, sc. 1, parter, ap. 2, Sector 4, București</p>
+    </div>
+  </div>
+  <div class="subsol-legal"><span>© 2026 Full Imobiliare. Toate drepturile rezervate.</span><span>fullimobiliare.ro</span></div>
 </div></footer>
 
-<script src="js/date-demo.js?v=6"></script>
-<script src="js/app.js?v=6"></script>
+<script src="js/date-demo.js?v=7"></script>
+<script src="js/comun.js?v=7"></script>
+<script src="js/app.js?v=7"></script>
+
 </body>
 </html>

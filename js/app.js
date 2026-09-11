@@ -1,4 +1,4 @@
-// FULL IMOBILIARE — app.js: randare anunțuri, filtre, sortare, pagină de detaliu.
+// FULL IMOBILIARE — app.js: randare proprietăți, filtre, sortare, pagină de detaliu, blog, servicii.
 // Sursa de date: localStorage (dacă adminul demo a modificat ceva), altfel ANUNTURI (date-demo.js).
 // La integrare, această funcție se rescrie pe Supabase; restul interfeței rămâne neschimbat.
 const DATE_ANUNTURI = (function () {
@@ -43,7 +43,7 @@ function cardAnunt(a, index) {
     a.suprafata_mp ? `${a.suprafata_mp} mp` : null,
     a.etaj !== null && a.etaj !== undefined ? `etaj ${a.etaj}/${a.etaje_total}` : (a.etaje_total ? `P+${a.etaje_total - 1}` : null)
   ].filter(Boolean).map(s => `<span>${s}</span>`).join("");
-  return `<a class="card-anunt" style="--i:${index || 0}" href="anunt.html?id=${a.id_intern}">
+  return `<a class="card-anunt" style="--i:${index || 0}" href="proprietate.html?id=${a.id_intern}">
     <div class="card-foto"><img src="${a.poze[0]}" alt="${a.titlu}"><div class="insigne">${insigne(a)}</div></div>
     <div class="card-corp">
       <div class="card-pret">${formatPret(a)}${a.negociabil ? '<span class="negociabil">negociabil</span>' : ""}</div>
@@ -55,7 +55,7 @@ function cardAnunt(a, index) {
   </a>`;
 }
 
-// Acasă: cele mai recente 3 anunțuri active
+// Acasă: cele mai recente 3 proprietăți active
 function randeazaRecente(idElement) {
   const el = document.getElementById(idElement);
   if (!el) return;
@@ -64,7 +64,7 @@ function randeazaRecente(idElement) {
   el.innerHTML = recente.map(cardAnunt).join("");
 }
 
-// Anunțuri: filtre + sortare
+// Proprietăți: filtre + sortare
 function randeazaLista() {
   const el = document.getElementById("lista-anunturi");
   if (!el) return;
@@ -89,9 +89,9 @@ function randeazaLista() {
   else lista.sort((x, y) => y.publicat_la.localeCompare(x.publicat_la));
 
   document.getElementById("rezultate-info").textContent =
-    lista.length === 1 ? "1 anunț găsit" : `${lista.length} anunțuri găsite`;
+    lista.length === 1 ? "1 proprietate găsită" : `${lista.length} proprietăți găsite`;
   el.innerHTML = lista.length ? lista.map(cardAnunt).join("")
-    : `<p style="color:var(--text-secundar)">Niciun anunț nu corespunde filtrelor alese.</p>`;
+    : `<p style="color:var(--text-secundar)">Nicio proprietate nu corespunde filtrelor alese.</p>`;
 }
 
 function populeazaZone() {
@@ -102,7 +102,7 @@ function populeazaZone() {
   });
 }
 
-// Pagina de anunț
+// Pagina proprietății
 function randeazaDetaliu() {
   const radacina = document.getElementById("detaliu-anunt");
   if (!radacina) return;
@@ -127,14 +127,21 @@ function randeazaDetaliu() {
   const rand = (eticheta, valoare) => valoare === null || valoare === undefined || valoare === "" ? "" :
     `<tr><td>${eticheta}</td><td><b>${valoare}</b></td></tr>`;
   document.getElementById("d-spec").innerHTML =
-    rand("Tip proprietate", a.tip) + rand("Tranzacție", a.tranzactie) +
-    rand("Suprafață utilă", a.suprafata_mp ? a.suprafata_mp + " mp" : null) +
+    rand("Tip proprietate", etichetaTip(a.tip)) + rand("Tranzacție", a.tranzactie === "inchiriere" ? "Închiriere" : "Vânzare") +
+    rand(a.tip === "teren" ? "Suprafață teren" : "Suprafață utilă", a.suprafata_mp ? a.suprafata_mp + " mp" : null) +
     rand("Camere", a.camere) + rand("Băi", a.bai) +
-    rand("Etaj", a.etaj !== null ? `${a.etaj} / ${a.etaje_total}` : null) +
-    rand("An construcție", a.an_constructie) + rand("Compartimentare", a.compartimentare) +
+    rand("Etaj", a.etaj !== null && a.etaj !== undefined ? `${a.etaj} / ${a.etaje_total}` : null) +
+    rand("An construcție", a.an_constructie) + rand("Compartimentare", a.compartimentare ? etichetaCompartimentare(a.compartimentare) : null) +
     rand("Certificat energetic", a.certificat_energetic ? "Clasa " + a.certificat_energetic : null);
-  document.getElementById("d-dotari").innerHTML =
-    a.dotari.map(d => `<span class="dotare">${d}</span>`).join("");
+  // Dotările: bifele grupate pe categorii + textul liber „Altele" din admin.
+  const grupuri = grupeazaDotari(a.dotari || []);
+  if (a.dotari_altele) {
+    const altele = grupuri.find(g => g.titlu === "Altele") || (grupuri.push({ titlu: "Altele", elemente: [] }), grupuri[grupuri.length - 1]);
+    a.dotari_altele.split(",").map(s => s.trim()).filter(Boolean).forEach(s => altele.elemente.push(s));
+  }
+  document.getElementById("d-dotari").innerHTML = grupuri.length ? grupuri.map(g => `
+    <div class="dotari-grup"><h4>${g.titlu}</h4><div class="dotari-lista">${g.elemente.map(d => `<span class="dotare">${escapeHtml(d)}</span>`).join("")}</div></div>`).join("")
+    : `<p style="color:var(--text-secundar); font-size:14.5px">Dotările se comunică la vizionare.</p>`;
 
   // Harta cu pin: embed Google Maps fără cheie API, pe baza adresei text din anunț.
   const harta = document.getElementById("d-harta");
@@ -212,6 +219,12 @@ function schimbaFotoPrincipala(src) {
 document.addEventListener("DOMContentLoaded", () => {
   randeazaRecente("anunturi-recente");
   populeazaZone();
+  // Căutarea din hero ajunge aici prin GET (?tranzactie=&tip=): preumplem filtrele înainte de prima randare.
+  const params = new URLSearchParams(location.search);
+  [["tranzactie", "f-tranzactie"], ["tip", "f-tip"], ["zona", "f-zona"]].forEach(([p, id]) => {
+    const el = document.getElementById(id), v = params.get(p);
+    if (el && v && [...el.options].some(o => o.value === v)) el.value = v;
+  });
   randeazaLista();
   randeazaDetaliu();
   randeazaBlog();

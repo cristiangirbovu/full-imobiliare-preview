@@ -2,19 +2,24 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Full Imobiliare | Agenție imobiliară în București și Ilfov, din 1993</title>
-<meta name="description" content="Agenție imobiliară full-service în București și Ilfov, din 1993: vânzări, închirieri, evaluare, cadastru și consultanță juridică gratuită. Anunțuri verificate.">
-<link rel="stylesheet" href="css/stil.css">
+<meta name="description" content="Agenție imobiliară full-service în București și Ilfov, din 1993: vânzări, închirieri, evaluare, cadastru și consultanță juridică gratuită. Proprietăți verificate.">
+<link rel="icon" href="img/icon/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
+<meta name="theme-color" content="#12294A">
+<link rel="stylesheet" href="css/stil.css?v=7">
+
 </head>
 <body>
 
 <header class="antet"><div class="container antet-inner">
-  <a class="sigla" href="index.html"><span class="sigla-marca"></span>FULL IMOBILIARE</a>
-  <nav class="nav">
+  <a class="sigla" href="index.html" aria-label="Full Imobiliare, pagina principală"><svg class="sigla-marca" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false"><defs><mask id="m-antet"><rect width="1000" height="1000" fill="white"/><path fill-rule="evenodd" fill="black" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></mask></defs><rect width="1000" height="1000" rx="180" fill="currentColor" mask="url(#m-antet)"/></svg><span class="sigla-text">FULL IMOBILIARE</span></a>
+  <nav class="nav" aria-label="Meniu principal">
     <a href="index.html" class="activ">Acasă</a>
-    <a href="anunturi.html">Anunțuri</a>
+    <a href="proprietati.html">Proprietăți</a>
     <a href="servicii.html">Servicii</a>
     <a href="despre.html">Despre</a>
     <a href="blog.html">Blog</a>
@@ -25,8 +30,9 @@
 <section class="hero"><div class="container hero-grila">
   <div>
     <h1>Casa ta, tranzacționată cu grijă. Din 1993.</h1>
-    <p class="sub">Agenție full-service în București și Ilfov: evaluare, anunț, contract, cadastru și consultanță juridică gratuită.</p>
-    <form class="cauta" action="anunturi.html" method="get">
+    <div class="taietura" aria-hidden="true"></div>
+    <p class="sub">Agenție full-service în București și Ilfov: evaluare, listare, contract, cadastru și consultanță juridică gratuită.</p>
+    <form class="cauta" action="proprietati.html" method="get">
       <select name="tranzactie" aria-label="Tranzacție">
         <option value="">Vânzare sau închiriere</option>
         <option value="vanzare">De vânzare</option>
@@ -35,12 +41,13 @@
       <select name="tip" aria-label="Tip proprietate">
         <option value="">Orice tip de proprietate</option>
         <option value="apartament">Apartament</option>
+        <option value="penthouse">Penthouse</option>
         <option value="casa">Casă / vilă</option>
         <option value="teren">Teren</option>
         <option value="comercial">Spațiu comercial</option>
         <option value="birou">Birou</option>
       </select>
-      <button type="submit">Caută anunțuri</button>
+      <button type="submit">Caută proprietăți</button>
     </form>
   </div>
   <div class="hero-foto"><img src="img/demo/ansamblu-canal.png" alt="Ansamblu rezidențial la ora albastră, București"></div>
@@ -48,8 +55,8 @@
 
 <section class="sectiune"><div class="container">
   <div class="sectiune-cap">
-    <h2>Cele mai noi anunțuri</h2>
-    <a href="anunturi.html">Vezi toate anunțurile →</a>
+    <h2>Cele mai noi proprietăți</h2>
+    <a href="proprietati.html">Vezi toate proprietățile →</a>
   </div>
   <div class="grila-anunturi aparitie" id="anunturi-recente"></div>
 </div></section>
@@ -62,6 +69,7 @@
   </div>
   <div class="servicii-asimetric aparitie">
     <div class="serviciu-vedeta">
+      <div class="taietura" aria-hidden="true"></div>
       <h3>Consultanță juridică gratuită</h3>
       <p>Fiecare client al agenției beneficiază de verificarea juridică a actelor și de asistență la contract, fără costuri suplimentare. Așa lucrăm din prima zi.</p>
     </div>
@@ -86,30 +94,43 @@
   </div>
 </div></section>
 
+<section class="sectiune" style="padding-top:0"><div class="container">
+  <div class="banda-cta aparitie">
+    <div>
+      <h2>Ești proprietar? Listează proprietatea cu noi.</h2>
+      <p>Completezi formularul în câteva minute, cu fotografiile tale. Un consultant te sună, verifică detaliile și publică proprietatea pe site și pe portalurile partenere.</p>
+    </div>
+    <a class="buton alama" href="contact.html?rol=proprietar">Listează proprietatea</a>
+  </div>
+</div></section>
+
 <footer class="subsol"><div class="container">
   <div class="subsol-grila">
     <div>
-      <h4>Full Imobiliare</h4>
-      <p>Agenție imobiliară în București și Ilfov, din 1993. Servicii complete de vânzare, închiriere și consultanță.</p>
-      <p style="margin-top:10px">Telefon: [DE COMPLETAT]<br>Program: [DE COMPLETAT]</p>
+      <a class="sigla" href="index.html" aria-label="Full Imobiliare"><svg class="sigla-marca" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false"><defs><mask id="m-subsol"><rect width="1000" height="1000" fill="white"/><path fill-rule="evenodd" fill="black" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></mask></defs><rect width="1000" height="1000" rx="180" fill="currentColor" mask="url(#m-subsol)"/></svg><span class="sigla-text">FULL IMOBILIARE</span></a>
+      <p>Agenție imobiliară în București și Ilfov, din 1993. Servicii complete de vânzare, închiriere și consultanță, cu asistență juridică gratuită.</p>
+      <p style="margin-top:10px">Telefon: [DE COMPLETAT]<br>Email: <a href="mailto:office@fullimobiliare.ro" style="display:inline; padding:0">office@fullimobiliare.ro</a><br>Program: [DE COMPLETAT]</p>
+      <div class="taietura" aria-hidden="true"></div>
     </div>
     <div>
       <h4>Navigare</h4>
-      <a href="anunturi.html">Anunțuri</a><a href="servicii.html">Servicii</a><a href="despre.html">Despre</a><a href="blog.html">Blog</a><a href="contact.html">Contact</a>
+      <a href="proprietati.html">Proprietăți</a><a href="servicii.html">Servicii</a><a href="despre.html">Despre</a><a href="blog.html">Blog</a><a href="contact.html">Contact</a><a href="contact.html?rol=proprietar">Listează proprietatea cu noi</a>
     </div>
     <div>
       <h4>Legal</h4>
-      <a href="#">Confidențialitate</a><a href="#">Cookie-uri</a><a href="#">Termeni și condiții</a><a href="#">ANPC - SAL</a><a href="#">ANPC - SOL</a>
+      <a href="#">Confidențialitate</a><a href="#">Cookie-uri</a><a href="#">Termeni și condiții</a><a href="https://anpc.ro/ce-este-sal/" rel="noopener" target="_blank">ANPC - SAL</a><a href="https://ec.europa.eu/consumers/odr" rel="noopener" target="_blank">ANPC - SOL</a>
     </div>
     <div>
       <h4>Date firmă</h4>
-      <p>[DENUMIRE LEGALĂ - DE COMPLETAT]<br>CUI: [DE COMPLETAT]<br>Reg. Com.: [DE COMPLETAT]<br>Sediu: [DE COMPLETAT]</p>
+      <p>Full Impex S.R.L.<br>CUI: 3901401<br>Reg. Com.: J40/11528/1993<br>Sediu: Bd. Dimitrie Cantemir nr. 19, bl. 5, sc. 1, parter, ap. 2, Sector 4, București</p>
     </div>
   </div>
   <div class="subsol-legal"><span>© 2026 Full Imobiliare. Toate drepturile rezervate.</span><span>fullimobiliare.ro</span></div>
 </div></footer>
 
-<script src="js/date-demo.js?v=6"></script>
-<script src="js/app.js?v=6"></script>
+<script src="js/date-demo.js?v=7"></script>
+<script src="js/comun.js?v=7"></script>
+<script src="js/app.js?v=7"></script>
+
 </body>
 </html>
