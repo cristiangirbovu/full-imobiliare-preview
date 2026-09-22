@@ -10,7 +10,7 @@
 <link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
 <meta name="theme-color" content="#12294A">
-<link rel="stylesheet" href="css/stil.css?v=10">
+<link rel="stylesheet" href="css/stil.css?v=11">
 
 </head>
 <body>
@@ -27,53 +27,82 @@
   </nav>
 </div></header>
 
-<section class="sectiune"><div class="container">
+<section class="sectiune sectiune-lista"><div class="container">
   <div class="sectiune-cap"><h2>Proprietăți listate</h2></div>
 
-  <div class="bara-filtre">
-    <select id="f-tranzactie" aria-label="Tranzacție">
-      <option value="">Vânzare + închiriere</option>
-      <option value="vanzare">De vânzare</option>
-      <option value="inchiriere">De închiriat</option>
-    </select>
-    <select id="f-tip" aria-label="Tip">
-      <option value="">Orice tip</option>
-        <option value="apartament">Apartament</option>
-        <option value="penthouse">Penthouse</option>
-        <option value="casa">Casă / vilă</option>
-        <option value="teren">Teren</option>
-        <option value="comercial">Spațiu comercial</option>
-        <option value="birou">Birou</option>
-    </select>
-    <select id="f-pret" aria-label="Preț">
-      <option value="">Orice preț</option>
-      <option value="0-1000">până în 1.000 € (chirii)</option>
-      <option value="0-100000">până în 100.000 €</option>
-      <option value="100000-200000">100.000 - 200.000 €</option>
-      <option value="200000-300000">200.000 - 300.000 €</option>
-      <option value="300000-">peste 300.000 €</option>
-    </select>
-    <select id="f-camere" aria-label="Camere">
-      <option value="">Orice număr de camere</option>
-      <option value="1">minim 1</option>
-      <option value="2">minim 2</option>
-      <option value="3">minim 3</option>
-      <option value="4">minim 4</option>
-    </select>
-    <select id="f-zona" aria-label="Zonă">
-      <option value="">Toate zonele</option>
-    </select>
-    <select id="f-sortare" aria-label="Sortare">
-      <option value="recente">Cele mai noi</option>
-      <option value="pret-crescator">Preț crescător</option>
-      <option value="pret-descrescator">Preț descrescător</option>
-    </select>
-  </div>
+  <!-- Filtre (v2, 22.09.2026): decizia principală ca butoane, căutare text, chip-uri, preț liber, stare în URL -->
+  <form class="filtre" id="filtre" autocomplete="off">
+    <div class="filtre-principal">
+      <div class="segment" role="radiogroup" aria-label="Tranzacție">
+        <label class="segment-optiune"><input type="radio" name="tranzactie" value="" checked><span>Toate</span></label>
+        <label class="segment-optiune"><input type="radio" name="tranzactie" value="vanzare"><span>De vânzare</span></label>
+        <label class="segment-optiune"><input type="radio" name="tranzactie" value="inchiriere"><span>De închiriat</span></label>
+      </div>
+      <label class="cautare-text">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" name="q" placeholder="Caută după zonă, stradă sau REF" aria-label="Caută după zonă, stradă sau REF">
+      </label>
+      <button class="filtre-comutator" type="button" id="filtre-comutator" aria-expanded="false" aria-controls="filtre-detalii">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtre<span class="filtre-numar" id="filtre-numar" hidden></span>
+      </button>
+    </div>
 
-  <p class="rezultate-info" id="rezultate-info"></p>
+    <div class="filtre-detalii" id="filtre-detalii">
+      <div class="filtru">
+        <span class="filtru-eticheta">Tip de proprietate</span>
+        <div class="chipuri" id="chip-tip">
+          <label class="chip"><input type="radio" name="tip" value="" checked><span>Orice tip</span></label>
+          <label class="chip"><input type="radio" name="tip" value="apartament"><span>Apartament</span></label>
+          <label class="chip"><input type="radio" name="tip" value="penthouse"><span>Penthouse</span></label>
+          <label class="chip"><input type="radio" name="tip" value="casa"><span>Casă / vilă</span></label>
+          <label class="chip"><input type="radio" name="tip" value="teren"><span>Teren</span></label>
+          <label class="chip"><input type="radio" name="tip" value="comercial"><span>Spațiu comercial</span></label>
+          <label class="chip"><input type="radio" name="tip" value="birou"><span>Birou</span></label>
+        </div>
+      </div>
+      <div class="filtre-rand">
+        <div class="filtru">
+          <span class="filtru-eticheta">Camere</span>
+          <div class="chipuri">
+            <label class="chip"><input type="radio" name="camere" value="" checked><span>Oricâte</span></label>
+            <label class="chip"><input type="radio" name="camere" value="1"><span>1+</span></label>
+            <label class="chip"><input type="radio" name="camere" value="2"><span>2+</span></label>
+            <label class="chip"><input type="radio" name="camere" value="3"><span>3+</span></label>
+            <label class="chip"><input type="radio" name="camere" value="4"><span>4+</span></label>
+          </div>
+        </div>
+        <div class="filtru filtru-pret">
+          <span class="filtru-eticheta">Preț (EUR<span id="pret-sufix"></span>)</span>
+          <div class="pret-campuri">
+            <input type="number" name="pret_min" min="0" inputmode="numeric" placeholder="de la" aria-label="Preț minim">
+            <span class="pret-sep">–</span>
+            <input type="number" name="pret_max" min="0" inputmode="numeric" placeholder="până la" aria-label="Preț maxim">
+          </div>
+          <div class="chipuri chipuri-mici" id="pret-sugestii"></div>
+        </div>
+      </div>
+      <div class="filtru">
+        <span class="filtru-eticheta">Zonă <small>(poți alege mai multe)</small></span>
+        <div class="chipuri" id="chip-zone"></div>
+      </div>
+    </div>
+
+    <div class="filtre-active" id="filtre-active" hidden></div>
+  </form>
+
+  <div class="rezultate-bara">
+    <p class="rezultate-info" id="rezultate-info"></p>
+    <label class="sortare">Sortează
+      <select id="f-sortare" name="sortare">
+        <option value="recente">Cele mai noi</option>
+        <option value="pret-crescator">Preț crescător</option>
+        <option value="pret-descrescator">Preț descrescător</option>
+        <option value="suprafata">Suprafață</option>
+      </select>
+    </label>
+  </div>
   <div class="grila-anunturi" id="lista-anunturi"></div>
 </div></section>
-
 <footer class="subsol filigran"><div class="container">
   <div class="subsol-grila">
     <div>
@@ -97,9 +126,9 @@
   <div class="subsol-legal"><span>© 2026 Full Imobiliare. Toate drepturile rezervate.</span><span>fullimobiliare.ro</span></div>
 </div></footer>
 
-<script src="js/date-demo.js?v=10"></script>
-<script src="js/comun.js?v=10"></script>
-<script src="js/app.js?v=10"></script>
+<script src="js/date-demo.js?v=11"></script>
+<script src="js/comun.js?v=11"></script>
+<script src="js/app.js?v=11"></script>
 
 </body>
 </html>

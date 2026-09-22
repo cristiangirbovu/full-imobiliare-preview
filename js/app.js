@@ -82,44 +82,160 @@ function randeazaRecente(idElement) {
   el.innerHTML = recente.map(cardAnunt).join("");
 }
 
-// Proprietăți: filtre + sortare
+// ===== Proprietăți: filtrare (v2) =====
+// Starea filtrelor trăiește în URL (?tranzactie=&tip=&camere=&pret_min=&pret_max=&zona=a,b&q=&sortare=),
+// deci căutarea din hero, linkurile partajate și butonul Înapoi funcționează natural.
+const SUGESTII_PRET = {
+  vanzare: [["sub 100.000", 0, 100000], ["100-200 mii", 100000, 200000], ["200-300 mii", 200000, 300000], ["peste 300 mii", 300000, null]],
+  inchiriere: [["sub 500", 0, 500], ["500-800", 500, 800], ["800-1.200", 800, 1200], ["peste 1.200", 1200, null]]
+};
+function normalizeaza(s) {
+  return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+function citesteFiltre() {
+  const form = document.getElementById("filtre");
+  const fd = new FormData(form);
+  return {
+    tranzactie: fd.get("tranzactie") || "", tip: fd.get("tip") || "", camere: fd.get("camere") || "",
+    pret_min: fd.get("pret_min") || "", pret_max: fd.get("pret_max") || "",
+    zone: fd.getAll("zona"), q: (fd.get("q") || "").trim(),
+    sortare: document.getElementById("f-sortare").value
+  };
+}
+function scrieFiltreInUrl(f) {
+  const u = new URL(location.href);
+  u.search = "";
+  ["tranzactie", "tip", "camere", "pret_min", "pret_max", "q"].forEach(k => { if (f[k]) u.searchParams.set(k, f[k]); });
+  if (f.zone.length) u.searchParams.set("zona", f.zone.join(","));
+  if (f.sortare && f.sortare !== "recente") u.searchParams.set("sortare", f.sortare);
+  history.replaceState(null, "", u);
+}
+function aplicaFiltreDinUrl() {
+  const p = new URLSearchParams(location.search), form = document.getElementById("filtre");
+  const bifeaza = (nume, val) => { const i = form.querySelector(`input[name="${nume}"][value="${CSS.escape(val)}"]`); if (i) i.checked = true; };
+  ["tranzactie", "tip", "camere"].forEach(k => { if (p.get(k)) bifeaza(k, p.get(k)); });
+  ["pret_min", "pret_max", "q"].forEach(k => { if (p.get(k)) form.elements[k].value = p.get(k); });
+  (p.get("zona") || "").split(",").filter(Boolean).forEach(z => bifeaza("zona", z));
+  if (p.get("sortare")) document.getElementById("f-sortare").value = p.get("sortare");
+}
+
+function populeazaZone() {
+  const el = document.getElementById("chip-zone");
+  if (!el) return;
+  // Zonele existente în date, cu numărul de proprietăți; chip-uri multiple (checkbox).
+  const contor = {};
+  DATE_ANUNTURI.forEach(a => { if (a.zona) contor[a.zona] = (contor[a.zona] || 0) + 1; });
+  el.innerHTML = Object.keys(contor).sort((x, y) => x.localeCompare(y, "ro")).map(z =>
+    `<label class="chip"><input type="checkbox" name="zona" value="${escapeHtml(z)}"><span>${escapeHtml(z)} <small>${contor[z]}</small></span></label>`).join("");
+}
+function randeazaSugestiiPret(tranzactie) {
+  const el = document.getElementById("pret-sugestii"), sufix = document.getElementById("pret-sufix");
+  if (!el) return;
+  const cheie = tranzactie || "vanzare";
+  sufix.textContent = tranzactie === "inchiriere" ? " / lună" : "";
+  el.innerHTML = SUGESTII_PRET[cheie].map(s => `<button type="button" class="chip-buton" data-min="${s[1]}" data-max="${s[2] === null ? "" : s[2]}">${s[0]}</button>`).join("");
+  el.querySelectorAll(".chip-buton").forEach(b => b.addEventListener("click", () => {
+    const form = document.getElementById("filtre");
+    form.elements.pret_min.value = b.dataset.min || ""; form.elements.pret_max.value = b.dataset.max;
+    randeazaLista();
+  }));
+}
+
 function randeazaLista() {
   const el = document.getElementById("lista-anunturi");
   if (!el) return;
-  const v = id => document.getElementById(id) ? document.getElementById(id).value : "";
-  const tranzactie = v("f-tranzactie"), tip = v("f-tip"), camere = v("f-camere"),
-        zona = v("f-zona"), pret = v("f-pret"), sortare = v("f-sortare");
-
+  const f = citesteFiltre();
+  const q = normalizeaza(f.q);
   let lista = DATE_ANUNTURI.filter(a => {
-    if (tranzactie && a.tranzactie !== tranzactie) return false;
-    if (tip && a.tip !== tip) return false;
-    if (camere && a.camere < parseInt(camere)) return false;
-    if (zona && a.zona !== zona) return false;
-    if (pret) {
-      const [min, max] = pret.split("-").map(Number);
-      if (a.pret_eur < min || (max && a.pret_eur > max)) return false;
-    }
+    if (f.tranzactie && a.tranzactie !== f.tranzactie) return false;
+    if (f.tip && a.tip !== f.tip) return false;
+    if (f.camere && !(a.camere >= parseInt(f.camere, 10))) return false;
+    if (f.zone.length && !f.zone.includes(a.zona)) return false;
+    if (f.pret_min && a.pret_eur < Number(f.pret_min)) return false;
+    if (f.pret_max && a.pret_eur > Number(f.pret_max)) return false;
+    if (q && !normalizeaza(`${a.titlu} ${a.zona} ${a.oras} ${a.adresa_harta || ""} ${a.id_intern}`).includes(q)) return false;
     return true;
   });
-
-  if (sortare === "pret-crescator") lista.sort((x, y) => x.pret_eur - y.pret_eur);
-  else if (sortare === "pret-descrescator") lista.sort((x, y) => y.pret_eur - x.pret_eur);
-  else lista.sort((x, y) => y.publicat_la.localeCompare(x.publicat_la));
+  if (f.sortare === "pret-crescator") lista.sort((x, y) => x.pret_eur - y.pret_eur);
+  else if (f.sortare === "pret-descrescator") lista.sort((x, y) => y.pret_eur - x.pret_eur);
+  else if (f.sortare === "suprafata") lista.sort((x, y) => (y.suprafata_mp || 0) - (x.suprafata_mp || 0));
+  else lista.sort((x, y) => (y.publicat_la || "").localeCompare(x.publicat_la || ""));
 
   document.getElementById("rezultate-info").textContent =
     lista.length === 1 ? "1 proprietate găsită" : `${lista.length} proprietăți găsite`;
   el.innerHTML = lista.length ? lista.map(cardAnunt).join("")
-    : `<p style="color:var(--text-secundar)">Nicio proprietate nu corespunde filtrelor alese.</p>`;
+    : `<div class="stare-goala">
+        <h3>Nu am găsit nimic cu filtrele alese</h3>
+        <p>Încearcă să elimini un filtru sau lărgește intervalul de preț. Sau spune-ne ce cauți: multe proprietăți ajung la clienții noștri înainte să apară pe site.</p>
+        <div class="stare-goala-actiuni"><button type="button" class="buton contur" data-reset>Resetează filtrele</button><a class="buton alama" href="contact.html?rol=cautator">Spune-ne ce cauți</a></div>
+      </div>`;
+  el.querySelectorAll("[data-reset]").forEach(b => b.addEventListener("click", reseteazaFiltre));
+  randeazaFiltreActive(f);
+  scrieFiltreInUrl(f);
 }
 
-function populeazaZone() {
-  const sel = document.getElementById("f-zona");
-  if (!sel) return;
-  [...new Set(DATE_ANUNTURI.map(a => a.zona))].sort().forEach(z => {
-    const o = document.createElement("option"); o.value = z; o.textContent = z; sel.appendChild(o);
+// Etichetele cu filtrele active (fiecare cu ✕) + contorul de pe butonul „Filtre" (mobil)
+function randeazaFiltreActive(f) {
+  const el = document.getElementById("filtre-active"), numar = document.getElementById("filtre-numar");
+  const etichete = [];
+  if (f.tranzactie) etichete.push({ k: "tranzactie", text: f.tranzactie === "inchiriere" ? "De închiriat" : "De vânzare" });
+  if (f.tip) etichete.push({ k: "tip", text: etichetaTip(f.tip) });
+  if (f.camere) etichete.push({ k: "camere", text: `${f.camere}+ camere` });
+  if (f.pret_min || f.pret_max) etichete.push({ k: "pret", text: `${f.pret_min ? Number(f.pret_min).toLocaleString("ro-RO") : "0"} – ${f.pret_max ? Number(f.pret_max).toLocaleString("ro-RO") : "∞"} €` });
+  f.zone.forEach(z => etichete.push({ k: "zona", v: z, text: z }));
+  if (f.q) etichete.push({ k: "q", text: `„${f.q}"` });
+  el.hidden = !etichete.length;
+  el.innerHTML = etichete.map(e => `<button type="button" class="eticheta-activa" data-k="${e.k}" data-v="${escapeHtml(e.v || "")}">${escapeHtml(e.text)}<span aria-hidden="true">✕</span></button>`).join("")
+    + (etichete.length ? `<button type="button" class="reset-filtre" data-reset>Resetează tot</button>` : "");
+  el.querySelectorAll(".eticheta-activa").forEach(b => b.addEventListener("click", () => scoateFiltru(b.dataset.k, b.dataset.v)));
+  el.querySelectorAll("[data-reset]").forEach(b => b.addEventListener("click", reseteazaFiltre));
+  // pe mobil contorul exclude tranzacția și căutarea (sunt mereu vizibile)
+  const inPanou = etichete.filter(e => e.k !== "tranzactie" && e.k !== "q").length;
+  numar.textContent = inPanou; numar.hidden = !inPanou;
+}
+function scoateFiltru(k, v) {
+  const form = document.getElementById("filtre");
+  if (k === "pret") { form.elements.pret_min.value = ""; form.elements.pret_max.value = ""; }
+  else if (k === "q") form.elements.q.value = "";
+  else if (k === "zona") { const i = form.querySelector(`input[name="zona"][value="${CSS.escape(v)}"]`); if (i) i.checked = false; }
+  else { const i = form.querySelector(`input[name="${k}"][value=""]`); if (i) i.checked = true; }
+  randeazaLista();
+}
+function reseteazaFiltre() {
+  const form = document.getElementById("filtre");
+  form.reset();
+  form.querySelectorAll('input[name="zona"]').forEach(i => { i.checked = false; });
+  document.getElementById("f-sortare").value = "recente";
+  randeazaSugestiiPret("");
+  randeazaLista();
+}
+function initFiltre() {
+  const form = document.getElementById("filtre");
+  if (!form) return;
+  populeazaZone();
+  aplicaFiltreDinUrl();
+  randeazaSugestiiPret(citesteFiltre().tranzactie);
+  form.addEventListener("submit", e => e.preventDefault());
+  form.addEventListener("change", e => {
+    if (e.target.name === "tranzactie") randeazaSugestiiPret(e.target.value);
+    randeazaLista();
   });
+  let temporizator;
+  form.addEventListener("input", e => {
+    if (!["q", "pret_min", "pret_max"].includes(e.target.name)) return;
+    clearTimeout(temporizator); temporizator = setTimeout(randeazaLista, 220);
+  });
+  document.getElementById("f-sortare").addEventListener("change", randeazaLista);
+  const comutator = document.getElementById("filtre-comutator"), detalii = document.getElementById("filtre-detalii");
+  comutator.addEventListener("click", () => {
+    const deschis = detalii.classList.toggle("deschis");
+    comutator.setAttribute("aria-expanded", deschis ? "true" : "false");
+  });
+  // Dacă vine din URL cu filtre din panou, pe mobil îl deschidem ca utilizatorul să vadă ce e activ.
+  const f = citesteFiltre();
+  if (f.tip || f.camere || f.pret_min || f.pret_max || f.zone.length) { detalii.classList.add("deschis"); comutator.setAttribute("aria-expanded", "true"); }
+  randeazaLista();
 }
-
 // Pagina proprietății
 function randeazaDetaliu() {
   const radacina = document.getElementById("detaliu-anunt");
@@ -319,19 +435,11 @@ function pregatesteDistribuire(a) {
 }
 document.addEventListener("DOMContentLoaded", () => {
   randeazaRecente("anunturi-recente");
-  populeazaZone();
-  // Căutarea din hero ajunge aici prin GET (?tranzactie=&tip=): preumplem filtrele înainte de prima randare.
-  const params = new URLSearchParams(location.search);
-  [["tranzactie", "f-tranzactie"], ["tip", "f-tip"], ["zona", "f-zona"]].forEach(([p, id]) => {
-    const el = document.getElementById(id), v = params.get(p);
-    if (el && v && [...el.options].some(o => o.value === v)) el.value = v;
-  });
-  randeazaLista();
+  initFiltre();
   randeazaDetaliu();
   randeazaBlog();
   randeazaArticol();
   randeazaServicii();
-  document.querySelectorAll(".bara-filtre select").forEach(s => s.addEventListener("change", randeazaLista));
 
   // Apariție la scroll: IntersectionObserver (fără scroll listener); CSS-ul respectă prefers-reduced-motion.
   const observator = new IntersectionObserver(intrari => {
