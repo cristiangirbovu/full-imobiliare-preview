@@ -551,6 +551,13 @@ document.getElementById("formular-articol").addEventListener("submit", e => {
 // ============================================================
 // SERVICII
 // ============================================================
+function slugUnicServiciu(titlu, id) {
+  const harta = { "ă": "a", "â": "a", "î": "i", "ș": "s", "ş": "s", "ț": "t", "ţ": "t" };
+  const baza = titlu.toLowerCase().replace(/[ăâîșşțţ]/g, c => harta[c] || c).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "serviciu";
+  let s = baza, n = 2;
+  while (servicii.some(x => x.slug === s && x.id !== id)) { s = `${baza}-${n}`; n++; }
+  return s;
+}
 function serviciiOrdonate() {
   return [...servicii].sort((x, y) => x.ordine - y.ordine);
 }
@@ -568,6 +575,7 @@ function randeazaTabelServicii() {
       <td class="tabel-titlu">${escapeHtml(s.titlu)}<div class="tabel-descriere">${escapeHtml(s.descriere || "")}</div></td>
       <td>${s.evidentiat ? '<span class="insigna-admin evidentiat">Evidențiat</span>' : '<span class="insigna-admin ciorna">Card standard</span>'}</td>
       <td class="col-actiuni">
+        ${s.slug ? `<a class="actiune" href="serviciu.html?s=${s.slug}" target="_blank" rel="noopener">Vezi</a>` : ""}
         <button class="actiune" data-serviciu-editeaza="${s.id}" type="button">Editează</button>
         <button class="actiune sterge" data-serviciu-sterge="${s.id}" type="button">Șterge</button>
       </td>
@@ -598,6 +606,8 @@ function deschideFormularServiciu(id) {
   document.getElementById("serviciu-formular-titlu").textContent = s ? "Editare serviciu" : "Serviciu nou";
   document.getElementById("fs-titlu").value = s ? s.titlu : "";
   document.getElementById("fs-descriere").value = s ? (s.descriere || "") : "";
+  document.getElementById("fs-continut").value = s ? (s.continut || "") : "";
+  document.getElementById("fs-adresa").textContent = s && s.slug ? `Pagina publică: serviciu.html?s=${s.slug} · apare și în meniul de sus, sub Servicii` : "Adresa paginii se generează automat din nume; serviciul apare și în meniul de sus, sub Servicii.";
   document.getElementById("fs-evidentiat").checked = s ? !!s.evidentiat : false;
   arataVederea("vedere-formular-serviciu");
 }
@@ -614,6 +624,8 @@ document.getElementById("formular-serviciu").addEventListener("submit", e => {
     : { id: servicii.reduce((m, x) => Math.max(m, x.id), 0) + 1, ordine: servicii.reduce((m, x) => Math.max(m, x.ordine), 0) + 1 };
   s.titlu = document.getElementById("fs-titlu").value.trim();
   s.descriere = document.getElementById("fs-descriere").value.trim();
+  s.continut = document.getElementById("fs-continut").value;
+  if (!s.slug) s.slug = slugUnicServiciu(s.titlu, s.id);   // adresa paginii rămâne stabilă după prima salvare
   s.evidentiat = document.getElementById("fs-evidentiat").checked;
   s.actualizat_la = azi();
   if (!serviciuInEditare) servicii.push(s);

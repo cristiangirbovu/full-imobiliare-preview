@@ -96,6 +96,26 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .nav .cta:hover { background: var(--brand-inchis); color: var(--alb); }
 .nav .cta:active { transform: scale(0.97); }
 .nav .cta.activ { color: var(--alb); background: var(--brand-inchis); }   /* altfel .activ îl face navy pe navy */
+/* Dropdown „Servicii": pe desktop se deschide la hover sau la săgeată; conținutul vine din date (app.js) */
+.nav-grup { position: relative; display: flex; align-items: center; gap: 2px; }
+.nav-sageata { background: none; border: 0; padding: 4px; color: var(--text-secundar); cursor: pointer; display: flex; border-radius: 4px; transition: transform var(--dur-ui) var(--ease-out), color var(--dur-ui) ease; }
+.nav-sageata svg { width: 14px; height: 14px; }
+.nav-dropdown { position: absolute; top: calc(100% + 14px); left: -12px; min-width: 260px; background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); box-shadow: var(--umbra-ridicat); padding: 8px; display: grid; opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity var(--dur-ui) ease, transform var(--dur-ui) var(--ease-out), visibility 0s linear var(--dur-ui); }
+.nav-dropdown::before { content: ""; position: absolute; left: 0; right: 0; top: -14px; height: 14px; }   /* punte invizibilă între link și meniu */
+.nav-dropdown a { display: block; padding: 9px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.nav-dropdown a.activ, .nav-dropdown a:hover { background: var(--fundal-sectiune); color: var(--brand); }
+.nav-dropdown-toate { margin-top: 4px; border-top: 1px solid var(--linie); color: var(--accent-inchis) !important; padding-top: 12px !important; }
+.nav-grup.deschis .nav-dropdown { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.nav-grup.deschis .nav-sageata { transform: rotate(180deg); color: var(--brand); }
+@media (hover: hover) and (pointer: fine) {
+  .nav-grup:hover .nav-dropdown { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .nav-grup:hover .nav-sageata { transform: rotate(180deg); color: var(--brand); }
+}
+.meniu-buton { display: none; width: 42px; height: 42px; border: 1px solid var(--linie); border-radius: var(--raza-interactiv); background: var(--alb); cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 0; }
+.meniu-buton span { display: block; width: 18px; height: 2px; background: var(--brand); border-radius: 2px; transition: transform var(--dur-ui) var(--ease-out), opacity var(--dur-ui) ease; }
+.meniu-buton.deschis span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.meniu-buton.deschis span:nth-child(2) { opacity: 0; }
+.meniu-buton.deschis span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ===== Hero: split asimetric; intrare o singură dată, la încărcare ===== */
 .hero { background: var(--brand); color: var(--alb); overflow: hidden; --f-h: 135%; --f-sus: -22%; --f-dreapta: -3%; --f-opacitate: 0.11; }
@@ -311,7 +331,20 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 /* ===== Grila servicii (pagina Servicii) ===== */
 .grila-servicii { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 24px; }
 .card-serviciu { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); padding: 26px; box-shadow: var(--umbra-card); transition: box-shadow var(--dur-ui) ease, transform var(--dur-ui) var(--ease-out); }
+.card-serviciu { display: flex; flex-direction: column; }
 .card-serviciu h3 { color: var(--brand); font-size: 17px; margin-bottom: 8px; font-weight: 700; }
+.card-serviciu-link { margin-top: auto; padding-top: 14px; font-size: 13.5px; font-weight: 700; color: var(--accent-inchis); }
+.card-serviciu.evidentiat .card-serviciu-link { color: var(--accent); }
+/* Pagina unui serviciu */
+.serviciu-pagina .eticheta-mica a:hover { text-decoration: underline; }
+.serviciu-cap h1 { font-size: clamp(28px, 3.6vw, 40px); color: var(--brand); line-height: 1.12; font-weight: 800; max-width: 22ch; }
+.serviciu-intro { margin-top: 14px; font-size: 18px; line-height: 1.6; color: var(--text-secundar); max-width: 62ch; }
+.serviciu-grila { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start; margin-top: 36px; }
+.serviciu-grila .articol-continut { margin-top: 0; }
+.serviciu-grila .articol-continut h2 { font-size: 21px; margin-top: 28px; }
+.lista-servicii-lateral a { display: block; padding: 8px 0; border-bottom: 1px solid var(--linie); font-size: 14px; font-weight: 600; color: var(--text); }
+.lista-servicii-lateral a:last-child { border-bottom: 0; }
+.lista-servicii-lateral a:hover { color: var(--brand); }
 .card-serviciu p { font-size: 14.5px; color: var(--text-secundar); }
 .card-serviciu.evidentiat { background: var(--brand); border-color: var(--brand); grid-column: 1 / -1; padding: 36px; --f-h: 240%; --f-sus: -60%; --f-dreapta: 2%; --f-opacitate: 0.12; }
 .card-serviciu.evidentiat h3 { color: var(--alb); font-size: 21px; }
@@ -453,12 +486,25 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 
 /* ===== Mobil ===== */
 @media (max-width: 860px) {
-  .nav { display: none; }                     /* meniul mobil se adaugă la faza de producție */
+  .meniu-buton { display: flex; }
+  .nav { display: none; position: absolute; left: 0; right: 0; top: 68px; background: var(--alb); border-bottom: 1px solid var(--linie); box-shadow: var(--umbra-ridicat); padding: 10px 24px 18px 24px; flex-direction: column; align-items: stretch; gap: 0; font-size: 16px; }
+  .nav.deschis { display: flex; max-height: calc(100vh - 68px); overflow-y: auto; }
+  .nav > a, .nav-grup > a { display: block; padding: 13px 4px; border-bottom: 1px solid var(--linie); }
+  .nav .cta { margin-top: 14px; text-align: center; border: 0; padding: 13px; }
+  .nav-grup { display: block; }
+  .nav-grup > a { border-bottom: 0; }
+  .nav-sageata { position: absolute; right: 0; top: 8px; padding: 8px; }
+  .nav-grup { position: relative; border-bottom: 1px solid var(--linie); }
+  .nav-dropdown { position: static; min-width: 0; box-shadow: none; border: 0; border-radius: 0; padding: 0 0 8px 14px; display: none; opacity: 1; visibility: visible; transform: none; transition: none; }
+  .nav-dropdown::before { display: none; }
+  .nav-grup.deschis .nav-dropdown { display: grid; }
+  .nav-dropdown a { font-size: 15px; padding: 9px 10px; white-space: normal; }
+  body.meniu-deschis { overflow: hidden; }
   .hero-grila { grid-template-columns: 1fr; gap: 30px; padding: 48px 0 56px 0; }
   .hero h1 { max-width: none; }
   .hero-foto { aspect-ratio: 16/10; }
   .sectiune { padding: 56px 0; }
-  .anunt-grila, .grila-contact, .subsol-grila, .servicii-asimetric, .rol-comutator, .banda-cta { grid-template-columns: 1fr; }
+  .anunt-grila, .grila-contact, .subsol-grila, .servicii-asimetric, .rol-comutator, .banda-cta, .serviciu-grila { grid-template-columns: 1fr; }
   .banda-cta { padding: 30px 26px; --f-dreapta: -30%; }
   .hero { --f-h: 90%; --f-sus: -10%; --f-dreapta: -18%; }
   .serviciu-vedeta { --f-dreapta: -25%; }

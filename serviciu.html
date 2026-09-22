@@ -4,8 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Blog imobiliar | Full Imobiliare</title>
-<meta name="description" content="Ghiduri și analize despre piața imobiliară din București și Ilfov: cumpărare, vânzare, închiriere, acte, credit.">
+<title>Serviciu | Full Imobiliare</title>
 <link rel="icon" href="img/icon/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
@@ -22,21 +21,43 @@
     <a href="index.html">Acasă</a>
     <a href="proprietati.html">Proprietăți</a>
     <div class="nav-grup">
-      <a href="servicii.html">Servicii</a>
+      <a href="servicii.html" class="activ">Servicii</a>
       <button class="nav-sageata" type="button" aria-expanded="false" aria-controls="nav-servicii" aria-label="Deschide lista de servicii"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       <div class="nav-dropdown" id="nav-servicii"></div>
     </div>
     <a href="despre.html">Despre</a>
-    <a href="blog.html" class="activ">Blog</a>
+    <a href="blog.html">Blog</a>
     <a href="contact.html" class="cta">Contact</a>
   </nav>
 </div></header>
 
-<section class="sectiune"><div class="container">
-  <p class="eticheta-mica">Ghiduri și analize</p>
-  <div class="sectiune-cap"><h2>Blogul Full Imobiliare</h2></div>
-  <div class="grila-blog" id="lista-articole"></div>
-</div></section>
+<section class="sectiune serviciu-pagina" id="serviciu">
+  <div class="container">
+    <p class="eticheta-mica"><a href="servicii.html" style="color:inherit">Servicii</a></p>
+    <div class="serviciu-cap">
+      <div>
+        <h1 id="s-titlu"></h1>
+        <p class="serviciu-intro" id="s-descriere"></p>
+      </div>
+    </div>
+    <div class="serviciu-grila">
+      <div class="articol-continut" id="s-continut"></div>
+      <aside class="lipicios">
+        <div class="panou panou-pret">
+          <h3>Ai nevoie de acest serviciu?</h3>
+          <p style="font-size:14px; color:var(--text-secundar)">Scrie-ne câteva rânduri despre situația ta și revenim cu pașii concreți.</p>
+          <a class="buton alama" id="s-email" href="mailto:office@fullimobiliare.ro">Solicită prin email</a>
+          <a class="buton telefon" href="tel:+40000000000">Sună agenția: [DE COMPLETAT]</a>
+          <a class="buton whatsapp" id="s-whatsapp" href="https://wa.me/40000000000">Scrie-ne pe WhatsApp</a>
+        </div>
+        <div class="panou">
+          <h3 style="font-size:16px; margin-bottom:10px">Alte servicii</h3>
+          <nav class="lista-servicii-lateral" id="s-altele" aria-label="Alte servicii"></nav>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
 
 <footer class="subsol filigran"><div class="container">
   <div class="subsol-grila">

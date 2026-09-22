@@ -14,15 +14,84 @@ const DATE_SERVICII = (function () {
   return (typeof SERVICII !== "undefined") ? SERVICII : [];
 })();
 
-// Pagina de servicii: cardul evidențiat primul (lățime totală), restul în ordinea setată din admin.
+// Serviciile ordonate cum apar public: cel evidențiat primul, apoi după `ordine` (setată din admin).
+function serviciiPublice() {
+  return [...DATE_SERVICII].sort((x, y) => (x.evidentiat === y.evidentiat) ? x.ordine - y.ordine : (x.evidentiat ? -1 : 1));
+}
+function slugServiciu(s) { return s.slug || ("serviciu-" + s.id); }
+function urlServiciu(s) { return `serviciu.html?s=${encodeURIComponent(slugServiciu(s))}`; }
+
+// Pagina de servicii: cardul evidențiat primul (lățime totală), restul în ordinea setată din admin; fiecare duce la pagina lui.
 function randeazaServicii() {
   const el = document.getElementById("lista-servicii");
   if (!el) return;
-  const lista = [...DATE_SERVICII].sort((x, y) => (x.evidentiat === y.evidentiat) ? x.ordine - y.ordine : (x.evidentiat ? -1 : 1));
-  el.innerHTML = lista.map(s => `
-    <div class="card-serviciu ${s.evidentiat ? "evidentiat filigran" : ""}">
-      <h3>${s.titlu}</h3><p>${s.descriere || ""}</p>
-    </div>`).join("");
+  el.innerHTML = serviciiPublice().map(s => `
+    <a class="card-serviciu ${s.evidentiat ? "evidentiat filigran" : ""}" href="${urlServiciu(s)}">
+      <h3>${escapeHtml(s.titlu)}</h3><p>${escapeHtml(s.descriere || "")}</p>
+      <span class="card-serviciu-link">Află mai multe →</span>
+    </a>`).join("");
+}
+
+// Meniul de sus: dropdown-ul „Servicii" se umple din aceleași date (deci urmează lista din admin).
+function randeazaMeniuServicii() {
+  const el = document.getElementById("nav-servicii");
+  if (!el) return;
+  const curent = new URLSearchParams(location.search).get("s");
+  el.innerHTML = serviciiPublice().map(s => `<a href="${urlServiciu(s)}"${slugServiciu(s) === curent ? ' class="activ"' : ""}>${escapeHtml(s.titlu)}</a>`).join("")
+    + `<a class="nav-dropdown-toate" href="servicii.html">Toate serviciile →</a>`;
+  const grup = el.closest(".nav-grup"), sageata = grup.querySelector(".nav-sageata");
+  const seteaza = deschis => { grup.classList.toggle("deschis", deschis); sageata.setAttribute("aria-expanded", deschis ? "true" : "false"); };
+  sageata.addEventListener("click", e => { e.stopPropagation(); seteaza(!grup.classList.contains("deschis")); });
+  // pe desktop se deschide și la hover (CSS); click în afară / Escape închid varianta deschisă prin buton
+  document.addEventListener("click", e => { if (!e.target.closest(".nav-grup")) seteaza(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") seteaza(false); });
+}
+
+// Meniul mobil (hamburger): sub 860px navul devine panou vertical sub antet.
+function initMeniuMobil() {
+  const b = document.getElementById("meniu-buton"), nav = document.getElementById("meniu-principal");
+  if (!b || !nav) return;
+  b.addEventListener("click", () => {
+    const deschis = nav.classList.toggle("deschis");
+    b.classList.toggle("deschis", deschis);
+    b.setAttribute("aria-expanded", deschis ? "true" : "false");
+    document.body.classList.toggle("meniu-deschis", deschis);
+  });
+}
+
+// Pagina unui serviciu (serviciu.html?s=slug)
+function randeazaServiciu() {
+  const radacina = document.getElementById("serviciu");
+  if (!radacina) return;
+  const slug = new URLSearchParams(location.search).get("s");
+  const lista = serviciiPublice();
+  const s = lista.find(x => slugServiciu(x) === slug) || lista[0];
+  if (!s) { radacina.innerHTML = '<div class="container"><p>Serviciul nu a fost găsit.</p></div>'; return; }
+  document.title = `${s.titlu} | Full Imobiliare`;
+  document.getElementById("s-titlu").textContent = s.titlu;
+  document.getElementById("s-descriere").textContent = s.descriere || "";
+  document.getElementById("s-continut").innerHTML = formateazaContinut(s.continut || "");
+  // Emailul: subiectul poartă numele serviciului (cerință clientă), corpul e un început de mesaj.
+  const subiect = `Solicitare: ${s.titlu}`;
+  const corp = `Bună ziua,\n\nVă scriu în legătură cu serviciul „${s.titlu}".\n\n[Descrieți pe scurt situația dumneavoastră]\n\nNume:\nTelefon:\n`;
+  document.getElementById("s-email").href = `mailto:office@fullimobiliare.ro?subject=${encodeURIComponent(subiect)}&body=${encodeURIComponent(corp)}`;
+  document.getElementById("s-whatsapp").href = `https://wa.me/40000000000?text=${encodeURIComponent("Bună ziua, mă interesează serviciul " + s.titlu + ".")}`;
+  document.getElementById("s-altele").innerHTML = lista.filter(x => x.id !== s.id).map(x => `<a href="${urlServiciu(x)}">${escapeHtml(x.titlu)}</a>`).join("");
+}
+
+// Text lung (articole, servicii): paragrafe separate prin linie goală; „## " = subtitlu.
+function formateazaContinut(text) {
+  return (text || "").split(/\n\s*\n/).map(bloc => {
+    const b = bloc.trim();
+    if (!b) return "";
+    if (b.startsWith("## ")) {
+      const linii = b.split("\n");
+      const titlu = `<h2>${escapeHtml(linii[0].slice(3))}</h2>`;
+      const rest = linii.slice(1).join(" ").trim();
+      return titlu + (rest ? `<p>${escapeHtml(rest)}</p>` : "");
+    }
+    return `<p>${escapeHtml(b.replace(/\n/g, " "))}</p>`;
+  }).join("");
 }
 
 function formatPret(a) {
@@ -325,18 +394,7 @@ function randeazaArticol() {
   document.getElementById("a-data").textContent = dataFrumoasa(a.publicat_la);
   const img = document.getElementById("a-imagine");
   if (a.imagine_url) { img.src = a.imagine_url; img.alt = a.titlu; } else { img.remove(); }
-  // Conținut: paragrafe separate prin linie goală; liniile care încep cu "## " devin subtitluri.
-  document.getElementById("a-continut").innerHTML = (a.continut || "").split(/\n\s*\n/).map(bloc => {
-    const b = bloc.trim();
-    if (!b) return "";
-    if (b.startsWith("## ")) {
-      const linii = b.split("\n");
-      const titlu = `<h2>${linii[0].slice(3)}</h2>`;
-      const rest = linii.slice(1).join(" ").trim();
-      return titlu + (rest ? `<p>${rest}</p>` : "");
-    }
-    return `<p>${b.replace(/\n/g, " ")}</p>`;
-  }).join("");
+  document.getElementById("a-continut").innerHTML = formateazaContinut(a.continut);
 }
 
 // ===== Galerie mozaic + vizualizare pe tot ecranul =====
@@ -440,6 +498,9 @@ document.addEventListener("DOMContentLoaded", () => {
   randeazaBlog();
   randeazaArticol();
   randeazaServicii();
+  randeazaServiciu();
+  randeazaMeniuServicii();
+  initMeniuMobil();
 
   // Apariție la scroll: IntersectionObserver (fără scroll listener); CSS-ul respectă prefers-reduced-motion.
   const observator = new IntersectionObserver(intrari => {
