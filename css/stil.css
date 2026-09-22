@@ -129,21 +129,37 @@ h1, h2, h3 { letter-spacing: -0.015em; }
     .card-anunt { opacity: 0; transform: translateY(12px); }
   }
 }
-.card-foto { position: relative; aspect-ratio: 16/10; overflow: hidden; background: var(--fundal-sectiune); }
+.card-foto { position: relative; display: block; aspect-ratio: 16/10; overflow: hidden; background: var(--fundal-sectiune); }
 .card-foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease-out); }
 .insigne { position: absolute; top: 12px; left: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
 .insigna { font-size: 11.5px; font-weight: 700; letter-spacing: 1px; padding: 5px 10px; border-radius: 5px; color: var(--alb); background: var(--marcaj-vanzare); text-transform: uppercase; }
 .insigna.inchiriere { background: var(--marcaj-inchiriere); }
 .insigna.rezervat { background: var(--marcaj-rezervat); }
 .insigna.vandut { background: var(--marcaj-vandut); }
-.card-corp { padding: 18px 20px 20px 20px; }
-.card-pret { font-size: 21px; font-weight: 800; color: var(--brand); }
+/* Semne de carte: panglici verticale în colțul din dreapta-sus, cu crestătură jos (ca în referință) */
+.panglici { position: absolute; top: 0; right: 12px; display: flex; gap: 6px; }
+.panglica { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 44px; padding: 8px 0 13px 0; color: var(--alb); background: var(--brand); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 7px), 0 100%); box-shadow: var(--umbra-card); }
+.panglica.navy { background: var(--brand); }
+.panglica.alama { background: var(--accent-inchis); }
+.panglica.verde { background: var(--ok); }
+.panglica.rosu { background: var(--eroare); }
+.panglica-ico svg { width: 16px; height: 16px; display: block; }
+.panglica-text { font-size: 8.5px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; line-height: 1; white-space: nowrap; }
+.contor-poze { position: absolute; left: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px; background: rgba(13, 30, 56, 0.72); color: var(--alb); font-size: 12.5px; font-weight: 700; padding: 5px 9px; border-radius: 6px; backdrop-filter: blur(4px); }
+.contor-poze svg { width: 16px; height: 16px; }
+.card-corp { padding: 20px 22px 20px 22px; }
+.card-titlu { font-size: 19px; font-weight: 800; line-height: 1.25; color: var(--text); letter-spacing: -0.01em; }
+.card-titlu a { transition: color var(--dur-ui) ease; }
+.card-adresa { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13.5px; font-weight: 600; color: var(--accent-inchis); text-decoration: underline; text-decoration-color: rgba(138, 98, 36, 0.35); text-underline-offset: 3px; transition: text-decoration-color var(--dur-ui) ease; }
+.card-adresa svg { width: 16px; height: 16px; flex: none; }
+.card-detalii { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--linie); }
+.detaliu { display: inline-flex; align-items: center; gap: 7px; color: var(--text-secundar); font-size: 13.5px; }
+.detaliu svg { width: 22px; height: 22px; color: var(--text-secundar); opacity: 0.75; }
+.detaliu b { color: var(--text); font-size: 15px; font-weight: 700; }
+.card-jos { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 16px; }
+.card-pret { font-size: 22px; font-weight: 800; color: var(--accent-inchis); }
 .card-pret span.negociabil { font-size: 12px; color: var(--text-secundar); font-weight: 600; margin-left: 6px; }
-.card-titlu { margin-top: 6px; font-size: 15.5px; font-weight: 600; line-height: 1.35; }
-.card-zona { margin-top: 4px; font-size: 13.5px; color: var(--text-secundar); }
-.card-specificatii { margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--linie); display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--text-secundar); }
-.card-id { margin-top: 10px; font-size: 11.5px; letter-spacing: 1px; color: var(--text-secundar); }
-
+.card-id { font-size: 11px; letter-spacing: 1px; color: var(--text-secundar); white-space: nowrap; }
 /* ===== Filtre (Proprietăți) ===== */
 .bara-filtre { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); padding: 16px; display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; box-shadow: var(--umbra-card); }
 .bara-filtre select { border: 1px solid var(--linie); border-radius: var(--raza-interactiv); padding: 11px 12px; font: inherit; font-size: 14px; color: var(--text); background: var(--alb); transition: border-color var(--dur-ui) ease; }
@@ -152,7 +168,10 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 /* ===== Pagina proprietății ===== */
 .anunt-titlu-bloc { padding: 38px 0 22px 0; }
 .anunt-titlu-bloc h1 { font-size: clamp(26px, 3vw, 32px); color: var(--brand); max-width: 26ch; line-height: 1.2; font-weight: 800; }
-.anunt-meta { margin-top: 8px; color: var(--text-secundar); font-size: 15px; }
+.anunt-meta { margin-top: 10px; color: var(--text-secundar); font-size: 15px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.adresa-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-inchis); font-weight: 600; text-decoration: underline; text-decoration-color: rgba(138, 98, 36, 0.35); text-underline-offset: 3px; }
+.adresa-link svg { width: 17px; height: 17px; }
+.meta-sep { color: var(--linie); }
 .anunt-grila { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; align-items: start; padding-bottom: 88px; }
 .galerie-principala { border-radius: var(--raza); overflow: hidden; aspect-ratio: 16/9; background: var(--fundal-sectiune); }
 .galerie-principala img { width: 100%; height: 100%; object-fit: cover; transition: opacity var(--dur-ui) ease, filter var(--dur-ui) ease; }
@@ -315,6 +334,8 @@ h1, h2, h3 { letter-spacing: -0.015em; }
   .sectiune-cap a:hover { transform: translateX(3px); }
   .card-anunt:hover { box-shadow: var(--umbra-ridicat); transform: translateY(-3px); }
   .card-anunt:hover .card-foto img { transform: scale(1.04); }
+  .card-titlu a:hover { color: var(--brand); }
+  .card-adresa:hover, .adresa-link:hover { text-decoration-color: currentColor; }
   .bara-filtre select:hover { border-color: var(--brand); }
   .galerie-mini img:hover { opacity: 1; transform: translateY(-2px); }
   .buton:hover { transform: translateY(-1px); }

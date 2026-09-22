@@ -37,22 +37,40 @@ function insigne(a) {
   return html;
 }
 
+// Cardul de proprietate (model agreat 22.09.2026): fotografie cu marcaje + contor de poze + semne de carte,
+// titlu simplu (tip + zonă), adresă cu link Google Maps, 3 detalii cu iconițe, prețul jos, distinct.
+// Cardul e un <article>: fotografia și titlul sunt linkuri către pagină, adresa e link separat către hartă.
+function panglici(a) {
+  return (a.etichete || []).map(c => etichetaOferta(c)).filter(Boolean).map(e =>
+    `<span class="panglica ${e.culoare}" title="${e.eticheta}"><span class="panglica-ico">${ICONITE[e.iconita] || ""}</span><span class="panglica-text">${e.eticheta}</span></span>`).join("");
+}
+function detaliiCard(a) {
+  const d = [];
+  if (a.camere) d.push({ ico: "pat", val: a.camere, unit: a.camere == 1 ? "cameră" : "camere" });
+  if (a.bai) d.push({ ico: "dus", val: a.bai, unit: a.bai == 1 ? "baie" : "băi" });
+  if (a.suprafata_mp) d.push({ ico: "suprafata", val: a.suprafata_mp, unit: "mp" });
+  return d.map(x => `<span class="detaliu">${ICONITE[x.ico]}<b>${x.val}</b><small>${x.unit}</small></span>`).join("");
+}
 function cardAnunt(a, index) {
-  const spec = [
-    a.camere ? `${a.camere} camere` : null,
-    a.suprafata_mp ? `${a.suprafata_mp} mp` : null,
-    a.etaj !== null && a.etaj !== undefined ? `etaj ${a.etaj}/${a.etaje_total}` : (a.etaje_total ? `P+${a.etaje_total - 1}` : null)
-  ].filter(Boolean).map(s => `<span>${s}</span>`).join("");
-  return `<a class="card-anunt" style="--i:${index || 0}" href="proprietate.html?id=${a.id_intern}">
-    <div class="card-foto"><img src="${a.poze[0]}" alt="${a.titlu}"><div class="insigne">${insigne(a)}</div></div>
+  const url = `proprietate.html?id=${a.id_intern}`;
+  const nrPoze = (a.poze || []).length;
+  return `<article class="card-anunt" style="--i:${index || 0}">
+    <a class="card-foto" href="${url}" aria-label="${escapeHtml(titluCard(a))}">
+      <img src="${(a.poze && a.poze[0]) || ""}" alt="${escapeHtml(a.titlu)}">
+      <div class="insigne">${insigne(a)}</div>
+      <div class="panglici">${panglici(a)}</div>
+      ${nrPoze ? `<span class="contor-poze">${ICONITE.camera}${nrPoze}</span>` : ""}
+    </a>
     <div class="card-corp">
-      <div class="card-pret">${formatPret(a)}${a.negociabil ? '<span class="negociabil">negociabil</span>' : ""}</div>
-      <div class="card-titlu">${a.titlu}</div>
-      <div class="card-zona">${a.oras} · ${a.zona}</div>
-      <div class="card-specificatii">${spec}</div>
-      <div class="card-id">REF: ${a.id_intern}</div>
+      <h3 class="card-titlu"><a href="${url}">${escapeHtml(titluCard(a))}</a></h3>
+      <a class="card-adresa" href="${linkHarta(a)}" target="_blank" rel="noopener" title="Deschide în Google Maps">${ICONITE.pin}<span>${escapeHtml(adresaAfisata(a))}</span></a>
+      <div class="card-detalii">${detaliiCard(a)}</div>
+      <div class="card-jos">
+        <div class="card-pret">${formatPret(a)}${a.negociabil ? '<span class="negociabil">negociabil</span>' : ""}</div>
+        <div class="card-id">REF ${a.id_intern}</div>
+      </div>
     </div>
-  </a>`;
+  </article>`;
 }
 
 // Acasă: cele mai recente 3 proprietăți active
@@ -111,8 +129,8 @@ function randeazaDetaliu() {
   document.title = `${a.titlu} | Full Imobiliare`;
 
   document.getElementById("d-titlu").textContent = a.titlu;
-  document.getElementById("d-meta").textContent =
-    `${a.oras}, ${a.zona} · publicat ${a.publicat_la}`;
+  document.getElementById("d-meta").innerHTML =
+    `<a class="adresa-link" href="${linkHarta(a)}" target="_blank" rel="noopener" title="Deschide în Google Maps">${ICONITE.pin}<span>${escapeHtml(adresaAfisata(a))}</span></a><span class="meta-sep">·</span>publicat ${a.publicat_la}`;
   const ref = document.getElementById("d-ref");
   if (ref) ref.textContent = `REF ${a.id_intern}`;
   document.getElementById("d-insigne").innerHTML = insigne(a);

@@ -213,6 +213,11 @@ const bifeEditor = document.getElementById("f-dotari");
 const tipEditor = document.getElementById("f-tip");
 tipEditor.addEventListener("change", () => randeazaBife(bifeEditor, tipEditor.value, citesteBife(bifeEditor)));
 const pozeEditor = ManagerPoze(document.getElementById("f-poze"), { url: true });
+const eticheteEditor = document.getElementById("f-etichete");
+function randeazaEtichete(selectate) {
+  const set = new Set(selectate || []);
+  eticheteEditor.innerHTML = ETICHETE_OFERTA.map(e => `<label class="bifa"><input type="checkbox" value="${e.cheie}" ${set.has(e.cheie) ? "checked" : ""}> ${e.eticheta}</label>`).join("");
+}
 
 // Completează editorul dintr-un obiect cu forma proprietății (existentă sau propusă de un proprietar).
 function completeazaEditor(a) {
@@ -231,6 +236,7 @@ function completeazaEditor(a) {
   v("f-descriere", a ? (a.descriere || "") : "");
   v("f-agent", a ? (a.agent_nume || "") : ""); v("f-agent-tel", a ? (a.agent_telefon || "") : "");
   randeazaBife(bifeEditor, tipEditor.value, a ? (a.dotari || []) : []);
+  randeazaEtichete(a ? (a.etichete || []) : []);
   pozeEditor.seteaza(a ? (a.poze || []) : []);
 }
 
@@ -291,6 +297,7 @@ document.getElementById("formular-anunt").addEventListener("submit", e => {
   a.certificat_energetic = text("f-certificat") || null;
   a.dotari = citesteBife(bifeEditor);
   a.dotari_altele = text("f-dotari-altele");
+  a.etichete = citesteBife(eticheteEditor);
   a.descriere = text("f-descriere");
   a.poze = pozeEditor.poze;
   a.agent_nume = text("f-agent") || null; a.agent_telefon = text("f-agent-tel") || null;

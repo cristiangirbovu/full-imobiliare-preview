@@ -9,8 +9,8 @@
 <link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
 <meta name="theme-color" content="#12294A">
-<link rel="stylesheet" href="css/stil.css?v=7">
-<link rel="stylesheet" href="css/admin.css?v=7">
+<link rel="stylesheet" href="css/stil.css?v=8">
+<link rel="stylesheet" href="css/admin.css?v=8">
 <script>
 /* Diagnostic vizibil: daca un script nu se incarca sau arunca o eroare, apare o banda rosie jos. */
 window.addEventListener("error", function (e) {
@@ -183,6 +183,9 @@ window.addEventListener("error", function (e) {
                 <option value="rezervat">Rezervat</option>
                 <option value="vandut">Vândut</option>
               </select>
+              <label style="margin-top:14px">Semne de carte (pe fotografia din listă)</label>
+              <div class="bife" id="f-etichete"></div>
+              <p class="nota-camp">Lista finală a semnelor vine de la client; se schimbă într-un singur loc (js/comun.js).</p>
               <p class="nota-camp" id="formular-sursa" hidden></p>
               <div class="rail-actiuni">
                 <button class="buton-principal" type="submit" id="buton-salveaza">Salvează proprietatea</button>
@@ -352,8 +355,8 @@ window.addEventListener("error", function (e) {
   </div>
 </dialog>
 
-<script src="js/date-demo.js?v=7"></script>
-<script src="js/comun.js?v=7"></script>
-<script src="js/admin.js?v=7"></script>
+<script src="js/date-demo.js?v=8"></script>
+<script src="js/comun.js?v=8"></script>
+<script src="js/admin.js?v=8"></script>
 </body>
 </html>

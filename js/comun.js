@@ -224,3 +224,40 @@ function titluPropus(p) {
 }
 
 function aziISO() { return new Date().toISOString().slice(0, 10); }
+
+// ===== Cardul de proprietate (modelul agreat 22.09.2026, referință modern.realhomes.io) =====
+// Semnele de carte („bookmark"-uri) afișate ca panglici pe fotografie. Lista finală vine de la clientă;
+// se schimbă DOAR aici (cheie, etichetă, culoare, iconiță), restul codului le preia.
+const ETICHETE_OFERTA = [
+  { cheie: "nou",           eticheta: "Nou",           culoare: "navy",  iconita: "stea" },
+  { cheie: "exclusivitate", eticheta: "Exclusiv",      culoare: "alama", iconita: "cheie" },
+  { cheie: "oferta",        eticheta: "Ofertă",        culoare: "verde", iconita: "flacara" },
+  { cheie: "pret_redus",    eticheta: "Redus",         culoare: "rosu",  iconita: "sageata" }
+];
+function etichetaOferta(cheie) { return ETICHETE_OFERTA.find(e => e.cheie === cheie); }
+
+// Iconițe de linie, 24x24, desenate pe currentColor (fără bibliotecă externă).
+const ICONITE = {
+  pat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7"/><path d="M3 15h18"/><path d="M5 9V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3"/><path d="M13 9V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3"/><path d="M3 18v2M21 18v2"/></svg>',
+  dus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V6a3 3 0 0 1 3-3h1a3 3 0 0 1 3 3v1"/><path d="M8 8h8"/><path d="M12 8a5 5 0 0 1 5 5"/><path d="M15 16v1M17.5 15.5l.5.9M12.5 15.5l-.5.9M15 19v1.5M18.5 18.5l.6 1M11.5 18.5l-.6 1"/></svg>',
+  suprafata: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="14" height="14"/><path d="M3 3h4v4H3zM17 3h4v4h-4zM3 17h4v4H3zM17 17h4v4h-4z" fill="currentColor" stroke="none"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.3-6-11a6 6 0 0 1 12 0c0 5.7-6 11-6 11z"/><circle cx="12" cy="10" r="2.3"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3"/></svg>',
+  stea: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg>',
+  cheie: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9 2.5a5.5 5.5 0 0 1 4.6 8.5l7 7-2 2-1.6-1.6-1.6 1.6-2-2 1.6-1.6-1.2-1.2-1.6 1.6-2-2 1.6-1.6-1.4-1.4A5.5 5.5 0 1 1 9 2.5zm0 3a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>',
+  flacara: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5c.6 3.4 3.2 4.7 4.6 7.3 1.6 3-.1 6.8-3.2 8.2.9-1.6.6-3.4-.6-4.4-.4 2-1.8 2.4-2.4 3.7-.6 1.2-.2 2.3.3 3.2C7.6 19.6 5.5 16.6 6 13.2c.5-3.2 3.4-4.2 4-7.3.6 1.1.7 2.3.4 3.4 1.7-1.4 2.2-4.2 1.6-6.8z"/></svg>',
+  sageata: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15"/><path d="M6 13l6 6 6-6"/></svg>'
+};
+
+// Titlul de card: simplu, Tip imobil + zonă (cerința clientei). Titlul complet rămâne pe pagina proprietății.
+function titluCard(a) {
+  const tip = ({ casa: "Casă", comercial: "Spațiu comercial" })[a.tip] || etichetaTip(a.tip);
+  return a.zona ? `${tip} în ${a.zona}` : tip;
+}
+// Adresa afișată sub titlu + linkul către Google Maps (adresa exactă dacă există, altfel zona + orașul).
+function adresaAfisata(a) {
+  return a.adresa_harta ? a.adresa_harta : [a.zona, a.oras].filter(Boolean).join(", ");
+}
+function linkHarta(a) {
+  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(adresaAfisata(a));
+}

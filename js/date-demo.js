@@ -9,7 +9,7 @@ const ANUNTURI = [
     oras: "București", zona: "Aviației", suprafata_mp: 78, camere: 3, bai: 2,
     etaj: 4, etaje_total: 8, an_constructie: 2022, compartimentare: "decomandat",
     certificat_energetic: "A", dotari: ["parcare_subterana", "balcon", "centrala_proprie", "aer_conditionat", "termopan", "parchet", "lift", "videointerfon", "vedere_panoramica"], dotari_altele: "",
-    status: "activ", agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]",
+    status: "activ", etichete: ["exclusivitate"], agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]",
     poze: ["img/demo/living-modern.png", "img/demo/fatada-eleganta.png", "img/demo/lobby.png"],
     publicat_la: "2026-07-08"
   },
@@ -31,7 +31,7 @@ const ANUNTURI = [
     oras: "București", zona: "Barbu Văcărescu", suprafata_mp: 156, camere: 4, bai: 3,
     etaj: 11, etaje_total: 12, an_constructie: 2020, compartimentare: "decomandat",
     certificat_energetic: "A", dotari: ["terasa", "parcare_subterana", "smart_home", "aer_conditionat", "lift", "finisaje_premium", "incalzire_pardoseala", "vedere_panoramica", "supraveghere_video"], dotari_altele: "Terasă perimetrală 40 mp, două locuri de parcare",
-    status: "rezervat", agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]",
+    status: "rezervat", etichete: ["nou", "exclusivitate"], agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]",
     poze: ["img/demo/penthouse.png", "img/demo/lobby.png"],
     publicat_la: "2026-06-28"
   },
@@ -42,7 +42,7 @@ const ANUNTURI = [
     oras: "București", zona: "Pipera", suprafata_mp: 58, camere: 2, bai: 1,
     etaj: 3, etaje_total: 6, an_constructie: 2019, compartimentare: "decomandat",
     certificat_energetic: "A", dotari: ["mobilat", "utilat", "parcare", "paza", "aer_conditionat", "centrala_proprie", "balcon", "lift", "supraveghere_video"], dotari_altele: "Disponibil imediat",
-    status: "activ", agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]",
+    status: "activ", etichete: ["oferta"], agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]",
     poze: ["img/demo/ansamblu-canal.png", "img/demo/living-modern.png"],
     publicat_la: "2026-07-10"
   },
@@ -53,7 +53,7 @@ const ANUNTURI = [
     oras: "Ilfov", zona: "Corbeanca", suprafata_mp: 210, camere: 4, bai: 3,
     etaj: null, etaje_total: 2, an_constructie: 2017, compartimentare: "decomandat",
     certificat_energetic: "B", dotari: ["garaj", "gradina", "foisor", "curte", "centrala_proprie", "termopan", "parchet", "alarma", "curent", "apa", "canalizare", "gaz"], dotari_altele: "Teren 500 mp, acces asfaltat",
-    status: "activ", agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]",
+    status: "activ", etichete: ["pret_redus"], agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]",
     poze: ["img/demo/fatada-eleganta.png", "img/demo/interior-clasic.png"],
     publicat_la: "2026-07-01"
   },
