@@ -159,10 +159,8 @@ function randeazaTabel() {
       <td class="tabel-pret">${formatPretAdmin(a)}</td>
       <td>
         <select class="select-status st-${a.status}" data-ref="${a.id_intern}" aria-label="Status ${a.id_intern}">
-          <option value="activ" ${a.status === "activ" ? "selected" : ""}>Activ</option>
-          <option value="rezervat" ${a.status === "rezervat" ? "selected" : ""}>Rezervat</option>
-          <option value="vandut" ${a.status === "vandut" ? "selected" : ""}>Vândut</option>
-        </select>
+          ${STATUSURI[a.tranzactie === "inchiriere" ? "inchiriere" : "vanzare"].map(s => `<option value="${s.cheie}" ${a.status === s.cheie ? "selected" : ""}>${s.eticheta.replace(/ \(.*\)$/, "")}</option>`).join("")}
+        </select>${a.status === "inchiriat" && a.inchiriat_pana_la ? `<div class="tabel-descriere">până la ${dataRO(a.inchiriat_pana_la)}</div>` : ""}${a.status === "activ" && a.liber_din ? `<div class="tabel-descriere">liber din ${dataRO(a.liber_din)}</div>` : ""}
       </td>
       <td>${a.publicat_la || "-"}</td>
       <td class="col-actiuni">
@@ -176,6 +174,8 @@ function randeazaTabel() {
     const a = anunturi.find(x => x.id_intern === e.target.dataset.ref);
     a.status = e.target.value;
     a.vandut_la = a.status === "vandut" ? azi() : null;
+    if (a.status !== "inchiriat") a.inchiriat_pana_la = null;
+    if (a.status !== "activ") a.liber_din = null;
     a.actualizat_la = azi();
     scrieSigur(CHEIE_DATE, anunturi);
     randeazaTabel();
@@ -211,6 +211,16 @@ function refNou() {
 // Componentele editorului: bifele de dotări (urmăresc tipul) și managerul de fotografii.
 const bifeEditor = document.getElementById("f-dotari");
 const tipEditor = document.getElementById("f-tip");
+tipEditor.innerHTML = optiuniTip();
+document.getElementById("f-etaj").innerHTML = optiuniEtaj("Nespecificat");
+// Statusurile depind de tranzacție (vânzare: vândut; închiriere: închiriat + date)
+const tranzactieEditor = document.getElementById("f-tranzactie"), statusEditor = document.getElementById("f-status");
+function randeazaStatusEditor(tranzactie, valoare) {
+  statusEditor.innerHTML = optiuniStatus(tranzactie);
+  statusEditor.value = [...statusEditor.options].some(o => o.value === valoare) ? valoare : "activ";
+  document.getElementById("f-inchiriere-date").hidden = tranzactie !== "inchiriere";
+}
+tranzactieEditor.addEventListener("change", () => randeazaStatusEditor(tranzactieEditor.value, statusEditor.value));
 tipEditor.addEventListener("change", () => randeazaBife(bifeEditor, tipEditor.value, citesteBife(bifeEditor)));
 const pozeEditor = ManagerPoze(document.getElementById("f-poze"), { url: true });
 const eticheteEditor = document.getElementById("f-etichete");
@@ -223,19 +233,21 @@ function randeazaEtichete(selectate) {
 function completeazaEditor(a) {
   const v = (id, val) => { document.getElementById(id).value = (val === null || val === undefined) ? "" : val; };
   v("f-titlu", a ? a.titlu : ""); v("f-tranzactie", a ? a.tranzactie : "vanzare");
-  v("f-tip", a ? a.tip : "apartament"); v("f-pret", a ? a.pret_eur : "");
+  v("f-tip", a ? tipNormalizat(a.tip) : "apartament"); v("f-pret", a ? a.pret_eur : "");
   document.getElementById("f-negociabil").checked = a ? !!a.negociabil : false;
   v("f-oras", a ? a.oras : "București"); v("f-zona", a ? a.zona : "");
   v("f-adresa", a ? (a.adresa_harta || "") : "");
-  v("f-status", a && a.status ? a.status : "activ"); v("f-suprafata", a ? a.suprafata_mp : "");
+  randeazaStatusEditor(a ? a.tranzactie : "vanzare", a && a.status ? a.status : "activ");
+  v("f-liber-din", a ? (a.liber_din || "") : ""); v("f-inchiriat-pana", a ? (a.inchiriat_pana_la || "") : "");
+  v("f-suprafata", a ? a.suprafata_mp : "");
   v("f-camere", a ? a.camere : ""); v("f-bai", a ? a.bai : "");
-  v("f-etaj", a ? a.etaj : ""); v("f-etaje", a ? a.etaje_total : "");
+  v("f-etaj", a && a.etaj !== null && a.etaj !== undefined ? String(a.etaj) : ""); v("f-regim", a ? (a.regim_inaltime || "") : "");
   v("f-an", a ? a.an_constructie : ""); v("f-compartimentare", a ? (a.compartimentare || "") : "");
   v("f-certificat", a ? (a.certificat_energetic || "") : "");
   v("f-dotari-altele", a ? (a.dotari_altele || "") : "");
   v("f-descriere", a ? (a.descriere || "") : "");
-  v("f-agent", a ? (a.agent_nume || "") : ""); v("f-agent-tel", a ? (a.agent_telefon || "") : "");
-  randeazaBife(bifeEditor, tipEditor.value, a ? (a.dotari || []) : []);
+  v("f-agent", a ? (a.agent_nume || "") : ""); v("f-agent-tel", a ? (a.agent_telefon || "") : ""); v("f-agent-email", a ? (a.agent_email || "") : "");
+  randeazaBife(bifeEditor, tipEditor.value, a ? normalizeazaDotari(a.dotari) : []);
   randeazaEtichete(a ? (a.etichete || []) : []);
   pozeEditor.seteaza(a ? (a.poze || []) : []);
 }
@@ -291,8 +303,10 @@ document.getElementById("formular-anunt").addEventListener("submit", e => {
   a.oras = text("f-oras"); a.zona = text("f-zona"); a.adresa_harta = text("f-adresa") || null;
   a.status = text("f-status");
   a.vandut_la = a.status === "vandut" ? (a.vandut_la || azi()) : null;
+  a.liber_din = a.tranzactie === "inchiriere" && a.status === "activ" ? (text("f-liber-din") || null) : null;
+  a.inchiriat_pana_la = a.tranzactie === "inchiriere" && a.status === "inchiriat" ? (text("f-inchiriat-pana") || null) : null;
   a.suprafata_mp = numar("f-suprafata"); a.camere = numar("f-camere"); a.bai = numar("f-bai");
-  a.etaj = numar("f-etaj"); a.etaje_total = numar("f-etaje"); a.an_constructie = numar("f-an");
+  a.etaj = text("f-etaj"); a.regim_inaltime = text("f-regim") || null; delete a.etaje_total; a.an_constructie = numar("f-an");
   a.compartimentare = text("f-compartimentare") || null;
   a.certificat_energetic = text("f-certificat") || null;
   a.dotari = citesteBife(bifeEditor);
@@ -300,7 +314,7 @@ document.getElementById("formular-anunt").addEventListener("submit", e => {
   a.etichete = citesteBife(eticheteEditor);
   a.descriere = text("f-descriere");
   a.poze = pozeEditor.poze;
-  a.agent_nume = text("f-agent") || null; a.agent_telefon = text("f-agent-tel") || null;
+  a.agent_nume = text("f-agent") || null; a.agent_telefon = text("f-agent-tel") || null; a.agent_email = text("f-agent-email") || null;
   a.actualizat_la = azi();
 
   const listaNoua = refInEditare ? anunturi : [a, ...anunturi];
@@ -397,7 +411,7 @@ function deschideSolicitare(id) {
       <h3>Caracteristici</h3>
       <table class="tabel-spec">
         ${randCaract("Suprafață", p.suprafata_mp ? p.suprafata_mp + " mp" : null)}${randCaract("Camere", p.camere)}${randCaract("Băi", p.bai)}
-        ${randCaract("Etaj", p.etaj !== null && p.etaj !== undefined ? `${p.etaj}${p.etaje_total ? " / " + p.etaje_total : ""}` : null)}
+        ${randCaract("Etaj", p.etaj ? etichetaEtaj(p.etaj) : null)}${randCaract("Regim de înălțime", p.regim_inaltime)}
         ${randCaract("An construcție", p.an_constructie)}${randCaract("Compartimentare", p.compartimentare ? etichetaCompartimentare(p.compartimentare) : null)}
         ${randCaract("Certificat energetic", p.certificat_energetic ? "Clasa " + p.certificat_energetic : null)}
       </table>

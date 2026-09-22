@@ -41,6 +41,8 @@
   // ===== Formularul proprietarului =====
   const fp = document.getElementById("formular-proprietar");
   const tipSel = document.getElementById("p-tip"), bife = document.getElementById("p-dotari");
+  document.querySelectorAll("select[data-tipuri]").forEach(sel => { sel.innerHTML = optiuniTip(sel.dataset.tipuri); });
+  document.querySelectorAll("select[data-etaje]").forEach(sel => { sel.innerHTML = optiuniEtaj(sel.dataset.etaje); });
   randeazaBife(bife, tipSel.value, []);
   tipSel.addEventListener("change", () => randeazaBife(bife, tipSel.value, citesteBife(bife)));
   const poze = ManagerPoze(document.getElementById("p-poze"));
@@ -66,7 +68,7 @@
       proprietate: {
         tranzactie: val("p-tranzactie"), tip: val("p-tip"), oras: val("p-oras"), zona: val("p-zona"), adresa: val("p-adresa"),
         pret_eur: numar("p-pret"), negociabil: document.getElementById("p-negociabil").checked,
-        suprafata_mp: numar("p-suprafata"), camere: numar("p-camere"), bai: numar("p-bai"), etaj: numar("p-etaj"), etaje_total: numar("p-etaje"),
+        suprafata_mp: numar("p-suprafata"), camere: numar("p-camere"), bai: numar("p-bai"), etaj: val("p-etaj"), regim_inaltime: val("p-regim"),
         an_constructie: numar("p-an"), compartimentare: val("p-compartimentare"), certificat_energetic: val("p-certificat"),
         dotari: citesteBife(bife), dotari_altele: val("p-dotari-altele"), descriere: val("p-descriere"), poze: poze.poze
       }

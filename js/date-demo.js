@@ -7,9 +7,9 @@ const ANUNTURI = [
     descriere: "Apartament luminos la etajul 4 dintr-un ansamblu finalizat în 2022, cu living generos, bucătărie open-space și două băi. Orientare sud-vest, loc de parcare subteran inclus.",
     tranzactie: "vanzare", tip: "apartament", pret_eur: 132000, negociabil: true,
     oras: "București", zona: "Aviației", suprafata_mp: 78, camere: 3, bai: 2,
-    etaj: 4, etaje_total: 8, an_constructie: 2022, compartimentare: "decomandat",
-    certificat_energetic: "A", dotari: ["parcare_subterana", "balcon", "centrala_proprie", "aer_conditionat", "termopan", "parchet", "lift", "videointerfon", "vedere_panoramica"], dotari_altele: "",
-    status: "activ", etichete: ["exclusivitate"], agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]",
+    etaj: "4", regim_inaltime: "S+P+8", an_constructie: 2022, compartimentare: "decomandat",
+    certificat_energetic: "A", dotari: ["parcare_subterana", "balcon", "centrala_proprie", "aer_conditionat", "termopan", "parchet_laminat", "lift", "videointerfon", "vedere_panoramica", "parcare_subterana"], dotari_altele: "",
+    status: "activ", etichete: ["exclusivitate"], agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]", agent_email: "",
     poze: ["img/demo/living-modern.png", "img/demo/fatada-eleganta.png", "img/demo/lobby.png"],
     publicat_la: "2026-07-08"
   },
@@ -18,9 +18,9 @@ const ANUNTURI = [
     descriere: "Apartament în bloc consolidat, renovat integral în 2025: instalații noi, bucătărie mobilată și utilată, parchet masiv. La 5 minute de parcul Verdi.",
     tranzactie: "vanzare", tip: "apartament", pret_eur: 115000, negociabil: false,
     oras: "București", zona: "Floreasca", suprafata_mp: 64, camere: 2, bai: 1,
-    etaj: 2, etaje_total: 4, an_constructie: 1978, compartimentare: "semidecomandat",
-    certificat_energetic: "B", dotari: ["renovat", "mobilat", "utilat", "boxa", "centrala_proprie", "termopan", "parchet", "gresie_faianta", "interfon"], dotari_altele: "Parchet masiv, bloc consolidat",
-    status: "activ", agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]",
+    etaj: "2", regim_inaltime: "P+4", an_constructie: 1978, compartimentare: "semidecomandat",
+    certificat_energetic: "B", dotari: ["renovat", "mobilat", "utilat", "boxa", "centrala_proprie", "termopan", "parchet_natur", "gresie_faianta", "interfon", "masina_spalat", "frigider", "aragaz_plita"], dotari_altele: "Parchet masiv, bloc consolidat",
+    status: "activ", agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]", agent_email: "",
     poze: ["img/demo/interior-clasic.png", "img/demo/living-modern.png"],
     publicat_la: "2026-07-05"
   },
@@ -29,9 +29,9 @@ const ANUNTURI = [
     descriere: "Penthouse pe două niveluri cu terasă perimetrală și vedere deschisă asupra orașului. Finisaje premium, două locuri de parcare, boxă.",
     tranzactie: "vanzare", tip: "penthouse", pret_eur: 295000, negociabil: true,
     oras: "București", zona: "Barbu Văcărescu", suprafata_mp: 156, camere: 4, bai: 3,
-    etaj: 11, etaje_total: 12, an_constructie: 2020, compartimentare: "decomandat",
+    etaj: "11", regim_inaltime: "S+P+12", an_constructie: 2020, compartimentare: "decomandat",
     certificat_energetic: "A", dotari: ["terasa", "parcare_subterana", "smart_home", "aer_conditionat", "lift", "finisaje_premium", "incalzire_pardoseala", "vedere_panoramica", "supraveghere_video"], dotari_altele: "Terasă perimetrală 40 mp, două locuri de parcare",
-    status: "rezervat", etichete: ["nou", "exclusivitate"], agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]",
+    status: "rezervat", etichete: ["nou", "exclusivitate"], agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]", agent_email: "",
     poze: ["img/demo/penthouse.png", "img/demo/lobby.png"],
     publicat_la: "2026-06-28"
   },
@@ -40,9 +40,9 @@ const ANUNTURI = [
     descriere: "Apartament mobilat și utilat modern, disponibil imediat, în ansamblu rezidențial liniștit cu spații verzi. Contract minim 12 luni.",
     tranzactie: "inchiriere", tip: "apartament", pret_eur: 650, negociabil: false,
     oras: "București", zona: "Pipera", suprafata_mp: 58, camere: 2, bai: 1,
-    etaj: 3, etaje_total: 6, an_constructie: 2019, compartimentare: "decomandat",
-    certificat_energetic: "A", dotari: ["mobilat", "utilat", "parcare", "paza", "aer_conditionat", "centrala_proprie", "balcon", "lift", "supraveghere_video"], dotari_altele: "Disponibil imediat",
-    status: "activ", etichete: ["oferta"], agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]",
+    etaj: "3", regim_inaltime: "P+6", an_constructie: 2019, compartimentare: "decomandat",
+    certificat_energetic: "A", dotari: ["mobilat", "utilat", "parcare_curte", "paza", "smart_tv", "masina_spalat", "canapea_extensibila", "pat_mijloc", "sifonier", "aer_conditionat", "centrala_proprie", "balcon", "lift", "supraveghere_video"], dotari_altele: "Disponibil imediat",
+    status: "activ", liber_din: "2026-11-01", etichete: ["oferta"], agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]", agent_email: "",
     poze: ["img/demo/ansamblu-canal.png", "img/demo/living-modern.png"],
     publicat_la: "2026-07-10"
   },
@@ -51,9 +51,9 @@ const ANUNTURI = [
     descriere: "Casă individuală P+1 cu living dublu, bucătărie închisă și grădină amenajată. Garaj și foișor. Toate utilitățile, acces asfaltat.",
     tranzactie: "vanzare", tip: "casa", pret_eur: 289000, negociabil: true,
     oras: "Ilfov", zona: "Corbeanca", suprafata_mp: 210, camere: 4, bai: 3,
-    etaj: null, etaje_total: 2, an_constructie: 2017, compartimentare: "decomandat",
-    certificat_energetic: "B", dotari: ["garaj", "gradina", "foisor", "curte", "centrala_proprie", "termopan", "parchet", "alarma", "curent", "apa", "canalizare", "gaz"], dotari_altele: "Teren 500 mp, acces asfaltat",
-    status: "activ", etichete: ["pret_redus"], agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]",
+    etaj: "", regim_inaltime: "P+1+M", an_constructie: 2017, compartimentare: "decomandat",
+    certificat_energetic: "B", dotari: ["garaj", "gradina", "foisor", "curte", "centrala_proprie", "termopan", "parchet_stratificat", "alarma", "curent", "apa", "canalizare", "gaz", "put", "semineu", "sezlonguri"], dotari_altele: "Teren 500 mp, acces asfaltat",
+    status: "activ", etichete: ["pret_redus"], agent_nume: "Viorel D.", agent_telefon: "[DE COMPLETAT]", agent_email: "",
     poze: ["img/demo/fatada-eleganta.png", "img/demo/interior-clasic.png"],
     publicat_la: "2026-07-01"
   },
@@ -62,9 +62,9 @@ const ANUNTURI = [
     descriere: "Exemplu de anunț finalizat: rămâne afișat 30 de zile de la vânzare, ca dovadă de activitate (regulă agreată la kickoff).",
     tranzactie: "vanzare", tip: "apartament", pret_eur: 148000, negociabil: false,
     oras: "București", zona: "Titan", suprafata_mp: 82, camere: 3, bai: 2,
-    etaj: 6, etaje_total: 10, an_constructie: 2015, compartimentare: "decomandat",
-    certificat_energetic: "B", dotari: ["parcare", "balcon", "aer_conditionat", "termoficare", "termopan"], dotari_altele: "Balcon închis",
-    status: "vandut", agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]",
+    etaj: "6", regim_inaltime: "P+10", an_constructie: 2015, compartimentare: "decomandat",
+    certificat_energetic: "B", dotari: ["parcare_strada", "balcon", "aer_conditionat", "termoficare", "termopan"], dotari_altele: "Balcon închis",
+    status: "vandut", agent_nume: "Georgeta V.", agent_telefon: "[DE COMPLETAT]", agent_email: "",
     poze: ["img/demo/lobby.png", "img/demo/ansamblu-canal.png"],
     publicat_la: "2026-06-02"
   }
@@ -147,9 +147,9 @@ const SOLICITARI = [
     contact: { nume: "Andrei Popescu", telefon: "07XX XXX XXX", email: "andrei.popescu@example.com" },
     proprietate: {
       tranzactie: "vanzare", tip: "apartament", oras: "București", zona: "Drumul Taberei", adresa: "Strada Brașov",
-      pret_eur: 98000, negociabil: true, suprafata_mp: 54, camere: 2, bai: 1, etaj: 3, etaje_total: 4,
+      pret_eur: 98000, negociabil: true, suprafata_mp: 54, camere: 2, bai: 1, etaj: "3", regim_inaltime: "P+4",
       an_constructie: 1982, compartimentare: "semidecomandat", certificat_energetic: "C",
-      dotari: ["centrala_proprie", "termopan", "parchet", "balcon", "interfon", "aer_conditionat"], dotari_altele: "Bloc reabilitat termic în 2019",
+      dotari: ["centrala_proprie", "termopan", "parchet_laminat", "balcon", "interfon", "aer_conditionat"], dotari_altele: "Bloc reabilitat termic în 2019",
       descriere: "Apartament cu 2 camere la etajul 3 din 4, orientare sud, lângă parcul Drumul Taberei. Îl vând pentru că ne mutăm la casă. Liber la vânzare.",
       poze: ["img/demo/interior-clasic.png"]
     }

@@ -9,8 +9,8 @@
 <link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
 <meta name="theme-color" content="#12294A">
-<link rel="stylesheet" href="css/stil.css?v=12">
-<link rel="stylesheet" href="css/admin.css?v=12">
+<link rel="stylesheet" href="css/stil.css?v=13">
+<link rel="stylesheet" href="css/admin.css?v=13">
 <script>
 /* Diagnostic vizibil: daca un script nu se incarca sau arunca o eroare, apare o banda rosie jos. */
 window.addEventListener("error", function (e) {
@@ -120,14 +120,7 @@ window.addEventListener("error", function (e) {
                     <option value="inchiriere">Închiriere</option>
                   </select></div>
                 <div><label for="f-tip">Tip proprietate *</label>
-                  <select id="f-tip" required>
-                    <option value="apartament">Apartament</option>
-                    <option value="penthouse">Penthouse</option>
-                    <option value="casa">Casă / vilă</option>
-                    <option value="teren">Teren</option>
-                    <option value="comercial">Spațiu comercial</option>
-                    <option value="birou">Birou</option>
-                  </select></div>
+                  <select id="f-tip" required data-tipuri></select></div>
                 <div><label for="f-pret">Preț (EUR) *</label><input id="f-pret" type="number" min="1" required></div>
                 <div class="camp-bifat"><label><input id="f-negociabil" type="checkbox"> Preț negociabil</label></div>
                 <div><label for="f-oras">Oraș / județ *</label><input id="f-oras" type="text" required value="București"></div>
@@ -140,8 +133,8 @@ window.addEventListener("error", function (e) {
                 <div><label for="f-suprafata">Suprafață (mp)</label><input id="f-suprafata" type="number" min="1"></div>
                 <div><label for="f-camere">Camere</label><input id="f-camere" type="number" min="0"></div>
                 <div><label for="f-bai">Băi</label><input id="f-bai" type="number" min="0"></div>
-                <div><label for="f-etaj">Etaj</label><input id="f-etaj" type="number"></div>
-                <div><label for="f-etaje">Total etaje</label><input id="f-etaje" type="number" min="0"></div>
+                <div><label for="f-etaj">Etaj</label><select id="f-etaj" data-etaje="Nespecificat"></select></div>
+                <div><label for="f-regim">Regim de înălțime</label><input id="f-regim" type="text" placeholder="ex. S+P+8, D+P+1+M"></div>
                 <div><label for="f-an">An construcție</label><input id="f-an" type="number" min="1800" max="2100"></div>
                 <div><label for="f-compartimentare">Compartimentare</label>
                   <select id="f-compartimentare">
@@ -178,11 +171,11 @@ window.addEventListener("error", function (e) {
             <div class="panou">
               <h3>Publicare</h3>
               <label for="f-status">Status</label>
-              <select id="f-status">
-                <option value="activ">Activ (vizibil pe site)</option>
-                <option value="rezervat">Rezervat</option>
-                <option value="vandut">Vândut</option>
-              </select>
+              <select id="f-status"></select>
+              <div id="f-inchiriere-date" hidden>
+                <label for="f-liber-din" style="margin-top:10px">Liber din (opțional, la Disponibil)</label><input id="f-liber-din" type="date">
+                <label for="f-inchiriat-pana" style="margin-top:10px">Închiriat până la</label><input id="f-inchiriat-pana" type="date">
+              </div>
               <label style="margin-top:14px">Semne de carte (pe fotografia din listă)</label>
               <div class="bife" id="f-etichete"></div>
               <p class="nota-camp">Lista finală a semnelor vine de la client; se schimbă într-un singur loc (js/comun.js).</p>
@@ -199,9 +192,10 @@ window.addEventListener("error", function (e) {
               <p class="nota-camp">Pinul de pe harta proprietății se așază pe această adresă.</p>
             </div>
             <div class="panou">
-              <h3>Agent responsabil</h3>
-              <label for="f-agent">Nume</label><input id="f-agent" type="text">
+              <h3>Agent imobiliar</h3>
+              <label for="f-agent">Nume complet</label><input id="f-agent" type="text">
               <label for="f-agent-tel" style="margin-top:10px">Telefon</label><input id="f-agent-tel" type="tel">
+              <label for="f-agent-email" style="margin-top:10px">Email</label><input id="f-agent-email" type="email">
             </div>
           </aside>
         </div>
@@ -358,8 +352,8 @@ window.addEventListener("error", function (e) {
   </div>
 </dialog>
 
-<script src="js/date-demo.js?v=12"></script>
-<script src="js/comun.js?v=12"></script>
-<script src="js/admin.js?v=12"></script>
+<script src="js/date-demo.js?v=13"></script>
+<script src="js/comun.js?v=13"></script>
+<script src="js/admin.js?v=13"></script>
 </body>
 </html>

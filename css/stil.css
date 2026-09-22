@@ -164,6 +164,7 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .insigna.inchiriere { background: var(--marcaj-inchiriere); }
 .insigna.rezervat { background: var(--marcaj-rezervat); }
 .insigna.vandut { background: var(--marcaj-vandut); }
+.insigna.liber { background: var(--ok); }
 /* Semne de carte: panglici verticale în colțul din dreapta-sus, cu crestătură jos (ca în referință) */
 .panglici { position: absolute; top: 0; right: 12px; display: flex; gap: 6px; }
 .panglica { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 44px; padding: 8px 0 13px 0; color: var(--alb); background: var(--brand); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 7px), 0 100%); box-shadow: var(--umbra-card); }

@@ -10,7 +10,7 @@
 <link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
 <meta name="theme-color" content="#12294A">
-<link rel="stylesheet" href="css/stil.css?v=12">
+<link rel="stylesheet" href="css/stil.css?v=13">
 
 </head>
 <body>
@@ -81,14 +81,7 @@
                   <option value="inchiriere">Închiriez</option>
                 </select></div>
               <div><label for="p-tip">Tip proprietate *</label>
-                <select id="p-tip" required>
-                  <option value="apartament">Apartament</option>
-                  <option value="penthouse">Penthouse</option>
-                  <option value="casa">Casă / vilă</option>
-                  <option value="teren">Teren</option>
-                  <option value="comercial">Spațiu comercial</option>
-                  <option value="birou">Birou</option>
-                </select></div>
+                <select id="p-tip" required data-tipuri="Alege tipul de proprietate"></select></div>
               <div><label for="p-oras">Oraș / județ *</label><input id="p-oras" type="text" value="București" required></div>
               <div><label for="p-zona">Zonă / cartier *</label><input id="p-zona" type="text" placeholder="Ex.: Aviației" required></div>
               <div class="camp-lat"><label for="p-adresa">Strada (opțional, nu se publică fără acordul tău)</label><input id="p-adresa" type="text" placeholder="Strada, număr"></div>
@@ -103,8 +96,8 @@
               <div><label for="p-suprafata">Suprafață (mp)</label><input id="p-suprafata" type="number" min="1" inputmode="numeric"></div>
               <div><label for="p-camere">Camere</label><input id="p-camere" type="number" min="0" inputmode="numeric"></div>
               <div><label for="p-bai">Băi</label><input id="p-bai" type="number" min="0" inputmode="numeric"></div>
-              <div><label for="p-etaj">Etaj</label><input id="p-etaj" type="number" inputmode="numeric"></div>
-              <div><label for="p-etaje">Total etaje</label><input id="p-etaje" type="number" min="0" inputmode="numeric"></div>
+              <div><label for="p-etaj">Etaj</label><select id="p-etaj" data-etaje="Nespecificat"></select></div>
+              <div><label for="p-regim">Regim de înălțime</label><input id="p-regim" type="text" placeholder="ex. P+4, D+P+1+M"></div>
               <div><label for="p-an">An construcție</label><input id="p-an" type="number" min="1800" max="2100" inputmode="numeric"></div>
               <div><label for="p-compartimentare">Compartimentare</label>
                 <select id="p-compartimentare">
@@ -171,14 +164,7 @@
                   <option value="inchiriere">Închiriez</option>
                 </select></div>
               <div><label for="c-tip">Tip proprietate *</label>
-                <select id="c-tip" required>
-                  <option value="apartament">Apartament</option>
-                  <option value="penthouse">Penthouse</option>
-                  <option value="casa">Casă / vilă</option>
-                  <option value="teren">Teren</option>
-                  <option value="comercial">Spațiu comercial</option>
-                  <option value="birou">Birou</option>
-                </select></div>
+                <select id="c-tip" required data-tipuri="Orice tip"></select></div>
               <div class="camp-lat"><label for="c-zone">Zone preferate</label><input id="c-zone" type="text" placeholder="Ex.: Aviației, Floreasca, Pipera"></div>
               <div><label for="c-camere">Număr minim de camere</label><input id="c-camere" type="number" min="0" inputmode="numeric"></div>
               <div><label for="c-buget">Buget maxim (EUR)</label><input id="c-buget" type="number" min="1" inputmode="numeric"></div>
@@ -237,9 +223,9 @@
   <div class="subsol-legal"><span>© 2026 Full Imobiliare. Toate drepturile rezervate.</span><span>fullimobiliare.ro</span></div>
 </div></footer>
 
-<script src="js/date-demo.js?v=12"></script>
-<script src="js/comun.js?v=12"></script>
-<script src="js/app.js?v=12"></script>
-<script src="js/contact.js?v=12"></script>
+<script src="js/date-demo.js?v=13"></script>
+<script src="js/comun.js?v=13"></script>
+<script src="js/app.js?v=13"></script>
+<script src="js/contact.js?v=13"></script>
 </body>
 </html>

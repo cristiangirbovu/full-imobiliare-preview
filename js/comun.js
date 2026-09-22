@@ -3,14 +3,20 @@
 // componenta de bife, managerul de fotografii (redimensionare în browser) și mici utilitare.
 // Un singur loc de adevăr: admin.html, contact.html și proprietate.html citesc de aici.
 
+// Lista aprobată de clientă (document „Câmpuri proprietate și lista de dotări", completat 22.09.2026).
 const TIPURI_IMOBIL = [
-  { cheie: "apartament", eticheta: "Apartament" },
-  { cheie: "penthouse",  eticheta: "Penthouse" },
-  { cheie: "casa",       eticheta: "Casă / vilă" },
-  { cheie: "teren",      eticheta: "Teren" },
-  { cheie: "comercial",  eticheta: "Spațiu comercial" },
-  { cheie: "birou",      eticheta: "Birou" }
+  { cheie: "apartament",       eticheta: "Apartament",        titlu: "Apartament" },
+  { cheie: "penthouse",        eticheta: "Penthouse",         titlu: "Penthouse" },
+  { cheie: "casa",             eticheta: "Casă / vilă",       titlu: "Casă" },
+  { cheie: "teren_intravilan", eticheta: "Teren intravilan",  titlu: "Teren intravilan" },
+  { cheie: "teren_extravilan", eticheta: "Teren extravilan",  titlu: "Teren extravilan" },
+  { cheie: "teren_agricol",    eticheta: "Teren agricol",     titlu: "Teren agricol" },
+  { cheie: "comercial",        eticheta: "Spațiu comercial",  titlu: "Spațiu comercial" },
+  { cheie: "birou",            eticheta: "Spațiu de birouri", titlu: "Spațiu de birouri" },
+  { cheie: "hala",             eticheta: "Hale/Depozite",     titlu: "Hală/Depozit" }
 ];
+// Cheile vechi din date (înainte de lista aprobată) se traduc la citire.
+const TIPURI_VECHI = { teren: "teren_intravilan" };
 
 const COMPARTIMENTARI = [
   { cheie: "decomandat",     eticheta: "Decomandat" },
@@ -21,55 +27,83 @@ const COMPARTIMENTARI = [
 
 const CERTIFICATE_ENERGETICE = ["A", "B", "C", "D", "E", "F", "G"];
 
-// Tipurile pentru care are sens un grup întreg; un element poate restrânge lista prin `tipuri` propriu.
+// Etajul: S / D / P / 1..30 / M (cerința clientei); clădirea are „regim de înălțime" în notația standard (ex. D+P+1+M, S+P+8).
+const ETAJE = [{ cheie: "S", eticheta: "Subsol" }, { cheie: "D", eticheta: "Demisol" }, { cheie: "P", eticheta: "Parter" }]
+  .concat(Array.from({ length: 30 }, (_, i) => ({ cheie: String(i + 1), eticheta: `Etaj ${i + 1}` })))
+  .concat([{ cheie: "M", eticheta: "Mansardă" }]);
+function etichetaEtaj(v) { const e = ETAJE.find(x => x.cheie === String(v)); return e ? e.eticheta : (v === null || v === undefined ? "" : String(v)); }
+
+// Statusurile depind de tranzacție: vânzare → vândut; închiriere → închiriat (până la o dată), cu „liber din" la cele disponibile.
+const STATUSURI = {
+  vanzare:    [{ cheie: "activ", eticheta: "Activ (vizibil pe site)" }, { cheie: "rezervat", eticheta: "Rezervat" }, { cheie: "vandut", eticheta: "Vândut (rămâne 30 de zile)" }],
+  inchiriere: [{ cheie: "activ", eticheta: "Disponibil (vizibil pe site)" }, { cheie: "rezervat", eticheta: "Rezervat" }, { cheie: "inchiriat", eticheta: "Închiriat (până la o dată)" }]
+};
+
+// Grupuri de tipuri pentru dotări
 const LOCUINTE = ["apartament", "penthouse", "casa"];
-const CLADIRI = ["apartament", "penthouse", "casa", "comercial", "birou"];
+const TERENURI = ["teren_intravilan", "teren_extravilan", "teren_agricol"];
+const COMERCIALE = ["comercial", "birou", "hala"];
+const CLADIRI = LOCUINTE.concat(COMERCIALE);
 const TOATE = TIPURI_IMOBIL.map(t => t.cheie);
 
 const GRUPURI_DOTARI = [
   { cheie: "utilitati", titlu: "Utilități", tipuri: TOATE, elemente: [
-    ["curent", "Curent electric"], ["apa", "Apă curentă"], ["canalizare", "Canalizare"], ["gaz", "Gaz"],
-    ["catv", "CATV"], ["internet", "Internet"]
+    ["curent", "Curent electric"], ["curent_trifazic", "Curent trifazic (380V)", ["casa"].concat(COMERCIALE, TERENURI)],
+    ["apa", "Apă curentă"], ["canalizare", "Canalizare"], ["gaz", "Gaz"], ["catv", "CATV"], ["internet", "Internet"],
+    ["generator", "Generator electric"], ["panouri_fotovoltaice", "Panouri fotovoltaice"], ["fosa_septica", "Fosă septică"], ["put", "Puț"]
   ]},
   { cheie: "incalzire", titlu: "Încălzire și climatizare", tipuri: CLADIRI, elemente: [
     ["centrala_proprie", "Centrală proprie"], ["centrala_imobil", "Centrală de imobil"], ["termoficare", "Termoficare"],
-    ["calorifere", "Calorifere"], ["incalzire_pardoseala", "Încălzire în pardoseală"], ["semineu", "Șemineu", LOCUINTE],
-    ["aer_conditionat", "Aer condiționat"], ["ventilatie", "Ventilație mecanică", ["comercial", "birou", "penthouse"]]
+    ["calorifere", "Calorifere"], ["calorifere_electrice", "Calorifere electrice"], ["incalzire_pardoseala", "Încălzire în pardoseală"],
+    ["soba", "Sobă", LOCUINTE], ["semineu", "Șemineu", LOCUINTE],
+    ["aer_conditionat", "Aer condiționat"], ["ventilatie", "Ventilație mecanică", ["penthouse"].concat(COMERCIALE)],
+    ["dezumidificator", "Dezumidificator"], ["purificator_aer", "Purificator de aer"]
   ]},
   { cheie: "finisaje", titlu: "Finisaje", tipuri: CLADIRI, elemente: [
-    ["parchet", "Parchet"], ["gresie_faianta", "Gresie și faianță"], ["termopan", "Termopan"], ["usi_interior_lemn", "Uși interior lemn"],
-    ["usa_metalica", "Ușă metalică"], ["renovat", "Renovat recent"], ["finisaje_premium", "Finisaje premium"]
+    ["parchet_natur", "Parchet natur"], ["parchet_stratificat", "Parchet stratificat"], ["parchet_laminat", "Parchet laminat"], ["parchet_spc", "Parchet SPC (rezistent la apă)"],
+    ["gresie_faianta", "Gresie și faianță"], ["termopan", "Termopan"], ["usi_noi", "Uși noi"], ["usi_interior_lemn", "Uși interior lemn"], ["usa_metalica", "Ușă metalică"],
+    ["vinarom", "Vinarom"], ["lambriuri", "Lambriuri"], ["tapet", "Tapet"], ["renovat", "Renovat recent"], ["finisaje_premium", "Finisaje premium"]
   ]},
   { cheie: "interior", titlu: "Dotări interioare", tipuri: LOCUINTE, elemente: [
-    ["mobilat", "Mobilat"], ["utilat", "Utilat"], ["masina_spalat", "Mașină de spălat"], ["masina_vase", "Mașină de spălat vase"],
-    ["frigider", "Frigider"], ["aragaz_plita", "Aragaz / plită"], ["cuptor", "Cuptor"], ["hota", "Hotă"], ["tv", "Televizor"],
-    ["dressing", "Dressing"], ["debara", "Debara"], ["smart_home", "Smart home"]
+    ["mobilat", "Mobilat"], ["utilat", "Utilat"],
+    ["masina_spalat", "Mașină de spălat rufe"], ["uscator_rufe", "Uscător de rufe"], ["masina_vase", "Mașină de spălat vase"],
+    ["frigider", "Frigider"], ["aragaz_plita", "Aragaz / plită"], ["cuptor", "Cuptor"], ["cuptor_microunde", "Cuptor cu microunde"], ["cuptor_lemne", "Cuptor pe lemne"], ["hota", "Hotă"],
+    ["cafetiera", "Cafetieră"], ["espressor", "Espressor"], ["prajitor_paine", "Prăjitor de pâine"], ["gratar_electric", "Grătar electric"], ["ustensile_bucatarie", "Ustensile de bucătărie"],
+    ["tv", "Televizor"], ["smart_tv", "Smart TV"], ["fier_calcat", "Fier de călcat"], ["uscator_par", "Uscător de păr"],
+    ["jacuzzi", "Jacuzzi"], ["cabina_dus", "Cabină de duș"], ["dressing", "Dressing"], ["debara", "Debara"], ["smart_home", "Smart home"]
+  ]},
+  { cheie: "mobilier", titlu: "Mobilier", tipuri: LOCUINTE, elemente: [
+    ["canapea_piele", "Canapea din piele"], ["canapea_extensibila", "Canapea extensibilă"], ["fotolii", "Fotolii"], ["masa_cafea", "Masă de cafea"],
+    ["masa", "Masă"], ["scaune", "Scaune"], ["pat_mijloc", "Pat de mijloc"], ["noptiere", "Noptiere"], ["sifonier", "Șifonier"]
   ]},
   { cheie: "imobil", titlu: "Imobil și exterior", tipuri: CLADIRI, elemente: [
     ["balcon", "Balcon", ["apartament", "penthouse"]], ["terasa", "Terasă"], ["logie", "Logie", ["apartament", "penthouse"]],
-    ["lift", "Lift", ["apartament", "penthouse", "comercial", "birou"]], ["parcare", "Loc de parcare"], ["parcare_subterana", "Parcare subterană"],
+    ["lift", "Lift", ["apartament", "penthouse"].concat(COMERCIALE)],
+    ["parcare_strada", "Parcare la stradă"], ["parcare_curte", "Parcare în curte"], ["parcare_plata", "Parcare cu plată"], ["parcare_subterana", "Parcare subterană"],
     ["garaj", "Garaj", LOCUINTE], ["boxa", "Boxă", ["apartament", "penthouse"]], ["curte", "Curte", LOCUINTE], ["gradina", "Grădină", LOCUINTE],
-    ["piscina", "Piscină", LOCUINTE], ["foisor", "Foișor", ["casa"]], ["acces_dizabilitati", "Acces persoane cu dizabilități"]
+    ["piscina", "Piscină", LOCUINTE], ["foisor", "Foișor", ["casa"]], ["bar", "Bar", LOCUINTE], ["balansoar", "Balansoar", LOCUINTE], ["sezlonguri", "Șezlonguri", LOCUINTE],
+    ["acces_dizabilitati", "Acces persoane cu dizabilități"]
   ]},
   { cheie: "siguranta", titlu: "Siguranță", tipuri: CLADIRI, elemente: [
     ["interfon", "Interfon"], ["videointerfon", "Videointerfon"], ["alarma", "Sistem de alarmă"], ["supraveghere_video", "Supraveghere video"],
     ["paza", "Pază"], ["usa_acces_securizat", "Acces securizat în imobil", ["apartament", "penthouse", "birou"]]
   ]},
   { cheie: "vedere", titlu: "Vedere", tipuri: ["apartament", "penthouse"], elemente: [
-    ["vedere_strada", "Stradă"], ["vedere_curte", "Curte interioară"], ["vedere_parc", "Parc"], ["vedere_lac", "Lac"], ["vedere_panoramica", "Panoramică"]
+    ["vedere_strada", "Stradală"], ["vedere_curte", "Curte interioară"], ["vedere_parc", "Parc"], ["vedere_lac", "Lac"], ["vedere_panoramica", "Panoramică"]
   ]},
-  { cheie: "teren", titlu: "Caracteristici teren", tipuri: ["teren"], elemente: [
-    ["intravilan", "Intravilan"], ["extravilan", "Extravilan"], ["construibil", "Construibil"], ["deschidere_strada", "Deschidere la stradă"],
-    ["drum_asfaltat", "Drum asfaltat"], ["utilitati_la_limita", "Utilități la limita proprietății"], ["imprejmuit", "Împrejmuit"],
-    ["puz_pug", "PUZ / PUG aprobat"], ["certificat_urbanism", "Certificat de urbanism"]
+  { cheie: "teren", titlu: "Caracteristici teren", tipuri: TERENURI, elemente: [
+    ["construibil", "Construibil"], ["deschidere_strada", "Deschidere la stradă"], ["drum_asfaltat", "Drum asfaltat"],
+    ["utilitati_la_limita", "Utilități la limita proprietății"], ["imprejmuit", "Împrejmuit"],
+    ["puz", "PUZ aprobat"], ["certificat_urbanism", "Certificat de urbanism"], ["autorizatie_construire", "Autorizație de construire"]
   ]},
-  { cheie: "comercial", titlu: "Spațiu comercial și birou", tipuri: ["comercial", "birou"], elemente: [
+  { cheie: "comercial", titlu: "Spațiu comercial, birouri, hale", tipuri: COMERCIALE, elemente: [
     ["vitrina", "Vitrină la stradă", ["comercial"]], ["acces_stradal", "Acces direct din stradă"], ["grup_sanitar", "Grup sanitar propriu"],
     ["spatiu_depozitare", "Spațiu de depozitare"], ["open_space", "Open space"], ["compartimentat", "Compartimentat"],
-    ["acces_tir", "Acces TIR", ["comercial"]], ["rampa", "Rampă de încărcare", ["comercial"]], ["receptie", "Recepție", ["birou"]]
+    ["acces_tir", "Acces TIR", ["comercial", "hala"]], ["rampa_tir", "Rampă TIR", ["comercial", "hala"]], ["receptie", "Recepție", ["birou"]]
   ]}
 ];
-
+// Chei vechi → chei noi (date introduse înainte de lista aprobată)
+const DOTARI_VECHI = { parchet: "parchet_laminat", parcare: "parcare_curte", rampa: "rampa_tir", puz_pug: "puz" };
 // Hartă cheie → etichetă, ca afișarea să nu depindă de grup.
 const ETICHETE_DOTARI = (function () {
   const m = {};
@@ -77,21 +111,36 @@ const ETICHETE_DOTARI = (function () {
   return m;
 })();
 
-function etichetaTip(cheie) { const t = TIPURI_IMOBIL.find(x => x.cheie === cheie); return t ? t.eticheta : cheie; }
+function tipNormalizat(cheie) { return TIPURI_VECHI[cheie] || cheie; }
+function etichetaTip(cheie) { const t = TIPURI_IMOBIL.find(x => x.cheie === tipNormalizat(cheie)); return t ? t.eticheta : cheie; }
+function etichetaTipTitlu(cheie) { const t = TIPURI_IMOBIL.find(x => x.cheie === tipNormalizat(cheie)); return t ? t.titlu : cheie; }
+function esteTeren(tip) { return TERENURI.includes(tipNormalizat(tip)); }
+function normalizeazaDotari(chei) { return (chei || []).map(c => DOTARI_VECHI[c] || c); }
+// Umple un <select> cu tipurile de proprietate (o singură listă pentru hero, filtre, admin, formularul proprietarului).
+function optiuniTip(prima) {
+  return (prima !== undefined ? `<option value="">${prima}</option>` : "") + TIPURI_IMOBIL.map(t => `<option value="${t.cheie}">${t.eticheta}</option>`).join("");
+}
+function optiuniEtaj(prima) {
+  return (prima !== undefined ? `<option value="">${prima}</option>` : "") + ETAJE.map(e => `<option value="${e.cheie}">${e.eticheta}</option>`).join("");
+}
+function optiuniStatus(tranzactie) {
+  return STATUSURI[tranzactie === "inchiriere" ? "inchiriere" : "vanzare"].map(s => `<option value="${s.cheie}">${s.eticheta}</option>`).join("");
+}
+function dataRO(iso) { if (!iso) return ""; const p = String(iso).slice(0, 10).split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.${p[0]}` : iso; }
 function etichetaCompartimentare(cheie) { const c = COMPARTIMENTARI.find(x => x.cheie === cheie); return c ? c.eticheta : cheie; }
 function etichetaDotare(cheie) { return ETICHETE_DOTARI[cheie] || cheie; }   // cheile vechi/necunoscute se afișează ca atare
 
 // Grupurile și elementele valabile pentru un tip de imobil.
 function grupuriPentruTip(tip) {
   return GRUPURI_DOTARI
-    .filter(g => g.tipuri.includes(tip))
-    .map(g => ({ cheie: g.cheie, titlu: g.titlu, elemente: g.elemente.filter(e => !e[2] || e[2].includes(tip)) }))
+    .filter(g => g.tipuri.includes(tipNormalizat(tip)))
+    .map(g => ({ cheie: g.cheie, titlu: g.titlu, elemente: g.elemente.filter(e => !e[2] || e[2].includes(tipNormalizat(tip))) }))
     .filter(g => g.elemente.length);
 }
 
 // Pentru afișarea publică: dotările selectate, grupate în ordinea listei; necunoscutele intră la „Altele".
 function grupeazaDotari(chei) {
-  const set = new Set(chei || []);
+  const set = new Set(normalizeazaDotari(chei));
   const rezultat = [];
   GRUPURI_DOTARI.forEach(g => {
     const el = g.elemente.filter(e => set.has(e[0])).map(e => e[1]);
@@ -215,12 +264,12 @@ function escapeHtml(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c
 
 // Titlu propus pentru o proprietate, din câmpurile ei (agentul îl poate rescrie în admin).
 function titluPropus(p) {
-  const tip = ({ casa: "Casă", comercial: "Spațiu comercial" })[p.tip] || etichetaTip(p.tip);
-  const camere = p.camere ? ` cu ${p.camere} ${p.camere == 1 ? "cameră" : "camere"}` : "";
-  const supraf = (p.tip === "teren" || p.tip === "comercial" || p.tip === "birou") && p.suprafata_mp ? ` de ${p.suprafata_mp} mp` : "";
-  const unde = p.zona ? `, ${p.zona}` : "";
+  const tip = etichetaTipTitlu(p.tip);
+  const camere = p.camere && !esteTeren(p.tip) ? ` cu ${p.camere} ${p.camere == 1 ? "cameră" : "camere"}` : "";
+  const supraf = (esteTeren(p.tip) || COMERCIALE.includes(tipNormalizat(p.tip))) && p.suprafata_mp ? ` de ${p.suprafata_mp} mp` : "";
+  const unde = [p.oras, p.zona].filter(Boolean).join(", ");
   const tranz = p.tranzactie === "inchiriere" ? " de închiriat" : "";
-  return `${tip}${camere}${supraf}${tranz}${unde}`;
+  return `${tip}${camere}${supraf}${tranz}${unde ? " în " + unde : ""}`;
 }
 
 function aziISO() { return new Date().toISOString().slice(0, 10); }
@@ -253,8 +302,9 @@ const ICONITE = {
 
 // Titlul de card: simplu, Tip imobil + zonă (cerința clientei). Titlul complet rămâne pe pagina proprietății.
 function titluCard(a) {
-  const tip = ({ casa: "Casă", comercial: "Spațiu comercial" })[a.tip] || etichetaTip(a.tip);
-  return a.zona ? `${tip} în ${a.zona}` : tip;
+  // Cerința clientei: tip + oraș + zonă (ex. „Apartament în București, Tineretului")
+  const unde = [a.oras, a.zona].filter(Boolean).join(", ");
+  return unde ? `${etichetaTipTitlu(a.tip)} în ${unde}` : etichetaTipTitlu(a.tip);
 }
 // Adresa afișată sub titlu + linkul către Google Maps (adresa exactă dacă există, altfel zona + orașul).
 function adresaAfisata(a) {

@@ -103,6 +103,8 @@ function insigne(a) {
   let html = `<span class="insigna ${a.tranzactie === "inchiriere" ? "inchiriere" : ""}">${a.tranzactie === "inchiriere" ? "De închiriat" : "De vânzare"}</span>`;
   if (a.status === "rezervat") html += `<span class="insigna rezervat">Rezervat</span>`;
   if (a.status === "vandut") html += `<span class="insigna vandut">Vândut</span>`;
+  if (a.status === "inchiriat") html += `<span class="insigna vandut">Închiriat${a.inchiriat_pana_la ? " până la " + dataRO(a.inchiriat_pana_la) : ""}</span>`;
+  if (a.status === "activ" && a.tranzactie === "inchiriere" && a.liber_din && a.liber_din > aziISO()) html += `<span class="insigna liber">Liber din ${dataRO(a.liber_din)}</span>`;
   return html;
 }
 
@@ -146,7 +148,7 @@ function cardAnunt(a, index) {
 function randeazaRecente(idElement) {
   const el = document.getElementById(idElement);
   if (!el) return;
-  const recente = DATE_ANUNTURI.filter(a => a.status !== "vandut")
+  const recente = DATE_ANUNTURI.filter(a => a.status !== "vandut" && a.status !== "inchiriat")
     .sort((x, y) => y.publicat_la.localeCompare(x.publicat_la)).slice(0, 3);
   el.innerHTML = recente.map(cardAnunt).join("");
 }
@@ -217,7 +219,7 @@ function randeazaLista() {
   const q = normalizeaza(f.q);
   let lista = DATE_ANUNTURI.filter(a => {
     if (f.tranzactie && a.tranzactie !== f.tranzactie) return false;
-    if (f.tip && a.tip !== f.tip) return false;
+    if (f.tip && tipNormalizat(a.tip) !== f.tip) return false;
     if (f.camere && !(a.camere >= parseInt(f.camere, 10))) return false;
     if (f.zone.length && !f.zone.includes(a.zona)) return false;
     if (f.pret_min && a.pret_eur < Number(f.pret_min)) return false;
@@ -278,7 +280,15 @@ function reseteazaFiltre() {
   randeazaSugestiiPret("");
   randeazaLista();
 }
+function populeazaTipuri() {
+  // Hero (select), filtre (chip-uri), formularul proprietarului/căutătorului (select): aceeași listă din comun.js
+  document.querySelectorAll("select[data-tipuri]").forEach(sel => { sel.innerHTML = optiuniTip(sel.dataset.tipuri); });
+  const chip = document.getElementById("chip-tip");
+  if (chip) chip.innerHTML = `<label class="chip"><input type="radio" name="tip" value="" checked><span>Orice tip</span></label>` +
+    TIPURI_IMOBIL.map(t => `<label class="chip"><input type="radio" name="tip" value="${t.cheie}"><span>${t.eticheta}</span></label>`).join("");
+}
 function initFiltre() {
+  populeazaTipuri();
   const form = document.getElementById("filtre");
   if (!form) return;
   populeazaZone();
@@ -325,7 +335,11 @@ function randeazaDetaliu() {
   randeazaGalerie(a);
   randeazaPuncteForte(a);
   document.getElementById("d-descriere").textContent = a.descriere;
-  document.getElementById("d-agent").textContent = [a.agent_nume, a.agent_telefon].filter(Boolean).join(" · ");
+  document.getElementById("d-agent").innerHTML = [
+    a.agent_nume ? escapeHtml(a.agent_nume) : "",
+    a.agent_telefon ? `<a href="tel:${escapeHtml(String(a.agent_telefon).replace(/\s+/g, ""))}">${escapeHtml(a.agent_telefon)}</a>` : "",
+    a.agent_email ? `<a href="mailto:${escapeHtml(a.agent_email)}">${escapeHtml(a.agent_email)}</a>` : ""
+  ].filter(Boolean).join(" · ");
   const viz = document.getElementById("d-vizionare");
   if (viz) viz.href = `contact.html?rol=cautator&ref=${encodeURIComponent(a.id_intern)}`;
   pregatesteDistribuire(a);
@@ -334,9 +348,12 @@ function randeazaDetaliu() {
     `<tr><td>${eticheta}</td><td><b>${valoare}</b></td></tr>`;
   document.getElementById("d-spec").innerHTML =
     rand("Tip proprietate", etichetaTip(a.tip)) + rand("Tranzacție", a.tranzactie === "inchiriere" ? "Închiriere" : "Vânzare") +
-    rand(a.tip === "teren" ? "Suprafață teren" : "Suprafață utilă", a.suprafata_mp ? a.suprafata_mp + " mp" : null) +
+    rand(esteTeren(a.tip) ? "Suprafață teren" : "Suprafață utilă", a.suprafata_mp ? a.suprafata_mp + " mp" : null) +
     rand("Camere", a.camere) + rand("Băi", a.bai) +
-    rand("Etaj", a.etaj !== null && a.etaj !== undefined ? `${a.etaj} / ${a.etaje_total}` : null) +
+    rand("Etaj", a.etaj !== null && a.etaj !== undefined && a.etaj !== "" ? etichetaEtaj(a.etaj) + (a.regim_inaltime ? ` (clădire ${a.regim_inaltime})` : "") : null) +
+    rand("Regim de înălțime", (a.etaj === null || a.etaj === undefined || a.etaj === "") && a.regim_inaltime ? a.regim_inaltime : null) +
+    rand("Disponibil", a.status === "activ" && a.tranzactie === "inchiriere" && a.liber_din && a.liber_din > aziISO() ? "din " + dataRO(a.liber_din) : null) +
+    rand("Închiriat", a.status === "inchiriat" && a.inchiriat_pana_la ? "până la " + dataRO(a.inchiriat_pana_la) : null) +
     rand("An construcție", a.an_constructie) + rand("Compartimentare", a.compartimentare ? etichetaCompartimentare(a.compartimentare) : null) +
     rand("Certificat energetic", a.certificat_energetic ? "Clasa " + a.certificat_energetic : null);
   // Dotările: bifele grupate pe categorii + textul liber „Altele" din admin.
@@ -442,7 +459,7 @@ function mutaLightbox(pas) {
 function randeazaPuncteForte(a) {
   const panou = document.getElementById("d-puncte-forte"), lista = document.getElementById("d-puncte-lista");
   if (!panou) return;
-  const d = new Set(a.dotari || []);
+  const d = new Set(normalizeazaDotari(a.dotari));
   const anCurent = new Date().getFullYear();
   const p = [];
   if (a.an_constructie && anCurent - a.an_constructie <= 6) p.push(`Construcție nouă, din ${a.an_constructie}`);
@@ -451,10 +468,11 @@ function randeazaPuncteForte(a) {
   if (d.has("vedere_panoramica")) p.push("Vedere panoramică asupra orașului");
   else if (d.has("vedere_parc") || d.has("vedere_lac")) p.push(`Vedere spre ${d.has("vedere_parc") ? "parc" : "lac"}, liniște la fereastră`);
   if (d.has("terasa") || d.has("balcon") || d.has("gradina") || d.has("curte")) p.push(d.has("gradina") ? "Grădină pentru diminețile cu cafea afară" : d.has("terasa") ? "Terasă generoasă, spațiu de respirat" : d.has("curte") ? "Curte proprie" : "Balcon pentru dimineți cu cafea");
-  if (d.has("parcare_subterana") || d.has("garaj") || d.has("parcare")) p.push(d.has("garaj") ? "Garaj propriu" : d.has("parcare_subterana") ? "Loc de parcare subteran, fără griji iarna" : "Loc de parcare inclus");
+  if (d.has("parcare_subterana") || d.has("garaj") || d.has("parcare_curte") || d.has("parcare_strada")) p.push(d.has("garaj") ? "Garaj propriu" : d.has("parcare_subterana") ? "Loc de parcare subteran, fără griji iarna" : d.has("parcare_curte") ? "Parcare în curte" : "Parcare la stradă");
   if (d.has("mobilat") && d.has("utilat")) p.push("Mobilat și utilat: te muți imediat");
   if (a.compartimentare === "decomandat") p.push("Decomandat: intimitate pentru fiecare cameră");
-  if (a.tip === "teren" && d.has("intravilan") && d.has("construibil")) p.push("Intravilan construibil, cu utilități la limită");
+  if (esteTeren(a.tip) && d.has("construibil")) p.push(a.tip === "teren_intravilan" ? "Intravilan construibil" + (d.has("utilitati_la_limita") ? ", cu utilități la limită" : "") : "Teren construibil");
+  if (esteTeren(a.tip) && d.has("autorizatie_construire")) p.push("Are autorizație de construire");
   if (d.has("smart_home")) p.push("Sistem smart home integrat");
   if (a.negociabil) p.push("Preț negociabil");
   const alese = p.slice(0, 4);
