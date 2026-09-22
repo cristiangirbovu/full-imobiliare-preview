@@ -246,6 +246,7 @@ const ICONITE = {
   stea: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg>',
   cheie: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9 2.5a5.5 5.5 0 0 1 4.6 8.5l7 7-2 2-1.6-1.6-1.6 1.6-2-2 1.6-1.6-1.2-1.2-1.6 1.6-2-2 1.6-1.6-1.4-1.4A5.5 5.5 0 1 1 9 2.5zm0 3a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>',
   flacara: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5c.6 3.4 3.2 4.7 4.6 7.3 1.6 3-.1 6.8-3.2 8.2.9-1.6.6-3.4-.6-4.4-.4 2-1.8 2.4-2.4 3.7-.6 1.2-.2 2.3.3 3.2C7.6 19.6 5.5 16.6 6 13.2c.5-3.2 3.4-4.2 4-7.3.6 1.1.7 2.3.4 3.4 1.7-1.4 2.2-4.2 1.6-6.8z"/></svg>',
+  cheiePozitiva: '<svg viewBox="355 155 315 645" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z"/></svg>',
   bifa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
   sageata: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15"/><path d="M6 13l6 6 6-6"/></svg>'
 };

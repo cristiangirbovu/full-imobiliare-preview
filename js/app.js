@@ -20,7 +20,7 @@ function randeazaServicii() {
   if (!el) return;
   const lista = [...DATE_SERVICII].sort((x, y) => (x.evidentiat === y.evidentiat) ? x.ordine - y.ordine : (x.evidentiat ? -1 : 1));
   el.innerHTML = lista.map(s => `
-    <div class="card-serviciu ${s.evidentiat ? "evidentiat" : ""}">
+    <div class="card-serviciu ${s.evidentiat ? "evidentiat filigran" : ""}">
       <h3>${s.titlu}</h3><p>${s.descriere || ""}</p>
     </div>`).join("");
 }
@@ -285,7 +285,7 @@ function randeazaPuncteForte(a) {
   if (a.negociabil) p.push("Preț negociabil");
   const alese = p.slice(0, 4);
   panou.hidden = alese.length < 2;
-  lista.innerHTML = alese.map(x => `<li>${ICONITE.bifa}<span>${escapeHtml(x)}</span></li>`).join("");
+  lista.innerHTML = alese.map(x => `<li>${ICONITE.cheiePozitiva}<span>${escapeHtml(x)}</span></li>`).join("");
 }
 
 // ===== Distribuie / Printează =====

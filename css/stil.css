@@ -48,6 +48,8 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --dur-apasare: 160ms;
   --dur-ui: 220ms;
+  /* Cheia pozitivă (elementul grafic din manual, cap. 10): filigran pe suprafețe navy, 10-16% opacitate, tăiată de margine */
+  --cheie-alb: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27355 155 315 645%27%3E%3Cpath fill-rule=%27evenodd%27 fill=%27%23FFFFFF%27 d=%27M425,358.995A105,105 0 1,1 495,358.995L495,405L670,405L670,465 L495,465L495,525L615,525L615,585 L495,585L495,800 L425,800 ZM460,215a45,45 0 1,1 0,90a45,45 0 1,1 0,-90Z%27/%3E%3C/svg%3E");
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -67,6 +69,12 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .taietura::before, .taietura::after { content: ""; display: block; height: var(--taietura-h, 6px); background: var(--accent); border-radius: 1px; }
 .taietura::before { width: calc(var(--taietura-h, 6px) * 175 / 60); }
 .taietura::after  { width: calc(var(--taietura-h, 6px) * 120 / 60); }
+
+/* ===== Filigranul cu cheia pozitivă: părintele primește .filigran (relative + overflow hidden) =====
+   Dimensiunea și poziția se dau per suprafață prin --f-h / --f-dreapta / --f-sus / --f-jos; opacitatea în 10-16%. */
+.filigran { position: relative; overflow: hidden; isolation: isolate; }
+.filigran::before { content: ""; position: absolute; z-index: 0; pointer-events: none; background: var(--cheie-alb) no-repeat center / contain; opacity: var(--f-opacitate, 0.12); height: var(--f-h, 120%); aspect-ratio: 315 / 645; right: var(--f-dreapta, -4%); top: var(--f-sus, auto); bottom: var(--f-jos, auto); }
+.filigran > * { position: relative; z-index: 1; }
 
 /* ===== Mișcare: apariție la scroll (IntersectionObserver adaugă .vizibil) ===== */
 @media (prefers-reduced-motion: no-preference) {
@@ -90,7 +98,7 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .nav .cta.activ { color: var(--alb); background: var(--brand-inchis); }   /* altfel .activ îl face navy pe navy */
 
 /* ===== Hero: split asimetric; intrare o singură dată, la încărcare ===== */
-.hero { background: var(--brand); color: var(--alb); overflow: hidden; }
+.hero { background: var(--brand); color: var(--alb); overflow: hidden; --f-h: 135%; --f-sus: -22%; --f-dreapta: -3%; --f-opacitate: 0.11; }
 .hero-grila { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; padding: 72px 0 76px 0; }
 .hero h1 { font-size: clamp(32px, 4.2vw, 50px); line-height: 1.12; max-width: 15ch; font-weight: 800; }
 .hero .taietura { margin-top: 22px; }
@@ -220,7 +228,7 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .panou-puncte { background: linear-gradient(135deg, #FFFDF9 0%, var(--alb) 60%); border-color: #EADFCB; }
 .puncte-forte { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 22px; }
 .puncte-forte li { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.4; }
-.puncte-forte svg { width: 20px; height: 20px; flex: none; color: var(--accent-inchis); margin-top: 1px; }
+.puncte-forte svg { width: auto; height: 18px; flex: none; color: var(--accent-inchis); margin: 2px 4px 0 3px; }   /* bulina de listă = cheia pozitivă (manual, cap. 10) */
 .descriere { color: var(--text); font-size: 16px; line-height: 1.75; white-space: pre-line; }
 .anunt-grila { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; align-items: start; padding: 26px 0 88px 0; }.panou { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); padding: 24px; box-shadow: var(--umbra-card); }
 .panou + .panou { margin-top: 20px; }
@@ -249,8 +257,7 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 
 /* ===== Servicii: layout asimetric 1 + coloană ===== */
 .servicii-asimetric { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px; align-items: stretch; }
-.serviciu-vedeta { background: var(--brand); border-radius: var(--raza); padding: 36px; color: var(--alb); display: flex; flex-direction: column; justify-content: flex-end; min-height: 320px; position: relative; overflow: hidden; }
-.serviciu-vedeta .taietura { margin-bottom: 18px; }
+.serviciu-vedeta { background: var(--brand); border-radius: var(--raza); padding: 36px; color: var(--alb); display: flex; flex-direction: column; justify-content: flex-end; min-height: 320px; --f-h: 125%; --f-sus: -18%; --f-dreapta: -6%; --f-opacitate: 0.13; }
 .serviciu-vedeta h3 { font-size: 24px; margin-bottom: 10px; font-weight: 800; }
 .serviciu-vedeta p { color: rgba(255,255,255,0.75); font-size: 15.5px; max-width: 46ch; }
 .servicii-lista { display: flex; flex-direction: column; justify-content: center; }
@@ -264,12 +271,12 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .card-serviciu { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); padding: 26px; box-shadow: var(--umbra-card); transition: box-shadow var(--dur-ui) ease, transform var(--dur-ui) var(--ease-out); }
 .card-serviciu h3 { color: var(--brand); font-size: 17px; margin-bottom: 8px; font-weight: 700; }
 .card-serviciu p { font-size: 14.5px; color: var(--text-secundar); }
-.card-serviciu.evidentiat { background: var(--brand); border-color: var(--brand); grid-column: 1 / -1; padding: 36px; }
+.card-serviciu.evidentiat { background: var(--brand); border-color: var(--brand); grid-column: 1 / -1; padding: 36px; --f-h: 240%; --f-sus: -60%; --f-dreapta: 2%; --f-opacitate: 0.12; }
 .card-serviciu.evidentiat h3 { color: var(--alb); font-size: 21px; }
 .card-serviciu.evidentiat p { color: rgba(255,255,255,0.78); max-width: 72ch; font-size: 15.5px; }
 
 /* ===== Bandă CTA (proprietari) ===== */
-.banda-cta { background: var(--brand-inchis); color: var(--alb); border-radius: var(--raza); padding: 40px 44px; display: grid; grid-template-columns: 1.4fr auto; gap: 28px; align-items: center; }
+.banda-cta { background: var(--brand-inchis); color: var(--alb); border-radius: var(--raza); padding: 40px 44px; display: grid; grid-template-columns: 1.4fr auto; gap: 28px; align-items: center; --f-h: 230%; --f-sus: -55%; --f-dreapta: 17%; --f-opacitate: 0.10; }
 .banda-cta h2 { font-size: clamp(22px, 2.4vw, 28px); line-height: 1.2; font-weight: 800; }
 .banda-cta p { color: rgba(255,255,255,0.72); margin-top: 8px; font-size: 15.5px; max-width: 56ch; }
 .banda-cta .buton { margin: 0; padding: 14px 26px; white-space: nowrap; }
@@ -362,14 +369,13 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .cifra p { color: var(--text-secundar); font-size: 14.5px; margin-top: 8px; max-width: 30ch; }
 
 /* ===== Footer ===== */
-.subsol { background: var(--brand-inchis); color: rgba(255,255,255,0.72); padding: 56px 0 28px 0; font-size: 14px; }
+.subsol { background: var(--brand-inchis); color: rgba(255,255,255,0.72); padding: 56px 0 28px 0; font-size: 14px; --f-h: 150%; --f-jos: -75%; --f-dreapta: 3%; --f-opacitate: 0.08; }
 .subsol-grila { display: grid; grid-template-columns: 2fr 1fr 1fr 1.4fr; gap: 32px; }
 .subsol a.sigla { display: flex; padding: 0; color: var(--alb); margin-bottom: 14px; }   /* bate .subsol a { display:block } */
 .subsol .sigla-marca { color: var(--alb); }
 .subsol h4 { color: var(--alb); font-size: 13.5px; letter-spacing: 1.5px; margin-bottom: 14px; text-transform: uppercase; }
 .subsol a { display: block; padding: 3px 0; transition: color var(--dur-ui) ease; }
 .subsol a:hover { color: var(--alb); }
-.subsol .taietura { margin-top: 18px; --taietura-h: 5px; }
 .subsol-legal { margin-top: 38px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.14); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 12.5px; color: rgba(255,255,255,0.5); }
 
 /* ===== Hover cu mișcare: DOAR pe dispozitive cu hover real (nu touch) ===== */
@@ -407,7 +413,9 @@ h1, h2, h3 { letter-spacing: -0.015em; }
   .hero-foto { aspect-ratio: 16/10; }
   .sectiune { padding: 56px 0; }
   .anunt-grila, .grila-contact, .subsol-grila, .servicii-asimetric, .rol-comutator, .banda-cta { grid-template-columns: 1fr; }
-  .banda-cta { padding: 30px 26px; }
+  .banda-cta { padding: 30px 26px; --f-dreapta: -30%; }
+  .hero { --f-h: 90%; --f-sus: -10%; --f-dreapta: -18%; }
+  .serviciu-vedeta { --f-dreapta: -25%; }
   .lipicios { position: static; }
   .cifre { grid-template-columns: 1fr; }
   .cifra { padding: 20px 4px; }
