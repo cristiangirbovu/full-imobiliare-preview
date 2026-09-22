@@ -82,6 +82,12 @@
 
   // ===== Formularul căutătorului =====
   const fc = document.getElementById("formular-cautator");
+  // Venit de pe o proprietate („Programează o vizionare"): preumplem mesajul cu referința.
+  const refViz = new URLSearchParams(location.search).get("ref");
+  if (refViz && /^FI-\d+$/.test(refViz)) {
+    const mesaj = document.getElementById("c-mesaj");
+    if (mesaj && !mesaj.value) mesaj.value = `Aș dori să programez o vizionare pentru proprietatea ${refViz}.`;
+  }
   fc.addEventListener("submit", e => {
     e.preventDefault();
     const solicitare = {

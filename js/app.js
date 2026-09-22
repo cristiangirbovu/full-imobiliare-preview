@@ -130,17 +130,20 @@ function randeazaDetaliu() {
 
   document.getElementById("d-titlu").textContent = a.titlu;
   document.getElementById("d-meta").innerHTML =
-    `<a class="adresa-link" href="${linkHarta(a)}" target="_blank" rel="noopener" title="Deschide în Google Maps">${ICONITE.pin}<span>${escapeHtml(adresaAfisata(a))}</span></a><span class="meta-sep">·</span>publicat ${a.publicat_la}`;
+    `<a class="adresa-link" href="${linkHarta(a)}" target="_blank" rel="noopener" title="Deschide în Google Maps">${ICONITE.pin}<span>${escapeHtml(adresaAfisata(a))}</span></a><span class="meta-sep">·</span><span>publicat ${dataFrumoasa(a.publicat_la)}</span>`;
   const ref = document.getElementById("d-ref");
   if (ref) ref.textContent = `REF ${a.id_intern}`;
   document.getElementById("d-insigne").innerHTML = insigne(a);
   document.getElementById("d-pret").innerHTML =
     `${formatPret(a)}${a.negociabil ? ' <span style="font-size:13px;color:var(--text-secundar)">negociabil</span>' : ""}`;
-  document.getElementById("d-foto").src = a.poze[0];
-  document.getElementById("d-mini").innerHTML =
-    a.poze.map(p => `<img src="${p}" onclick="schimbaFotoPrincipala('${p}')" alt="Miniatură ${a.titlu}">`).join("");
+  document.getElementById("d-eticheta").textContent = titluCard(a);
+  randeazaGalerie(a);
+  randeazaPuncteForte(a);
   document.getElementById("d-descriere").textContent = a.descriere;
-  document.getElementById("d-agent").textContent = `${a.agent_nume} · ${a.agent_telefon}`;
+  document.getElementById("d-agent").textContent = [a.agent_nume, a.agent_telefon].filter(Boolean).join(" · ");
+  const viz = document.getElementById("d-vizionare");
+  if (viz) viz.href = `contact.html?rol=cautator&ref=${encodeURIComponent(a.id_intern)}`;
+  pregatesteDistribuire(a);
 
   const rand = (eticheta, valoare) => valoare === null || valoare === undefined || valoare === "" ? "" :
     `<tr><td>${eticheta}</td><td><b>${valoare}</b></td></tr>`;
@@ -158,7 +161,7 @@ function randeazaDetaliu() {
     a.dotari_altele.split(",").map(s => s.trim()).filter(Boolean).forEach(s => altele.elemente.push(s));
   }
   document.getElementById("d-dotari").innerHTML = grupuri.length ? grupuri.map(g => `
-    <div class="dotari-grup"><h4>${g.titlu}</h4><div class="dotari-lista">${g.elemente.map(d => `<span class="dotare">${escapeHtml(d)}</span>`).join("")}</div></div>`).join("")
+    <div class="dotari-grup"><h4>${g.titlu}</h4><div class="dotari-lista">${g.elemente.map(d => `<span class="dotare">${ICONITE.bifa}${escapeHtml(d)}</span>`).join("")}</div></div>`).join("")
     : `<p style="color:var(--text-secundar); font-size:14.5px">Dotările se comunică la vizionare.</p>`;
 
   // Harta cu pin: embed Google Maps fără cheie API, pe baza adresei text din anunț.
@@ -220,20 +223,100 @@ function randeazaArticol() {
   }).join("");
 }
 
-// Schimbarea pozei principale: crossfade cu blur ca să mascheze tranziția între două imagini.
-// Imaginea nouă se preîncarcă; blur-ul se ridică abia după ce e gata, deci nu există cadru gol.
-function schimbaFotoPrincipala(src) {
-  const foto = document.getElementById("d-foto");
-  if (!foto || foto.src.endsWith(src)) return;
-  foto.classList.add("se-schimba");
-  const noua = new Image();
-  noua.onload = () => {
-    foto.src = src;
-    requestAnimationFrame(() => requestAnimationFrame(() => foto.classList.remove("se-schimba")));
-  };
-  noua.src = src;
+// ===== Galerie mozaic + vizualizare pe tot ecranul =====
+let pozeGalerie = [];
+let indexLightbox = 0;
+function randeazaGalerie(a) {
+  const g = document.getElementById("d-galerie");
+  if (!g) return;
+  pozeGalerie = (a.poze || []).filter(Boolean);
+  const n = pozeGalerie.length;
+  if (!n) { g.innerHTML = `<div class="galerie-gol">Fotografiile sunt în curs de pregătire.</div>`; return; }
+  g.className = "galerie " + (n >= 3 ? "trei" : n === 2 ? "doua" : "una");
+  g.innerHTML = pozeGalerie.slice(0, 3).map((p, i) => `
+    <button type="button" class="galerie-poza" data-i="${i}" aria-label="Fotografia ${i + 1} din ${n}"><img src="${p}" alt="${escapeHtml(a.titlu)}, fotografia ${i + 1}" ${i ? 'loading="lazy"' : ""}></button>`).join("")
+    + `<button type="button" class="galerie-toate" data-i="0">${ICONITE.camera}Vezi toate cele ${n} ${n === 1 ? "fotografie" : "fotografii"}</button>`;
+  g.querySelectorAll("[data-i]").forEach(b => b.addEventListener("click", () => deschideLightbox(+b.dataset.i)));
+}
+function deschideLightbox(i) {
+  const lb = document.getElementById("lightbox");
+  if (!lb || !pozeGalerie.length) return;
+  indexLightbox = i;
+  arataFotoLightbox();
+  lb.showModal();
+}
+function arataFotoLightbox() {
+  const img = document.getElementById("lb-img");
+  img.src = pozeGalerie[indexLightbox];
+  document.getElementById("lb-contor").textContent = `${indexLightbox + 1} / ${pozeGalerie.length}`;
+}
+function mutaLightbox(pas) {
+  indexLightbox = (indexLightbox + pas + pozeGalerie.length) % pozeGalerie.length;
+  arataFotoLightbox();
+}
+(function initLightbox() {
+  const lb = document.getElementById("lightbox");
+  if (!lb) return;
+  document.getElementById("lb-prev").addEventListener("click", () => mutaLightbox(-1));
+  document.getElementById("lb-next").addEventListener("click", () => mutaLightbox(1));
+  document.getElementById("lb-inchide").addEventListener("click", () => lb.close());
+  lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });   // click pe fundal închide
+  lb.addEventListener("keydown", e => { if (e.key === "ArrowLeft") mutaLightbox(-1); if (e.key === "ArrowRight") mutaLightbox(1); });
+})();
+
+// ===== Puncte forte: 3-4 argumente pozitive deduse din date, în ordinea impactului =====
+function randeazaPuncteForte(a) {
+  const panou = document.getElementById("d-puncte-forte"), lista = document.getElementById("d-puncte-lista");
+  if (!panou) return;
+  const d = new Set(a.dotari || []);
+  const anCurent = new Date().getFullYear();
+  const p = [];
+  if (a.an_constructie && anCurent - a.an_constructie <= 6) p.push(`Construcție nouă, din ${a.an_constructie}`);
+  else if (d.has("renovat")) p.push("Renovat recent, gata de mutat");
+  if (a.certificat_energetic === "A" || a.certificat_energetic === "B") p.push(`Eficiență energetică ridicată, clasa ${a.certificat_energetic}: facturi mici`);
+  if (d.has("vedere_panoramica")) p.push("Vedere panoramică asupra orașului");
+  else if (d.has("vedere_parc") || d.has("vedere_lac")) p.push(`Vedere spre ${d.has("vedere_parc") ? "parc" : "lac"}, liniște la fereastră`);
+  if (d.has("terasa") || d.has("balcon") || d.has("gradina") || d.has("curte")) p.push(d.has("gradina") ? "Grădină pentru diminețile cu cafea afară" : d.has("terasa") ? "Terasă generoasă, spațiu de respirat" : d.has("curte") ? "Curte proprie" : "Balcon pentru dimineți cu cafea");
+  if (d.has("parcare_subterana") || d.has("garaj") || d.has("parcare")) p.push(d.has("garaj") ? "Garaj propriu" : d.has("parcare_subterana") ? "Loc de parcare subteran, fără griji iarna" : "Loc de parcare inclus");
+  if (d.has("mobilat") && d.has("utilat")) p.push("Mobilat și utilat: te muți imediat");
+  if (a.compartimentare === "decomandat") p.push("Decomandat: intimitate pentru fiecare cameră");
+  if (a.tip === "teren" && d.has("intravilan") && d.has("construibil")) p.push("Intravilan construibil, cu utilități la limită");
+  if (d.has("smart_home")) p.push("Sistem smart home integrat");
+  if (a.negociabil) p.push("Preț negociabil");
+  const alese = p.slice(0, 4);
+  panou.hidden = alese.length < 2;
+  lista.innerHTML = alese.map(x => `<li>${ICONITE.bifa}<span>${escapeHtml(x)}</span></li>`).join("");
 }
 
+// ===== Distribuie / Printează =====
+function pregatesteDistribuire(a) {
+  const buton = document.getElementById("buton-distribuie"), meniu = document.getElementById("share-meniu");
+  if (!buton || !meniu) return;
+  const url = location.href, titlu = `${a.titlu} | Full Imobiliare`;
+  const text = `${titluCard(a)}, ${formatPret(a)} · REF ${a.id_intern}`;
+  meniu.querySelector('[data-share="whatsapp"]').href = `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`;
+  meniu.querySelector('[data-share="facebook"]').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+  meniu.querySelector('[data-share="email"]').href = `mailto:?subject=${encodeURIComponent(titlu)}&body=${encodeURIComponent(text + "\n" + url)}`;
+  const inchide = () => { meniu.hidden = true; buton.setAttribute("aria-expanded", "false"); };
+  buton.addEventListener("click", async () => {
+    // Pe telefon: fereastra nativă de distribuire; pe desktop: meniul cu opțiuni.
+    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      try { await navigator.share({ title: titlu, text, url }); } catch (e) {}
+      return;
+    }
+    meniu.hidden = !meniu.hidden;
+    buton.setAttribute("aria-expanded", meniu.hidden ? "false" : "true");
+  });
+  meniu.querySelector('[data-share="copiaza"]').addEventListener("click", async b => {
+    const el = b.currentTarget;
+    try { await navigator.clipboard.writeText(url); el.textContent = "Link copiat ✓"; } catch (e) { el.textContent = url; }
+    setTimeout(() => { el.textContent = "Copiază linkul"; inchide(); }, 1400);
+  });
+  document.addEventListener("click", e => { if (!e.target.closest(".share-invelis")) inchide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") inchide(); });
+  const print = document.getElementById("buton-printeaza");
+  if (print) print.addEventListener("click", () => window.print());
+}
 document.addEventListener("DOMContentLoaded", () => {
   randeazaRecente("anunturi-recente");
   populeazaZone();

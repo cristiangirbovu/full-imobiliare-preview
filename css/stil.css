@@ -165,24 +165,68 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .bara-filtre select { border: 1px solid var(--linie); border-radius: var(--raza-interactiv); padding: 11px 12px; font: inherit; font-size: 14px; color: var(--text); background: var(--alb); transition: border-color var(--dur-ui) ease; }
 .rezultate-info { font-size: 14px; color: var(--text-secundar); margin-bottom: 18px; }
 
-/* ===== Pagina proprietății ===== */
-.anunt-titlu-bloc { padding: 38px 0 22px 0; }
-.anunt-titlu-bloc h1 { font-size: clamp(26px, 3vw, 32px); color: var(--brand); max-width: 26ch; line-height: 1.2; font-weight: 800; }
+/* ===== Pagina proprietății (ajustare emoțională 22.09.2026: galerie mozaic + lightbox, puncte forte, CTA vizionare) ===== */
+.anunt-titlu-bloc { padding: 34px 0 18px 0; }
+.anunt-cap { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.anunt-cap .eticheta-mica { margin-bottom: 6px; }
+.anunt-titlu-bloc h1 { font-size: clamp(26px, 3.2vw, 36px); color: var(--brand); max-width: 28ch; line-height: 1.15; font-weight: 800; }
 .anunt-meta { margin-top: 10px; color: var(--text-secundar); font-size: 15px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .adresa-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-inchis); font-weight: 600; text-decoration: underline; text-decoration-color: rgba(138, 98, 36, 0.35); text-underline-offset: 3px; }
 .adresa-link svg { width: 17px; height: 17px; }
 .meta-sep { color: var(--linie); }
-.anunt-grila { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; align-items: start; padding-bottom: 88px; }
-.galerie-principala { border-radius: var(--raza); overflow: hidden; aspect-ratio: 16/9; background: var(--fundal-sectiune); }
-.galerie-principala img { width: 100%; height: 100%; object-fit: cover; transition: opacity var(--dur-ui) ease, filter var(--dur-ui) ease; }
-.galerie-principala img.se-schimba { opacity: 0.4; filter: blur(8px); }
-.galerie-mini { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px; }
-.galerie-mini img { aspect-ratio: 4/3; object-fit: cover; border-radius: var(--raza-interactiv); cursor: pointer; opacity: 0.8; transition: opacity var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out); }
-.galerie-mini img:active { transform: scale(0.96); }
-.panou { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); padding: 24px; box-shadow: var(--umbra-card); }
+.anunt-actiuni { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 4px; }
+.buton-icon { display: inline-flex; align-items: center; gap: 7px; background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza-interactiv); padding: 9px 13px; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--text); cursor: pointer; transition: border-color var(--dur-ui) ease, transform var(--dur-apasare) var(--ease-out); }
+.buton-icon svg { width: 17px; height: 17px; color: var(--accent-inchis); }
+.buton-icon:active { transform: scale(0.97); }
+.share-invelis { position: relative; }
+.share-meniu { position: absolute; top: calc(100% + 6px); right: 0; z-index: 20; background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); box-shadow: var(--umbra-ridicat); padding: 6px; min-width: 190px; display: grid; }
+.share-meniu a, .share-meniu button { display: block; width: 100%; text-align: left; background: none; border: 0; font: inherit; font-size: 14px; font-weight: 600; color: var(--text); padding: 9px 12px; border-radius: 6px; cursor: pointer; }
+.share-meniu a:hover, .share-meniu button:hover { background: var(--fundal-sectiune); }
+
+/* Galeria mozaic: fotografia principală ocupă 2/3, două laterale 1/3; înălțime fixă, poze decupate frumos */
+.galerie { display: grid; gap: 10px; height: clamp(300px, 42vw, 520px); border-radius: var(--raza); overflow: hidden; position: relative; }
+.galerie.trei { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
+.galerie.doua { grid-template-columns: 1.6fr 1fr; }
+.galerie.una { grid-template-columns: 1fr; }
+.galerie-poza { position: relative; border: 0; padding: 0; background: var(--fundal-sectiune); cursor: zoom-in; overflow: hidden; }
+.galerie.trei .galerie-poza:first-child { grid-row: 1 / 3; }
+.galerie-poza img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s var(--ease-out); }
+.galerie-toate { position: absolute; right: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.94); color: var(--brand); border: 0; border-radius: var(--raza-interactiv); padding: 10px 14px; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; box-shadow: var(--umbra-ridicat); backdrop-filter: blur(6px); transition: transform var(--dur-apasare) var(--ease-out); }
+.galerie-toate svg { width: 17px; height: 17px; }
+.galerie-toate:active { transform: scale(0.97); }
+.galerie-gol { height: 100%; display: flex; align-items: center; justify-content: center; background: var(--fundal-sectiune); color: var(--text-secundar); }
+@media (prefers-reduced-motion: no-preference) {
+  .galerie { transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+  @starting-style { .galerie { opacity: 0; transform: translateY(12px); } }
+}
+
+/* Lightbox: fundal închis, fotografia centrată, navigare cu săgeți și tastatură */
+.lightbox { border: 0; padding: 0; background: transparent; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; }
+.lightbox::backdrop { background: rgba(6, 14, 28, 0.92); }
+.lightbox figure { margin: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 56px 72px; }
+.lightbox img { max-width: 100%; max-height: calc(100vh - 140px); object-fit: contain; border-radius: 8px; box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
+.lightbox figcaption { color: rgba(255,255,255,0.7); font-size: 13.5px; letter-spacing: 1px; font-weight: 600; }
+.lb-inchide, .lb-nav { position: fixed; background: rgba(255,255,255,0.12); color: var(--alb); border: 0; border-radius: 50%; width: 46px; height: 46px; font-size: 26px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background var(--dur-ui) ease; }
+.lb-inchide { top: 18px; right: 18px; font-size: 18px; }
+.lb-nav { top: 50%; transform: translateY(-50%); font-size: 34px; padding-bottom: 4px; }
+.lb-prev { left: 16px; } .lb-next { right: 16px; }
+.lb-inchide:hover, .lb-nav:hover { background: rgba(255,255,255,0.24); }
+@media (prefers-reduced-motion: no-preference) {
+  .lightbox[open] { transition: opacity var(--dur-ui) var(--ease-out); }
+  @starting-style { .lightbox[open] { opacity: 0; } }
+}
+
+/* Puncte forte: argumentele pozitive, cu bifă în alamă */
+.panou-puncte { background: linear-gradient(135deg, #FFFDF9 0%, var(--alb) 60%); border-color: #EADFCB; }
+.puncte-forte { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 22px; }
+.puncte-forte li { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.4; }
+.puncte-forte svg { width: 20px; height: 20px; flex: none; color: var(--accent-inchis); margin-top: 1px; }
+.descriere { color: var(--text); font-size: 16px; line-height: 1.75; white-space: pre-line; }
+.anunt-grila { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; align-items: start; padding: 26px 0 88px 0; }.panou { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); padding: 24px; box-shadow: var(--umbra-card); }
 .panou + .panou { margin-top: 20px; }
 .panou h3 { color: var(--brand); margin-bottom: 12px; font-size: 17px; font-weight: 700; }
-.panou .pret { font-size: 30px; font-weight: 800; color: var(--brand); }
+.panou-pret { border-top: 3px solid var(--accent); }
+.panou .pret { font-size: 32px; font-weight: 800; color: var(--accent-inchis); }
 .panou .ref { margin-top: 4px; font-size: 12.5px; letter-spacing: 1px; color: var(--text-secundar); }
 .lipicios { position: sticky; top: 88px; }
 .buton { display: block; text-align: center; font-weight: 700; border-radius: var(--raza-interactiv); padding: 13px; margin-top: 12px; font-size: 15px; transition: transform var(--dur-apasare) var(--ease-out), box-shadow var(--dur-ui) ease, background var(--dur-ui) ease; cursor: pointer; }
@@ -197,7 +241,8 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .tabel-spec tr + tr td { border-top: 1px solid var(--linie); }
 .tabel-spec td:first-child { color: var(--text-secundar); width: 46%; }
 .dotari-lista { display: flex; flex-wrap: wrap; gap: 8px; }
-.dotare { background: var(--fundal-sectiune); border-radius: var(--raza-interactiv); padding: 7px 13px; font-size: 13px; }
+.dotare { display: inline-flex; align-items: center; gap: 6px; background: var(--fundal-sectiune); border-radius: var(--raza-interactiv); padding: 7px 12px 7px 9px; font-size: 13.5px; font-weight: 500; }
+.dotare svg { width: 15px; height: 15px; color: var(--accent-inchis); flex: none; }
 .dotari-grup + .dotari-grup { margin-top: 16px; }
 .dotari-grup h4 { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-secundar); font-weight: 700; margin-bottom: 8px; }
 .harta-slot { background: var(--fundal-sectiune); border: 1px dashed var(--linie); border-radius: var(--raza); height: 300px; display: flex; align-items: center; justify-content: center; color: var(--text-secundar); font-size: 14px; text-align: center; padding: 0 24px; }
@@ -335,9 +380,11 @@ h1, h2, h3 { letter-spacing: -0.015em; }
   .card-anunt:hover { box-shadow: var(--umbra-ridicat); transform: translateY(-3px); }
   .card-anunt:hover .card-foto img { transform: scale(1.04); }
   .card-titlu a:hover { color: var(--brand); }
+  .galerie-poza:hover img { transform: scale(1.03); }
+  .galerie-toate:hover { transform: translateY(-1px); }
+  .buton-icon:hover { border-color: var(--brand); }
   .card-adresa:hover, .adresa-link:hover { text-decoration-color: currentColor; }
   .bara-filtre select:hover { border-color: var(--brand); }
-  .galerie-mini img:hover { opacity: 1; transform: translateY(-2px); }
   .buton:hover { transform: translateY(-1px); }
   .buton.telefon:hover { background: var(--brand-inchis); }
   .buton.alama:hover { background: var(--brand); }
@@ -365,10 +412,39 @@ h1, h2, h3 { letter-spacing: -0.015em; }
   .cifre { grid-template-columns: 1fr; }
   .cifra { padding: 20px 4px; }
   .cifra + .cifra { border-left: 0; border-top: 1px solid var(--linie); }
-  .galerie-mini { grid-template-columns: repeat(4, 1fr); }
+  .galerie.trei, .galerie.doua { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+  .galerie.trei .galerie-poza:not(:first-child), .galerie.doua .galerie-poza:not(:first-child) { display: none; }
+  .galerie { height: clamp(220px, 62vw, 360px); }
+  .puncte-forte { grid-template-columns: 1fr; }
+  .meta-sep { display: none; }
+  .lightbox figure { padding: 56px 12px; }
+  .lb-nav { width: 40px; height: 40px; }
 }
 @media (max-width: 600px) {
   .formular .grila-2, .formular .grila-3 { grid-template-columns: 1fr; }
   .bife { grid-template-columns: 1fr 1fr; }
   .sectiune-cap { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+/* ===== Tipar (butonul „Printează" de pe pagina proprietății) ===== */
+@media print {
+  @page { margin: 14mm; }
+  body { background: #fff; color: #000; font-size: 12pt; }
+  .antet .nav, .subsol-grila, .anunt-actiuni, .galerie-toate, .lipicios .panou:not(.panou-pret), .buton, .lightbox, .banda-cta, .contact-direct { display: none !important; }
+  .antet { position: static; border-bottom: 1px solid #ccc; background: #fff; }
+  .galerie { height: auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 6px; break-inside: avoid; }
+  .galerie.trei .galerie-poza:first-child { grid-row: auto; }
+  .galerie-poza img { height: 62mm; }
+  .anunt-grila { grid-template-columns: 1fr; gap: 10px; padding-bottom: 0; }
+  .lipicios { position: static; }
+  .panou { border: 1px solid #ddd; box-shadow: none; padding: 12px 14px; break-inside: avoid; }
+  .panou-pret { border-top: 3px solid #8A6224; }
+  .panou .pret { font-size: 22pt; color: #000; }
+  .agent { display: block; }
+  .adresa-link { color: #000; text-decoration: none; }
+  .adresa-link::after { content: " (" attr(href) ")"; font-size: 9pt; color: #555; word-break: break-all; }
+  .harta-slot, #d-harta iframe { display: none !important; }
+  .panou-puncte { background: #fff; }
+  .subsol { background: #fff; color: #333; padding: 10px 0; }
+  .subsol-legal { border-top: 1px solid #ccc; color: #333; }
 }

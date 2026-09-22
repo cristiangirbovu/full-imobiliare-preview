@@ -9,7 +9,7 @@
 <link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
 <meta name="theme-color" content="#12294A">
-<link rel="stylesheet" href="css/stil.css?v=8">
+<link rel="stylesheet" href="css/stil.css?v=9">
 
 </head>
 <body>
@@ -28,19 +28,43 @@
 
 <div id="detaliu-anunt">
 <div class="container anunt-titlu-bloc">
-  <div class="insigne" style="position:static; margin-bottom:10px" id="d-insigne"></div>
-  <h1 id="d-titlu"></h1>
-  <p class="anunt-meta" id="d-meta"></p>
+  <div class="anunt-cap">
+    <div>
+      <p class="eticheta-mica" id="d-eticheta"></p>
+      <h1 id="d-titlu"></h1>
+      <p class="anunt-meta" id="d-meta"></p>
+    </div>
+    <div class="anunt-actiuni">
+      <div class="insigne" style="position:static" id="d-insigne"></div>
+      <div class="share-invelis">
+        <button class="buton-icon" type="button" id="buton-distribuie" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Distribuie</button>
+        <div class="share-meniu" id="share-meniu" hidden>
+          <button type="button" data-share="copiaza">Copiază linkul</button>
+          <a data-share="whatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a>
+          <a data-share="facebook" href="#" target="_blank" rel="noopener">Facebook</a>
+          <a data-share="email" href="#">Email</a>
+        </div>
+      </div>
+      <button class="buton-icon" type="button" id="buton-printeaza"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="9" rx="2"/><path d="M6 14h12v7H6z"/></svg>Printează</button>
+    </div>
+  </div>
+</div>
+
+<!-- Galerie mozaic: fotografia principală mare + două laterale; orice click deschide vizualizarea pe tot ecranul -->
+<div class="container">
+  <div class="galerie" id="d-galerie"></div>
 </div>
 
 <div class="container anunt-grila">
   <div>
-    <div class="galerie-principala"><img id="d-foto" src="" alt="Fotografie proprietate"></div>
-    <div class="galerie-mini" id="d-mini"></div>
+    <div class="panou panou-puncte" id="d-puncte-forte" hidden>
+      <h3>Ce îți va plăcea aici</h3>
+      <ul class="puncte-forte" id="d-puncte-lista"></ul>
+    </div>
 
-    <div class="panou" style="margin-top:18px">
+    <div class="panou">
       <h3>Descriere</h3>
-      <p id="d-descriere" style="color:var(--text-secundar); font-size:15px"></p>
+      <p class="descriere" id="d-descriere"></p>
     </div>
 
     <div class="panou">
@@ -60,12 +84,13 @@
   </div>
 
   <aside class="lipicios">
-    <div class="panou">
+    <div class="panou panou-pret">
       <div class="pret" id="d-pret"></div>
       <div class="ref" id="d-ref"></div>
+      <a class="buton alama" id="d-vizionare" href="contact.html?rol=cautator">Programează o vizionare</a>
       <a class="buton telefon" href="tel:+40000000000">Sună agenția: [DE COMPLETAT]</a>
       <a class="buton whatsapp" href="https://wa.me/40000000000">Scrie-ne pe WhatsApp</a>
-      <div class="agent">Agent responsabil: <b id="d-agent"></b></div>
+      <div class="agent">Agent: <b id="d-agent"></b></div>
     </div>
     <div class="panou">
       <h3 style="font-size:16px; margin-bottom:8px">De ce Full Imobiliare</h3>
@@ -80,6 +105,13 @@
 </div>
 </div>
 
+<!-- Vizualizare fotografii pe tot ecranul -->
+<dialog class="lightbox" id="lightbox" aria-label="Fotografiile proprietății">
+  <button class="lb-inchide" type="button" id="lb-inchide" aria-label="Închide">✕</button>
+  <button class="lb-nav lb-prev" type="button" id="lb-prev" aria-label="Fotografia anterioară">‹</button>
+  <figure><img id="lb-img" src="" alt=""><figcaption id="lb-contor"></figcaption></figure>
+  <button class="lb-nav lb-next" type="button" id="lb-next" aria-label="Fotografia următoare">›</button>
+</dialog>
 <footer class="subsol"><div class="container">
   <div class="subsol-grila">
     <div>
@@ -104,9 +136,9 @@
   <div class="subsol-legal"><span>© 2026 Full Imobiliare. Toate drepturile rezervate.</span><span>fullimobiliare.ro</span></div>
 </div></footer>
 
-<script src="js/date-demo.js?v=8"></script>
-<script src="js/comun.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
+<script src="js/date-demo.js?v=9"></script>
+<script src="js/comun.js?v=9"></script>
+<script src="js/app.js?v=9"></script>
 
 </body>
 </html>
