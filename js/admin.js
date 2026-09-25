@@ -6,6 +6,7 @@
 const CHEIE_DATE = "fi_anunturi";
 const CHEIE_ARTICOLE = "fi_articole";
 const CHEIE_SERVICII = "fi_servicii";
+const CHEIE_INTRO = "fi_intro_servicii";
 const CHEIE_SOLICITARI = "fi_solicitari";
 const CHEIE_SESIUNE = "fi_sesiune";
 const CONT_DEMO = { email: "admin@fullimobiliare.ro", parola: "demo2026" };
@@ -191,7 +192,7 @@ document.getElementById("admin-cauta").addEventListener("input", randeazaTabel);
 document.getElementById("admin-filtru-status").addEventListener("change", randeazaTabel);
 
 document.getElementById("buton-reset").addEventListener("click", () => {
-  try { [CHEIE_DATE, CHEIE_ARTICOLE, CHEIE_SERVICII, CHEIE_SOLICITARI].forEach(c => localStorage.removeItem(c)); } catch (e) {}
+  try { [CHEIE_DATE, CHEIE_ARTICOLE, CHEIE_SERVICII, CHEIE_SOLICITARI, CHEIE_INTRO].forEach(c => localStorage.removeItem(c)); } catch (e) {}
   anunturi = citeste(CHEIE_DATE, ANUNTURI);
   articole = citeste(CHEIE_ARTICOLE, typeof ARTICOLE !== "undefined" ? ARTICOLE : []);
   servicii = citeste(CHEIE_SERVICII, typeof SERVICII !== "undefined" ? SERVICII : []);
@@ -577,6 +578,7 @@ function serviciiOrdonate() {
 }
 
 function randeazaTabelServicii() {
+  document.getElementById("intro-servicii").value = citesteIntro();
   const lista = serviciiOrdonate();
   document.getElementById("servicii-contor").textContent =
     `${lista.length} servicii pe pagina publică`;
@@ -627,6 +629,13 @@ function deschideFormularServiciu(id) {
 }
 
 function inchideFormularServiciu() { arataVederea("vedere-servicii"); randeazaTabelServicii(); }
+
+// Banda albastră de pe pagina Servicii și de pe prima pagină (text unic, fără titlu).
+function citesteIntro() { try { return localStorage.getItem(CHEIE_INTRO) || INTRO_SERVICII; } catch (e) { return INTRO_SERVICII; } }
+document.getElementById("buton-intro-salveaza").addEventListener("click", () => {
+  try { localStorage.setItem(CHEIE_INTRO, document.getElementById("intro-servicii").value.trim()); } catch (e) {}
+  alert("Textul benzii a fost salvat.");
+});
 
 document.getElementById("buton-serviciu-nou").addEventListener("click", () => deschideFormularServiciu(null));
 document.getElementById("buton-serviciu-inapoi").addEventListener("click", inchideFormularServiciu);

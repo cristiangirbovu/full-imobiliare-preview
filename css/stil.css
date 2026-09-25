@@ -556,3 +556,23 @@ h1, h2, h3 { letter-spacing: -0.015em; }
   .subsol { background: #fff; color: #333; padding: 10px 0; }
   .subsol-legal { border-top: 1px solid #ccc; color: #333; }
 }
+/* ===== Banda albastră de servicii (mesajul agenției) + text lung cu liste și butoane ===== */
+.banda-servicii { background: var(--brand); color: var(--alb); border-radius: var(--raza); padding: 34px 38px; margin-bottom: 30px; --f-h: 210%; --f-sus: -52%; --f-dreapta: 3%; --f-opacitate: 0.12; }
+.banda-servicii p { font-size: 17.5px; line-height: 1.65; color: rgba(255,255,255,0.88); max-width: 78ch; margin-top: 16px; }
+.servicii-asimetric .banda-servicii { margin-bottom: 0; min-height: 320px; display: flex; flex-direction: column; justify-content: flex-end; }
+.servicii-asimetric .banda-servicii p { font-size: 16px; max-width: 46ch; }
+.servicii-lista a.rand { display: block; }
+.servicii-lista a.rand h3 { transition: color var(--dur-ui) ease; }
+.lista-continut { list-style: none; display: grid; gap: 9px; margin: 6px 0 4px 0; }
+.lista-continut li { display: flex; align-items: flex-start; gap: 10px; font-size: 16px; line-height: 1.5; }
+.lista-continut svg { width: auto; height: 15px; flex: none; color: var(--accent-inchis); margin: 5px 3px 0 2px; }
+.continut-cta { margin: 22px 0; }
+.continut-cta .buton { display: inline-block; margin: 0; padding: 13px 24px; }
+@media (hover: hover) and (pointer: fine) {
+  .servicii-lista a.rand:hover h3 { color: var(--accent-inchis); }
+}
+@media (max-width: 860px) {
+  .banda-servicii { padding: 26px 24px; }
+  .servicii-asimetric .banda-servicii { min-height: 0; }
+}
+.articol-continut ul + p, .articol-continut p + ul { margin-top: 16px; }

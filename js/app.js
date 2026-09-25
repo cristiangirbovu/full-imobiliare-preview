@@ -21,8 +21,14 @@ function serviciiPublice() {
 function slugServiciu(s) { return s.slug || ("serviciu-" + s.id); }
 function urlServiciu(s) { return `serviciu.html?s=${encodeURIComponent(slugServiciu(s))}`; }
 
-// Pagina de servicii: cardul evidențiat primul (lățime totală), restul în ordinea setată din admin; fiecare duce la pagina lui.
+function introServicii() {
+  try { const s = localStorage.getItem("fi_intro_servicii"); if (s) return s; } catch (e) {}
+  return (typeof INTRO_SERVICII !== "undefined") ? INTRO_SERVICII : "";
+}
+// Pagina de servicii: banda albastră cu mesajul agenției (cerința clientei), apoi cardurile; fiecare duce la pagina lui.
 function randeazaServicii() {
+  const banda = document.getElementById("banda-servicii");
+  if (banda) banda.innerHTML = `<div class="taietura" aria-hidden="true"></div><p>${escapeHtml(introServicii())}</p>`;
   const el = document.getElementById("lista-servicii");
   if (!el) return;
   el.innerHTML = serviciiPublice().map(s => `
@@ -32,6 +38,17 @@ function randeazaServicii() {
     </a>`).join("");
 }
 
+// Prima pagină: aceeași bandă albastră + primele trei servicii din ordinea setată în admin.
+function randeazaServiciiAcasa() {
+  const banda = document.getElementById("intro-servicii-acasa");
+  if (!banda) return;
+  banda.innerHTML = `<div class="taietura" aria-hidden="true"></div><p>${escapeHtml(introServicii())}</p>`;
+  const lista = document.getElementById("servicii-acasa");
+  if (lista) lista.innerHTML = serviciiPublice().slice(0, 3).map(s => `
+    <a class="rand" href="${urlServiciu(s)}">
+      <h3>${escapeHtml(s.titlu)}</h3><p>${escapeHtml(s.descriere || "")}</p>
+    </a>`).join("");
+}
 // Meniul de sus: dropdown-ul „Servicii" se umple din aceleași date (deci urmează lista din admin).
 function randeazaMeniuServicii() {
   const el = document.getElementById("nav-servicii");
@@ -79,21 +96,27 @@ function randeazaServiciu() {
   document.getElementById("s-altele").innerHTML = lista.filter(x => x.id !== s.id).map(x => `<a href="${urlServiciu(x)}">${escapeHtml(x.titlu)}</a>`).join("");
 }
 
-// Text lung (articole, servicii): paragrafe separate prin linie goală; „## " = subtitlu.
+// Text lung (articole, servicii): paragrafe separate prin linie goală; „## " = subtitlu;
+// blocurile de linii care încep cu „- " devin listă; „[buton:cautator|proprietar] Text" = buton către formularul din Contact.
+const ROLURI_BUTON = { cautator: "Caută-ți casa împreună cu noi", proprietar: "Listează proprietatea cu noi" };
 function formateazaContinut(text) {
   return (text || "").split(/\n\s*\n/).map(bloc => {
     const b = bloc.trim();
     if (!b) return "";
+    const buton = b.match(/^\[buton:(cautator|proprietar)\]\s*(.+)$/);
+    if (buton) return `<p class="continut-cta"><a class="buton alama" href="contact.html?rol=${buton[1]}">${escapeHtml(buton[2].trim())}</a></p>`;
     if (b.startsWith("## ")) {
       const linii = b.split("\n");
       const titlu = `<h2>${escapeHtml(linii[0].slice(3))}</h2>`;
       const rest = linii.slice(1).join(" ").trim();
       return titlu + (rest ? `<p>${escapeHtml(rest)}</p>` : "");
     }
+    if (b.startsWith("- ")) {
+      return `<ul class="lista-continut">${b.split("\n").map(l => l.replace(/^-\s*/, "").trim()).filter(Boolean).map(l => `<li>${ICONITE.cheiePozitiva}<span>${escapeHtml(l)}</span></li>`).join("")}</ul>`;
+    }
     return `<p>${escapeHtml(b.replace(/\n/g, " "))}</p>`;
   }).join("");
 }
-
 function formatPret(a) {
   const pret = a.pret_eur.toLocaleString("ro-RO");
   return a.tranzactie === "inchiriere" ? `${pret} € / lună` : `${pret} €`;
@@ -516,6 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
   randeazaBlog();
   randeazaArticol();
   randeazaServicii();
+  randeazaServiciiAcasa();
   randeazaServiciu();
   randeazaMeniuServicii();
   initMeniuMobil();

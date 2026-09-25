@@ -9,8 +9,8 @@
 <link rel="icon" href="img/icon/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="img/icon/apple-touch-180.png">
 <meta name="theme-color" content="#12294A">
-<link rel="stylesheet" href="css/stil.css?v=13">
-<link rel="stylesheet" href="css/admin.css?v=13">
+<link rel="stylesheet" href="css/stil.css?v=14">
+<link rel="stylesheet" href="css/admin.css?v=14">
 <script>
 /* Diagnostic vizibil: daca un script nu se incarca sau arunca o eroare, apare o banda rosie jos. */
 window.addEventListener("error", function (e) {
@@ -305,6 +305,11 @@ window.addEventListener("error", function (e) {
         <div><h2>Servicii</h2><p class="rezultate-info" id="servicii-contor"></p></div>
         <div class="admin-unelte"><button class="buton-principal" id="buton-serviciu-nou" type="button">+ Serviciu nou</button></div>
       </div>
+      <div class="panou sectiune-formular">
+        <h3>Banda albastră (pagina Servicii și prima pagină)</h3>
+        <textarea id="intro-servicii" rows="4"></textarea>
+        <div class="rail-actiuni" style="margin-top:12px"><button class="buton-principal" id="buton-intro-salveaza" type="button">Salvează textul benzii</button></div>
+      </div>
       <div class="tabel-invelis">
         <table class="tabel-admin">
           <thead><tr><th>Ordine</th><th>Serviciu</th><th>Afișare</th><th class="col-actiuni">Acțiuni</th></tr></thead>
@@ -328,7 +333,8 @@ window.addEventListener("error", function (e) {
           <label for="fs-descriere" style="margin-top:14px">Descriere scurtă (cardul din listă și introducerea paginii)</label>
           <textarea id="fs-descriere" rows="3" maxlength="300"></textarea>
           <label for="fs-continut" style="margin-top:14px">Textul paginii serviciului</label>
-          <textarea id="fs-continut" rows="14" placeholder="Paragrafele se separă printr-o linie goală.&#10;&#10;## Un rând care începe cu ## devine subtitlu"></textarea>
+          <textarea id="fs-continut" rows="16" placeholder="Paragrafele se separă printr-o linie goală.&#10;&#10;## Un rând care începe cu ## devine subtitlu&#10;&#10;- Rândurile care încep cu liniuță devin listă cu bifă&#10;&#10;[buton:cautator] Trimite-ne cererea ta&#10;[buton:proprietar] Trimite-ne proprietatea ta"></textarea>
+          <p class="nota-camp">Formatare: linie goală între paragrafe · <b>## </b> subtitlu · <b>- </b> listă · <b>[buton:cautator]</b> sau <b>[buton:proprietar]</b> urmat de textul butonului.</p>
           <label class="camp-bifat-simplu" style="margin-top:14px"><input id="fs-evidentiat" type="checkbox"> Serviciu evidențiat (cardul mare, primul pe pagină)</label>
           <div class="rail-actiuni" style="margin-top:20px">
             <button class="buton-principal" type="submit">Salvează serviciul</button>
@@ -352,8 +358,8 @@ window.addEventListener("error", function (e) {
   </div>
 </dialog>
 
-<script src="js/date-demo.js?v=13"></script>
-<script src="js/comun.js?v=13"></script>
-<script src="js/admin.js?v=13"></script>
+<script src="js/date-demo.js?v=14"></script>
+<script src="js/comun.js?v=14"></script>
+<script src="js/admin.js?v=14"></script>
 </body>
 </html>
