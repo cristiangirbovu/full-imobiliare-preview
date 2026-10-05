@@ -576,3 +576,5 @@ h1, h2, h3 { letter-spacing: -0.015em; }
   .servicii-asimetric .banda-servicii { min-height: 0; }
 }
 .articol-continut ul + p, .articol-continut p + ul { margin-top: 16px; }
+
+.continut-slogan { margin-top: 26px; font-size: 13.5px; letter-spacing: 2px; font-weight: 700; color: var(--accent-inchis); line-height: 1.7; }

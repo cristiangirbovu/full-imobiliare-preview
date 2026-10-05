@@ -87,24 +87,31 @@ function randeazaServiciu() {
   document.title = `${s.titlu} | Full Imobiliare`;
   document.getElementById("s-titlu").textContent = s.titlu;
   document.getElementById("s-descriere").textContent = s.descriere || "";
-  document.getElementById("s-continut").innerHTML = formateazaContinut(s.continut || "");
   // Emailul: subiectul poartă numele serviciului (cerință clientă), corpul e un început de mesaj.
+  // Același link îl folosesc și butoanele [buton:email] din textul paginii.
   const subiect = `Solicitare: ${s.titlu}`;
-  const corp = `Bună ziua,\n\nVă scriu în legătură cu serviciul „${s.titlu}".\n\n[Descrieți pe scurt situația dumneavoastră]\n\nNume:\nTelefon:\n`;
-  document.getElementById("s-email").href = `mailto:office@fullimobiliare.ro?subject=${encodeURIComponent(subiect)}&body=${encodeURIComponent(corp)}`;
+  const corp = `Bună ziua,\n\nVă scriu în legătură cu serviciul „${s.titlu}".\n\n[Descrie pe scurt situația ta]\n\nNume:\nTelefon:\n`;
+  const mailto = `mailto:office@fullimobiliare.ro?subject=${encodeURIComponent(subiect)}&body=${encodeURIComponent(corp)}`;
+  document.getElementById("s-email").href = mailto;
+  document.getElementById("s-continut").innerHTML = formateazaContinut(s.continut || "", { mailto });
   document.getElementById("s-whatsapp").href = `https://wa.me/40000000000?text=${encodeURIComponent("Bună ziua, mă interesează serviciul " + s.titlu + ".")}`;
   document.getElementById("s-altele").innerHTML = lista.filter(x => x.id !== s.id).map(x => `<a href="${urlServiciu(x)}">${escapeHtml(x.titlu)}</a>`).join("");
 }
 
 // Text lung (articole, servicii): paragrafe separate prin linie goală; „## " = subtitlu;
-// blocurile de linii care încep cu „- " devin listă; „[buton:cautator|proprietar] Text" = buton către formularul din Contact.
-const ROLURI_BUTON = { cautator: "Caută-ți casa împreună cu noi", proprietar: "Listează proprietatea cu noi" };
-function formateazaContinut(text) {
+// blocurile de linii care încep cu „- " devin listă; „[buton:cautator|proprietar] Text" = buton către formularul din Contact;
+// „[buton:email] Text" = buton care deschide un email (context.mailto, altfel office@); un rând scris integral
+// cu majuscule devine slogan (stil de etichetă, nu paragraf).
+function formateazaContinut(text, context) {
+  context = context || {};
   return (text || "").split(/\n\s*\n/).map(bloc => {
     const b = bloc.trim();
     if (!b) return "";
-    const buton = b.match(/^\[buton:(cautator|proprietar)\]\s*(.+)$/);
-    if (buton) return `<p class="continut-cta"><a class="buton alama" href="contact.html?rol=${buton[1]}">${escapeHtml(buton[2].trim())}</a></p>`;
+    const buton = b.match(/^\[buton:(cautator|proprietar|email)\]\s*(.+)$/);
+    if (buton) {
+      const href = buton[1] === "email" ? (context.mailto || "mailto:office@fullimobiliare.ro") : `contact.html?rol=${buton[1]}`;
+      return `<p class="continut-cta"><a class="buton alama" href="${escapeHtml(href)}">${escapeHtml(buton[2].trim())}</a></p>`;
+    }
     if (b.startsWith("## ")) {
       const linii = b.split("\n");
       const titlu = `<h2>${escapeHtml(linii[0].slice(3))}</h2>`;
@@ -114,10 +121,12 @@ function formateazaContinut(text) {
     if (b.startsWith("- ")) {
       return `<ul class="lista-continut">${b.split("\n").map(l => l.replace(/^-\s*/, "").trim()).filter(Boolean).map(l => `<li>${ICONITE.cheiePozitiva}<span>${escapeHtml(l)}</span></li>`).join("")}</ul>`;
     }
+    if (b.length <= 140 && /[A-ZĂÂÎȘȚ]/.test(b) && b === b.toLocaleUpperCase("ro-RO")) {
+      return `<p class="continut-slogan">${escapeHtml(b)}</p>`;
+    }
     return `<p>${escapeHtml(b.replace(/\n/g, " "))}</p>`;
   }).join("");
-}
-function formatPret(a) {
+}function formatPret(a) {
   const pret = a.pret_eur.toLocaleString("ro-RO");
   return a.tranzactie === "inchiriere" ? `${pret} € / lună` : `${pret} €`;
 }
