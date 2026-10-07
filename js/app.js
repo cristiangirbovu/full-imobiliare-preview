@@ -105,10 +105,24 @@ function randeazaServiciu() {
 // Text lung (articole, servicii): paragrafe separate prin linie goală; „## " = subtitlu;
 // liniile care încep cu „- " devin listă (una sub alta), chiar dacă stau lipite de subtitlu sau de un paragraf;
 // „[buton:cautator|proprietar] Text" = buton către formularul din Contact; „[buton:email] Text" = email (context.mailto);
+// „[piloni] A | B | C" = idei-cheie pe plăcuțe cu cheia; „[banda] Text" = frază pe bandă navy cu filigranul cheii;
 // o frază scurtă terminată în „:" devine etichetă de listă; un rând scris integral cu majuscule devine slogan.
 // Cu context.sectiuni (paginile de servicii), fiecare „## " deschide o secțiune-card; textul dinaintea primului
-// subtitlu rămâne introducere, iar o pagină fără subtitluri primește un singur card.
+// subtitlu rămâne introducere; pilonii și banda stau în afara cardurilor.
 const RE_BUTON = /^\[buton:(cautator|proprietar|email)\]\s*(.+)$/;
+const RE_PILONI = /^\[piloni\]\s*(.+)$/;
+const RE_BANDA = /^\[banda\]\s*([\s\S]+)$/;
+function esteBlocSpecial(b) { return RE_PILONI.test(b) || RE_BANDA.test(b); }
+function formateazaSpecial(b) {
+  let m = b.match(RE_PILONI);
+  if (m) {
+    const piloni = m[1].split("|").map(x => x.trim()).filter(Boolean);
+    return `<div class="piloni">${piloni.map(p => `<div class="pilon"><span class="pilon-placa" aria-hidden="true">${ICONITE.cheiePozitiva}</span><span class="pilon-text">${escapeHtml(p)}</span></div>`).join("")}</div>`;
+  }
+  m = b.match(RE_BANDA);
+  if (m) return `<div class="banda-continut filigran"><p>${escapeHtml(m[1].replace(/\s*\n\s*/g, " ").trim())}</p></div>`;
+  return "";
+}
 function formateazaGrup(tip, linii, context, primul) {
   if (tip === "lista") {
     return `<ul class="lista-continut">${linii.map(l => `<li>${ICONITE.cheiePozitiva}<span>${escapeHtml(l.replace(/^-\s*/, ""))}</span></li>`).join("")}</ul>`;
@@ -145,19 +159,29 @@ function formateazaBloc(bloc, context, lead) {
 function formateazaContinut(text, context) {
   context = context || {};
   const blocuri = (text || "").split(/\n\s*\n/).map(x => x.trim()).filter(Boolean);
-  if (!context.sectiuni) return blocuri.map(b => formateazaBloc(b, context, false)).join("");
+  if (!context.sectiuni) return blocuri.map(b => esteBlocSpecial(b) ? formateazaSpecial(b) : formateazaBloc(b, context, false)).join("");
+  // Paginile de servicii: carduri pe secțiuni. Înainte de primul „## " (dacă pagina are subtitluri) = introducere;
+  // pe paginile fără subtitluri, blocurile obișnuite consecutive intră în același card.
   const areSubtitluri = blocuri.some(b => b.startsWith("## "));
-  if (!areSubtitluri) {
-    return `<section class="bloc-serviciu">${blocuri.map((b, i) => formateazaBloc(b, context, i === 0)).join("")}</section>`;
-  }
-  let intro = "", sectiuni = "", deschisa = false;
+  let html = "", deschis = null, vazutSubtitlu = false, primulInCard = false;
+  const inchide = () => { if (deschis === "card") html += "</section>"; if (deschis === "intro") html += "</div>"; deschis = null; };
   blocuri.forEach(b => {
-    if (b.startsWith("## ")) { if (deschisa) sectiuni += "</section>"; sectiuni += `<section class="bloc-serviciu">`; deschisa = true; }
-    const h = formateazaBloc(b, context, false);
-    if (deschisa) sectiuni += h; else intro += h;
+    if (esteBlocSpecial(b)) { inchide(); html += formateazaSpecial(b); return; }
+    if (b.startsWith("## ")) {
+      inchide(); vazutSubtitlu = true;
+      html += `<section class="bloc-serviciu">`; deschis = "card";
+      html += formateazaBloc(b, context, false); primulInCard = false;
+      return;
+    }
+    if (!deschis) {
+      if (areSubtitluri && !vazutSubtitlu) { html += `<div class="serviciu-intro-text">`; deschis = "intro"; }
+      else { html += `<section class="bloc-serviciu">`; deschis = "card"; primulInCard = true; }
+    }
+    html += formateazaBloc(b, context, deschis === "card" && primulInCard);
+    primulInCard = false;
   });
-  if (deschisa) sectiuni += "</section>";
-  return (intro ? `<div class="serviciu-intro-text">${intro}</div>` : "") + sectiuni;
+  inchide();
+  return html;
 }
 
 function formatPret(a) {

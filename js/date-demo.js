@@ -115,7 +115,8 @@ const INTRO_SERVICII = "La Full Imobiliare, credem că o tranzacție imobiliară
 // „Consultanță credit" și „Administrare proprietăți" au fost șterse la cererea clientei. Ordinea = ordinea din documentul ei.
 // Format `continut`: paragrafe separate prin linie goală; „## " = subtitlu; „- " = element de listă;
 // „[buton:cautator] Text" / „[buton:proprietar] Text" = buton către formularul din Contact;
-// „[buton:email] Text" = buton care deschide un email către office@ cu subiectul serviciului.
+// „[buton:email] Text" = buton care deschide un email către office@ cu subiectul serviciului;
+// „[piloni] A | B | C" = idei-cheie pe plăcuțe; „[banda] Text" = frază pe bandă navy.
 const SERVICII = [
   { id: 1, ordine: 1, evidentiat: false, slug: "consultanta-juridica-gratuita", titlu: "Consultanță juridică gratuită",
     descriere: "Diferențiatorul nostru din 1993: verificarea actelor de proprietate, asistență la antecontract și contract, intermediere sigură între vânzător și cumpărător, fără costuri suplimentare pentru clienții agenției.",
@@ -140,13 +141,13 @@ const SERVICII = [
     continut: "## Certificatul de performanță energetică, o cerință legală pentru tranzacțiile imobiliare\nPentru imobilele care se vând sau se închiriază, legislația impune, în condițiile prevăzute de Legea nr. 372/2005, punerea la dispoziția potențialului cumpărător sau chiriaș a certificatului de performanță energetică anterior perfectării contractului.\n\nPrin partenerii și colaboratorii noștri autorizați, îți facilităm obținerea certificatului de performanță energetică al imobilului, document necesar, în condițiile prevăzute de lege pentru toate tranzacțiile imobiliare.\n\nFull facilitează relația cu specialistul atestat, coordonează solicitarea și te sprijină în pregătirea documentelor necesare, astfel încât procesul să fie cât mai simplu și eficient.\n\nEvaluarea energetică și întocmirea și emiterea certificatului sunt realizate de specialistul atestat, în baza caracteristicilor tehnice ale imobilului și a documentației disponibile.\n\nDocumentația necesară pentru tranzacția ta, simplu și eficient.\n\n[buton:email] Solicită serviciu" },
   { id: 10, ordine: 8, evidentiat: false, slug: "consultanta-imobiliara", titlu: "Consultanță imobiliară",
     descriere: "Analiză, evaluare și îndrumare adaptate nevoilor și obiectivelor tale imobiliare.",
-    continut: "Consultanța imobiliară Full înseamnă mai mult decât intermedierea unei tranzacții. Agenții noștri îți oferă informații relevante despre piață, analiză și recomandări personalizate, adaptate proprietății și obiectivelor tale.\n\nTe sprijinim în evaluarea oportunității unei tranzacții, analiza proprietății, stabilirea strategiei de vânzare sau cumpărare, evaluarea prețului de vânzare-cumpărare, identificarea oportunităților și negocierea condițiilor tranzacției.\n\nDe la prima analiză până la finalizarea tranzacției, îți oferim îndrumare pe parcursul fiecărei etape și te ajutăm să înțelegi opțiunile pe care le ai, astfel încât deciziile tale să fie informate, fundamentate și adaptate obiectivelor pe care le urmărești.\n\nCUNOAȘTEREA PIEȚEI. EXPERIENȚĂ ÎN TRANZACȚII. CONSULTANȚĂ PERSONALIZATĂ." }
+    continut: "[piloni] Cunoașterea pieței | Experiență în tranzacții | Consultanță personalizată\n\nConsultanța imobiliară Full înseamnă mai mult decât intermedierea unei tranzacții. Agenții noștri îți oferă informații relevante despre piață, analiză și recomandări personalizate, adaptate proprietății și obiectivelor tale.\n\nTe sprijinim în:\n- evaluarea oportunității unei tranzacții\n- analiza proprietății\n- stabilirea strategiei de vânzare sau cumpărare\n- evaluarea prețului de vânzare-cumpărare\n- identificarea oportunităților\n- negocierea condițiilor tranzacției\n\n[banda] De la prima analiză până la finalizarea tranzacției, îți oferim îndrumare pe parcursul fiecărei etape și te ajutăm să înțelegi opțiunile pe care le ai, astfel încât deciziile tale să fie informate, fundamentate și adaptate obiectivelor pe care le urmărești." }
 ];
 
 // Versiunea textelor de servicii: când se schimbă, copiile vechi salvate de admin în acest browser se ignoră,
 // ca oricine deschide preview-ul să vadă textele curente. (Dispare la integrarea Supabase.)
 (function () {
-  const VERSIUNE_SERVICII = "2026-10-05";
+  const VERSIUNE_SERVICII = "2026-10-07";
   try {
     if (localStorage.getItem("fi_versiune_servicii") !== VERSIUNE_SERVICII) {
       localStorage.removeItem("fi_servicii");
