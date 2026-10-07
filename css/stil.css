@@ -578,3 +578,47 @@ h1, h2, h3 { letter-spacing: -0.015em; }
 .articol-continut ul + p, .articol-continut p + ul { margin-top: 16px; }
 
 .continut-slogan { margin-top: 26px; font-size: 13.5px; letter-spacing: 2px; font-weight: 700; color: var(--accent-inchis); line-height: 1.7; }
+
+/* ===== Pagina unui serviciu (v2, 07.10.2026): bandă de brand + secțiuni pe carduri =====
+   Banda navy cu filigranul cheii și tăietura (manual, cap. 10), traseu de navigare, apoi conținutul împărțit
+   pe carduri, fiecare cu subtitlu marcat cu alamă; listele stau una sub alta, cu cheia ca bulină. */
+.serviciu-hero { background: var(--brand); color: var(--alb); padding: 44px 0 52px 0; --f-h: 165%; --f-sus: -38%; --f-dreapta: 3%; --f-opacitate: 0.10; }
+.firimituri { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 20px; }
+.firimituri a { color: rgba(255,255,255,0.75); transition: color var(--dur-ui) ease; }
+.firimituri [aria-current] { color: var(--accent); font-weight: 600; }
+.serviciu-hero h1 { font-size: clamp(30px, 4vw, 46px); font-weight: 800; line-height: 1.1; max-width: 24ch; color: var(--alb); }
+.serviciu-hero .taietura { margin-top: 20px; }
+.serviciu-hero .serviciu-intro { margin-top: 16px; font-size: 18px; line-height: 1.6; color: rgba(255,255,255,0.8); max-width: 62ch; }
+.serviciu-hero-actiuni { display: none; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.serviciu-hero-actiuni .buton { display: inline-block; margin: 0; padding: 12px 20px; }
+.buton.contur-alb { background: transparent; color: var(--alb); border: 1.5px solid rgba(255,255,255,0.55); }
+.serviciu-corp { padding: 40px 0 88px 0; }
+.serviciu-corp .serviciu-grila { margin-top: 0; gap: 32px; }
+.serviciu-continut { min-width: 0; }
+.serviciu-intro-text { margin-bottom: 22px; }
+.serviciu-intro-text p { font-size: 17.5px; line-height: 1.75; color: var(--text); }
+.serviciu-intro-text p + p { margin-top: 14px; }
+.bloc-serviciu { background: var(--alb); border: 1px solid var(--linie); border-radius: var(--raza); padding: 28px 30px; box-shadow: var(--umbra-card); }
+.bloc-serviciu + .bloc-serviciu { margin-top: 18px; }
+.bloc-serviciu h2 { font-size: 21px; font-weight: 800; color: var(--brand); line-height: 1.3; padding-left: 14px; border-left: 3px solid var(--accent); margin-bottom: 4px; }
+.bloc-serviciu p { font-size: 16px; line-height: 1.7; color: var(--text); margin-top: 12px; }
+.bloc-serviciu p.continut-lead { font-size: 17px; font-weight: 600; color: var(--brand); line-height: 1.55; }
+.bloc-serviciu p.continut-eticheta, .serviciu-intro-text p.continut-eticheta { margin-top: 22px; font-size: 12px; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 700; color: var(--accent-inchis); line-height: 1.4; }
+.serviciu-continut .lista-continut { list-style: none; display: grid; gap: 8px; margin: 12px 0 0 0; }
+.serviciu-continut .lista-continut li { display: flex; align-items: flex-start; gap: 12px; padding: 11px 14px; background: var(--fundal); border: 1px solid var(--linie); border-radius: var(--raza-interactiv); font-size: 15.5px; line-height: 1.5; color: var(--text); }
+.serviciu-continut .lista-continut li svg { width: auto; height: 17px; flex: none; color: var(--accent-inchis); margin: 2px 0 0 0; }
+.serviciu-continut .continut-cta { margin: 22px 0 2px 0; }
+.serviciu-continut .continut-slogan { margin-top: 20px; }
+.lista-servicii-lateral a { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; }
+.lista-servicii-lateral a::after { content: "›"; color: var(--accent-inchis); font-size: 18px; line-height: 1; transition: transform var(--dur-ui) var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .firimituri a:hover { color: var(--alb); }
+  .buton.contur-alb:hover { background: rgba(255,255,255,0.1); border-color: var(--alb); }
+  .lista-servicii-lateral a:hover::after { transform: translateX(3px); }
+}
+@media (max-width: 860px) {
+  .serviciu-hero { padding: 32px 0 38px 0; --f-h: 120%; --f-sus: -14%; --f-dreapta: -22%; }
+  .serviciu-hero-actiuni { display: flex; }
+  .bloc-serviciu { padding: 22px 18px; }
+  .serviciu-corp { padding: 26px 0 56px 0; }
+}

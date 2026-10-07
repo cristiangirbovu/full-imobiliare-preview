@@ -93,40 +93,74 @@ function randeazaServiciu() {
   const corp = `Bună ziua,\n\nVă scriu în legătură cu serviciul „${s.titlu}".\n\n[Descrie pe scurt situația ta]\n\nNume:\nTelefon:\n`;
   const mailto = `mailto:office@fullimobiliare.ro?subject=${encodeURIComponent(subiect)}&body=${encodeURIComponent(corp)}`;
   document.getElementById("s-email").href = mailto;
-  document.getElementById("s-continut").innerHTML = formateazaContinut(s.continut || "", { mailto });
+  const emailHero = document.getElementById("s-email-hero");
+  if (emailHero) emailHero.href = mailto;
+  const firimitura = document.getElementById("s-firimitura");
+  if (firimitura) firimitura.textContent = s.titlu;
+  document.getElementById("s-continut").innerHTML = formateazaContinut(s.continut || "", { mailto, sectiuni: true });
   document.getElementById("s-whatsapp").href = `https://wa.me/40000000000?text=${encodeURIComponent("Bună ziua, mă interesează serviciul " + s.titlu + ".")}`;
   document.getElementById("s-altele").innerHTML = lista.filter(x => x.id !== s.id).map(x => `<a href="${urlServiciu(x)}">${escapeHtml(x.titlu)}</a>`).join("");
 }
 
 // Text lung (articole, servicii): paragrafe separate prin linie goală; „## " = subtitlu;
-// blocurile de linii care încep cu „- " devin listă; „[buton:cautator|proprietar] Text" = buton către formularul din Contact;
-// „[buton:email] Text" = buton care deschide un email (context.mailto, altfel office@); un rând scris integral
-// cu majuscule devine slogan (stil de etichetă, nu paragraf).
+// liniile care încep cu „- " devin listă (una sub alta), chiar dacă stau lipite de subtitlu sau de un paragraf;
+// „[buton:cautator|proprietar] Text" = buton către formularul din Contact; „[buton:email] Text" = email (context.mailto);
+// o frază scurtă terminată în „:" devine etichetă de listă; un rând scris integral cu majuscule devine slogan.
+// Cu context.sectiuni (paginile de servicii), fiecare „## " deschide o secțiune-card; textul dinaintea primului
+// subtitlu rămâne introducere, iar o pagină fără subtitluri primește un singur card.
+const RE_BUTON = /^\[buton:(cautator|proprietar|email)\]\s*(.+)$/;
+function formateazaGrup(tip, linii, context, primul) {
+  if (tip === "lista") {
+    return `<ul class="lista-continut">${linii.map(l => `<li>${ICONITE.cheiePozitiva}<span>${escapeHtml(l.replace(/^-\s*/, ""))}</span></li>`).join("")}</ul>`;
+  }
+  if (tip === "buton") {
+    const m = linii[0].match(RE_BUTON);
+    const href = m[1] === "email" ? (context.mailto || "mailto:office@fullimobiliare.ro") : `contact.html?rol=${m[1]}`;
+    return `<p class="continut-cta"><a class="buton alama" href="${escapeHtml(href)}">${escapeHtml(m[2].trim())}</a></p>`;
+  }
+  const t = linii.join(" ");
+  if (t.length <= 140 && /[A-ZĂÂÎȘȚ]/.test(t) && t === t.toLocaleUpperCase("ro-RO")) return `<p class="continut-slogan">${escapeHtml(t)}</p>`;
+  if (t.length <= 60 && t.endsWith(":")) return `<p class="continut-eticheta">${escapeHtml(t)}</p>`;
+  // Deschiderea secțiunii se evidențiază doar când e scurtă (o frază-cheie), nu la paragrafe lungi.
+  return `<p${primul && t.length <= 140 ? ' class="continut-lead"' : ""}>${escapeHtml(t)}</p>`;
+}
+function formateazaBloc(bloc, context, lead) {
+  const linii = bloc.split("\n").map(l => l.trim()).filter(Boolean);
+  if (!linii.length) return "";
+  let html = "";
+  if (linii[0].startsWith("## ")) {
+    html += `<h2>${escapeHtml(linii.shift().slice(3).trim())}</h2>`;
+    lead = true;   // primul paragraf de după subtitlu e textul de deschidere al secțiunii
+  }
+  // Liniile consecutive de același tip formează un grup: listă, buton sau paragraf.
+  const grupuri = [];
+  linii.forEach(l => {
+    const tip = l.startsWith("- ") ? "lista" : RE_BUTON.test(l) ? "buton" : "text";
+    const ultim = grupuri[grupuri.length - 1];
+    if (ultim && ultim.tip === tip && tip !== "buton") ultim.linii.push(l); else grupuri.push({ tip, linii: [l] });
+  });
+  grupuri.forEach((g, i) => { html += formateazaGrup(g.tip, g.linii, context, lead && i === 0 && g.tip === "text"); });
+  return html;
+}
 function formateazaContinut(text, context) {
   context = context || {};
-  return (text || "").split(/\n\s*\n/).map(bloc => {
-    const b = bloc.trim();
-    if (!b) return "";
-    const buton = b.match(/^\[buton:(cautator|proprietar|email)\]\s*(.+)$/);
-    if (buton) {
-      const href = buton[1] === "email" ? (context.mailto || "mailto:office@fullimobiliare.ro") : `contact.html?rol=${buton[1]}`;
-      return `<p class="continut-cta"><a class="buton alama" href="${escapeHtml(href)}">${escapeHtml(buton[2].trim())}</a></p>`;
-    }
-    if (b.startsWith("## ")) {
-      const linii = b.split("\n");
-      const titlu = `<h2>${escapeHtml(linii[0].slice(3))}</h2>`;
-      const rest = linii.slice(1).join(" ").trim();
-      return titlu + (rest ? `<p>${escapeHtml(rest)}</p>` : "");
-    }
-    if (b.startsWith("- ")) {
-      return `<ul class="lista-continut">${b.split("\n").map(l => l.replace(/^-\s*/, "").trim()).filter(Boolean).map(l => `<li>${ICONITE.cheiePozitiva}<span>${escapeHtml(l)}</span></li>`).join("")}</ul>`;
-    }
-    if (b.length <= 140 && /[A-ZĂÂÎȘȚ]/.test(b) && b === b.toLocaleUpperCase("ro-RO")) {
-      return `<p class="continut-slogan">${escapeHtml(b)}</p>`;
-    }
-    return `<p>${escapeHtml(b.replace(/\n/g, " "))}</p>`;
-  }).join("");
-}function formatPret(a) {
+  const blocuri = (text || "").split(/\n\s*\n/).map(x => x.trim()).filter(Boolean);
+  if (!context.sectiuni) return blocuri.map(b => formateazaBloc(b, context, false)).join("");
+  const areSubtitluri = blocuri.some(b => b.startsWith("## "));
+  if (!areSubtitluri) {
+    return `<section class="bloc-serviciu">${blocuri.map((b, i) => formateazaBloc(b, context, i === 0)).join("")}</section>`;
+  }
+  let intro = "", sectiuni = "", deschisa = false;
+  blocuri.forEach(b => {
+    if (b.startsWith("## ")) { if (deschisa) sectiuni += "</section>"; sectiuni += `<section class="bloc-serviciu">`; deschisa = true; }
+    const h = formateazaBloc(b, context, false);
+    if (deschisa) sectiuni += h; else intro += h;
+  });
+  if (deschisa) sectiuni += "</section>";
+  return (intro ? `<div class="serviciu-intro-text">${intro}</div>` : "") + sectiuni;
+}
+
+function formatPret(a) {
   const pret = a.pret_eur.toLocaleString("ro-RO");
   return a.tranzactie === "inchiriere" ? `${pret} € / lună` : `${pret} €`;
 }
